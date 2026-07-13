@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+dist/
+build/
+.vercel/
+
+# local caches and runtime state
+.cache/
+.next-cache/
+.codex-home/
+.codex-browsers/
+work/
+outputs/
+tsconfig.tsbuildinfo
+
+# env
+.env
+.env.*
+.env.local
+!.env.example
+
+# local video files
+public/assets/video/*.mp4
+public/assets/video/*.mov
+public/assets/video/*.webm
+public/assets/*.mp4
+public/assets/*.mov
+public/assets/*.webm
+
+# system
+.DS_Store
