@@ -17,6 +17,7 @@ type IntroProps = {
 export function Intro({ activeSection = "design", disablePortraitEffects = false, className = "" }: IntroProps) {
   const isMusic = activeSection === "music";
   const isFilms = activeSection === "films";
+  const showHobbies = false;
   const hasStaticPortrait = isMusic || isFilms || disablePortraitEffects;
   const [showAltPortrait, setShowAltPortrait] = useState(false);
   const [isPortraitLayerMounted, setIsPortraitLayerMounted] = useState(false);
@@ -198,11 +199,13 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                   </ExternalLink>
                   , solving product design challenges and leading the design team in{"\u00a0"}the Acquisition & Activation stream
                 </p>
-                <p>
-                  My hobbies are producing <ExternalLink href="https://band.link/venyavekk">pop music</ExternalLink>, making{" "}
-                  <ExternalLink href="/films">short films</ExternalLink>, and{"\u00a0"}
-                  <ExternalLink href="https://t.me/desiqn">blogging</ExternalLink> about{"\u00a0"}everything
-                </p>
+                {showHobbies ? (
+                  <p>
+                    My hobbies are producing <ExternalLink href="https://band.link/venyavekk">pop music</ExternalLink>, making{" "}
+                    <ExternalLink href="/films">short films</ExternalLink>, and{"\u00a0"}
+                    <ExternalLink href="https://t.me/desiqn">blogging</ExternalLink> about{"\u00a0"}everything
+                  </p>
+                ) : null}
               </div>
               <div className="intro-meta-block space-y-8">
                 <div className="space-y-2">
