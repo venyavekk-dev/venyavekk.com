@@ -148,7 +148,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               }}
             >
               <video
-                src="/assets/avatar-alt-pingpong.mp4"
+                src="/assets/video/compressed/avatar-alt-pingpong.webm"
                 className="h-full w-full rounded-full object-cover"
                 autoPlay
                 loop

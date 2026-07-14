@@ -121,7 +121,7 @@ export const companySections: CompanySection[] = [
         title: "Hotel Search Scenario",
         description: "Designed a seamless hotel search flow with engaging interactions to boost user retention",
         image: "/assets/HxcfkXkHcS7zCaKKRw1aB2vs6Xs.png",
-        video: "/assets/video/Fk75mwmSV7IGsVPBjwNGfV8UfDE.mp4",
+        video: "/assets/video/compressed/Fk75mwmSV7IGsVPBjwNGfV8UfDE.webm",
         aspectRatio: "244 / 510",
         maxWidth: 244,
         href: "https://www.figma.com/"
@@ -130,7 +130,7 @@ export const companySections: CompanySection[] = [
         title: "Hotel Card Design",
         description: "User-centric design that makes hotel evaluation effortless - all essential info is structured for quick and confident decision-making",
         image: "/assets/HxcfkXkHcS7zCaKKRw1aB2vs6Xs.png",
-        video: "/assets/video/S8AcnpY1M3JZMLLJ3npSNFa9HR8.mp4",
+        video: "/assets/video/compressed/S8AcnpY1M3JZMLLJ3npSNFa9HR8.webm",
         aspectRatio: "244 / 510",
         maxWidth: 244
       },
@@ -138,7 +138,7 @@ export const companySections: CompanySection[] = [
         title: "Flight Ticket Purchase",
         description: "Product design to simplify flight search and promote the most relevant ticket options",
         image: "/assets/HxcfkXkHcS7zCaKKRw1aB2vs6Xs.png",
-        video: "/assets/video/4DUrGTPE0gsOmDuADEuEZe4roY.mp4",
+        video: "/assets/video/compressed/4DUrGTPE0gsOmDuADEuEZe4roY.webm",
         aspectRatio: "244 / 510",
         maxWidth: 244
       },
@@ -146,7 +146,7 @@ export const companySections: CompanySection[] = [
         title: "Room & Hotel Cards",
         description: "Product design for an engaging hotel room selection that helps users find the best option",
         image: "/assets/HxcfkXkHcS7zCaKKRw1aB2vs6Xs.png",
-        video: "/assets/video/sFFdMTDsFKJiV2RYFEO3mRtdq4.mp4",
+        video: "/assets/video/compressed/sFFdMTDsFKJiV2RYFEO3mRtdq4.webm",
         aspectRatio: "244 / 510",
         maxWidth: 244
       }

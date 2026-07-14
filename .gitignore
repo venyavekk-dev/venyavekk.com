@@ -27,6 +27,9 @@ tsconfig.tsbuildinfo
 public/assets/video/*.mp4
 public/assets/video/*.mov
 public/assets/video/*.webm
+!public/assets/video/compressed/
+!public/assets/video/compressed/*.mp4
+!public/assets/video/compressed/*.webm
 public/assets/*.mp4
 public/assets/*.mov
 public/assets/*.webm
