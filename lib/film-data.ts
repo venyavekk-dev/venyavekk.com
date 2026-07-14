@@ -21,7 +21,7 @@ export const filmSections: CollectionSectionData[] = [
     collageImages: [thumbnail("mpnuerFGGtA"), thumbnail("xydVeKYYv4k"), thumbnail("xQhZD6HVtSs"), thumbnail("8kdZXUcSOJU")],
     items: [
       {
-        title: "Short film I",
+        title: "Вся магия кино — в свете",
         description: "Visual story",
         href: `${youtube}mpnuerFGGtA`,
         videoUrl: `${youtube}mpnuerFGGtA`,
@@ -30,7 +30,7 @@ export const filmSections: CollectionSectionData[] = [
         duration: "YouTube"
       },
       {
-        title: "Short film II",
+        title: "Цена творческой жизни",
         description: "Visual story",
         href: `${youtube}xydVeKYYv4k`,
         videoUrl: `${youtube}xydVeKYYv4k`,
@@ -39,7 +39,7 @@ export const filmSections: CollectionSectionData[] = [
         duration: "YouTube"
       },
       {
-        title: "Short film III",
+        title: "Уберись в своей комнате! — редизайн себя",
         description: "Visual story",
         href: `${youtube}xQhZD6HVtSs`,
         videoUrl: `${youtube}xQhZD6HVtSs`,
@@ -48,7 +48,7 @@ export const filmSections: CollectionSectionData[] = [
         duration: "YouTube"
       },
       {
-        title: "Short film IV",
+        title: "Делай как ты можешь",
         description: "Visual story",
         href: `${youtube}8kdZXUcSOJU`,
         videoUrl: `${youtube}8kdZXUcSOJU`,
@@ -66,7 +66,7 @@ export const filmSections: CollectionSectionData[] = [
     collageImages: [thumbnail("3Vtout49avI"), thumbnail("M3lFKnbfhWQ"), thumbnail("j89YduxCBZ0"), thumbnail("Z2RWTLjoW_8")],
     items: [
       {
-        title: "Short-form I",
+        title: "Я сломался (short film 2024)",
         description: "Creative sketch",
         href: `${youtube}3Vtout49avI`,
         videoUrl: `${youtube}3Vtout49avI`,
@@ -75,7 +75,7 @@ export const filmSections: CollectionSectionData[] = [
         duration: "YouTube"
       },
       {
-        title: "Short-form II",
+        title: "Год не в России (mood short film)",
         description: "Creative sketch",
         href: `${youtube}M3lFKnbfhWQ`,
         videoUrl: `${youtube}M3lFKnbfhWQ`,
@@ -84,7 +84,7 @@ export const filmSections: CollectionSectionData[] = [
         duration: "YouTube"
       },
       {
-        title: "Short-form III",
+        title: "Метод прогрессивного джипега",
         description: "Creative sketch",
         href: `${youtube}j89YduxCBZ0`,
         videoUrl: `${youtube}j89YduxCBZ0`,
@@ -93,7 +93,7 @@ export const filmSections: CollectionSectionData[] = [
         duration: "YouTube"
       },
       {
-        title: "Short-form IV",
+        title: "Базовое правило дизайна",
         description: "Creative sketch",
         href: `${youtube}Z2RWTLjoW_8`,
         videoUrl: `${youtube}Z2RWTLjoW_8`,
@@ -111,7 +111,7 @@ export const filmSections: CollectionSectionData[] = [
     cover: thumbnail("wiRmZRclac4"),
     items: [
       {
-        title: "Early short film",
+        title: "Много маленьких проектов или один большой?",
         description: "Archive visual story",
         href: `${youtube}wiRmZRclac4`,
         videoUrl: `${youtube}wiRmZRclac4`,
