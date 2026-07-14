@@ -34,5 +34,8 @@ public/assets/*.mp4
 public/assets/*.mov
 public/assets/*.webm
 
+# local image backups
+public/assets/_original-images-backup/
+
 # system
 .DS_Store

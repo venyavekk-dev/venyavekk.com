@@ -14,7 +14,7 @@ export function Header() {
           className="h-10 w-10 rounded-full object-cover transition duration-200 hover:scale-95 active:scale-[0.93] sm:h-[54px] sm:w-[54px]"
         />
         <h1 className="font-normal">
-          <strong className="font-semibold">Veniamin Vekk,</strong>
+          <strong className="font-semibold">Veniamin Vekk</strong>
           <br />
           Designer, musician, and <ExternalLink href="/films">filmmaker</ExternalLink>
         </h1>

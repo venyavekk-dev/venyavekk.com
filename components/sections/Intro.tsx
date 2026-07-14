@@ -108,7 +108,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
             </button>
           )}
           <div className="space-y-0.5">
-            <h1 className="font-semibold">Veniamin Vekk,</h1>
+            <h1 className="font-semibold">Veniamin Vekk</h1>
             <p>
               {activeSection === "design" ? (
                 <span className="italic-text">Designer</span>

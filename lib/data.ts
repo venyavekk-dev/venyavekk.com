@@ -44,29 +44,29 @@ export const companySections: CompanySection[] = [
     logo: "/assets/vQHpJgJHYRgAuEdoDFsVl7pP8g.png",
     yandexPlusShowcase: {
       productDesignerImages: [
-        "/assets/projects/dis06.png",
-        "/assets/projects/dis08.png",
-        "/assets/projects/dis05.png",
-        "/assets/projects/dis01.png",
-        "/assets/projects/dis04.png",
-        "/assets/projects/dis02.png",
-        "/assets/projects/dis07.png"
+        "/assets/projects/dis06.webp",
+        "/assets/projects/dis08.webp",
+        "/assets/projects/dis05.webp",
+        "/assets/projects/dis01.webp",
+        "/assets/projects/dis04.webp",
+        "/assets/projects/dis02.webp",
+        "/assets/projects/dis07.webp"
       ],
       designLeadImages: [
-        "/assets/projects/Artdir01.png",
-        "/assets/projects/Artdir06.png",
-        "/assets/projects/Artdir05.png",
-        "/assets/projects/Artdir08.png",
-        "/assets/projects/Artdir10.png",
-        "/assets/projects/Artdir14.png",
-        "/assets/projects/Artdir02.png",
-        "/assets/projects/Artdir03.png",
-        "/assets/projects/Artdir04.png",
-        "/assets/projects/Artdir13.png",
-        "/assets/projects/Artdir09.png",
-        "/assets/projects/Artdir12.png",
-        "/assets/projects/Artdir07.png",
-        "/assets/projects/Artdir11.png"
+        "/assets/projects/Artdir01.webp",
+        "/assets/projects/Artdir06.webp",
+        "/assets/projects/Artdir05.webp",
+        "/assets/projects/Artdir08.webp",
+        "/assets/projects/Artdir10.webp",
+        "/assets/projects/Artdir14.webp",
+        "/assets/projects/Artdir02.webp",
+        "/assets/projects/Artdir03.webp",
+        "/assets/projects/Artdir04.webp",
+        "/assets/projects/Artdir13.webp",
+        "/assets/projects/Artdir09.webp",
+        "/assets/projects/Artdir12.webp",
+        "/assets/projects/Artdir07.webp",
+        "/assets/projects/Artdir11.webp"
       ]
     },
     hideProjects: true,
@@ -162,13 +162,13 @@ export const companySections: CompanySection[] = [
       {
         title: "Alternative App Marketplace",
         description: "Product design across all platforms for a large app marketplace • 2022 • 7M MAU",
-        image: "/assets/projects/rustore.png",
+        image: "/assets/projects/rustore.webp",
         aspectRatio: "1288 / 1084"
       },
       {
         title: "Main App for Pyatеrochka",
         description: "Redesign of the user's personal account. Impact on retention by creating a loyalty program • 2021 • 4.46B yearly visits",
-        image: "/assets/projects/pya.png",
+        image: "/assets/projects/pya.webp",
         aspectRatio: "1288 / 1084"
       }
     ]
