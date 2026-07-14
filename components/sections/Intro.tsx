@@ -20,7 +20,6 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const hasStaticPortrait = isMusic || isFilms || disablePortraitEffects;
   const [showAltPortrait, setShowAltPortrait] = useState(false);
   const [isPortraitLayerMounted, setIsPortraitLayerMounted] = useState(false);
-  const [isPostOpen, setIsPostOpen] = useState(false);
   const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
   const [hasPortraitBeenOpened, setHasPortraitBeenOpened] = useState(false);
 
@@ -79,7 +78,6 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               onClick={() => {
                 setHasPortraitBeenOpened(true);
                 if (showAltPortrait || isPortraitLayerMounted) {
-                  setIsPostOpen(false);
                   setShowAltPortrait(false);
                   window.setTimeout(() => setIsPortraitLayerMounted(false), 540);
                   return;
@@ -140,11 +138,11 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
             <button
               type="button"
               className={`portrait-video-panel ${showAltPortrait ? "is-open" : ""}`}
-              aria-label="Open Telegram post"
-              aria-expanded={isPostOpen}
+              aria-label="Hide portrait video"
               disabled={!showAltPortrait}
               onClick={() => {
-                setIsPostOpen((value) => !value);
+                setShowAltPortrait(false);
+                window.setTimeout(() => setIsPortraitLayerMounted(false), 540);
               }}
             >
               <video
@@ -157,19 +155,6 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 preload="auto"
               />
             </button>
-            <div className={`telegram-post-panel ${isPostOpen ? "is-open" : ""}`} aria-hidden={!isPostOpen}>
-              <div className="telegram-post-frame">
-                <button type="button" className="telegram-post-close" aria-label="Close Telegram post" onClick={() => setIsPostOpen(false)}>
-                  Close
-                </button>
-                <iframe
-                  src="https://t.me/desiqn/8501?embed=1&mode=tme"
-                  title="Telegram post by Veniamin Vekk"
-                  loading="lazy"
-                  className="h-full w-full"
-                />
-              </div>
-            </div>
           </div>
         ) : null}
         <div className={`intro-content-flow space-y-8 ${showAltPortrait ? "is-centered" : ""}`}>
