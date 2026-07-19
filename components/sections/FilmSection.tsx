@@ -1,4 +1,5 @@
 import { ExternalLink } from "@/components/ui/ExternalLink";
+import { YouTubeIcon } from "@/components/ui/YouTubeIcon";
 import type { CollectionSectionData } from "@/components/sections/CollectionSection";
 
 export function FilmSection({ section }: { section: CollectionSectionData }) {
@@ -27,7 +28,7 @@ export function FilmSection({ section }: { section: CollectionSectionData }) {
                 {item.description ? <p>{item.description}</p> : null}
               </div>
               <span className="music-youtube-button" aria-hidden="true">
-                ▶
+                <YouTubeIcon />
               </span>
             </div>
           </ExternalLink>
