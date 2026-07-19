@@ -123,8 +123,7 @@ export const companySections: CompanySection[] = [
         image: "/assets/HxcfkXkHcS7zCaKKRw1aB2vs6Xs.png",
         video: "/assets/video/compressed/Fk75mwmSV7IGsVPBjwNGfV8UfDE.webm",
         aspectRatio: "244 / 510",
-        maxWidth: 244,
-        href: "https://www.figma.com/"
+        maxWidth: 244
       },
       {
         title: "Hotel Card Design",

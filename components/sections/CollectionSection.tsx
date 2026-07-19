@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink } from "@/components/ui/ExternalLink";
+import { YouTubeIcon } from "@/components/ui/YouTubeIcon";
 import { useState } from "react";
 
 export type CollectionItem = {
@@ -108,11 +109,11 @@ function MusicItem({
           {item.status === "locked" ? <span aria-label="Locked">Lock</span> : null}
           {item.videoUrl && opensExternally ? (
             <span className="music-youtube-button" aria-label={`Open video for ${item.title}`}>
-              <span aria-hidden="true">▶</span>
+              <YouTubeIcon />
             </span>
           ) : item.videoUrl ? (
             <button type="button" className="music-youtube-button" aria-label={`Open video for ${item.title}`} onClick={onVideoToggle}>
-              <span aria-hidden="true">▶</span>
+              <YouTubeIcon />
             </button>
           ) : item.videoPlanned ? (
             <span className="music-video-planned">clip planned</span>
