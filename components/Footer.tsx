@@ -1,6 +1,4 @@
-import { ExternalLink } from "@/components/ui/ExternalLink";
-import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
-import { links } from "@/lib/data";
+import { ContactChips } from "@/components/ui/ContactChips";
 
 export function Footer() {
   return (
@@ -8,14 +6,7 @@ export function Footer() {
       <p>
         2016 → now
       </p>
-      <nav aria-label="Footer contacts" className="flex flex-wrap gap-x-6 gap-y-1">
-        {links.map((link) => (
-          <ExternalLink key={link.label} href={link.href}>
-            {link.label}
-          </ExternalLink>
-        ))}
-        <EmailCopyButton />
-      </nav>
+      <ContactChips ariaLabel="Footer contacts" />
     </footer>
   );
 }

@@ -1,9 +1,8 @@
 "use client";
 
 import { ExternalLink } from "@/components/ui/ExternalLink";
-import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
+import { ContactChips } from "@/components/ui/ContactChips";
 import { filmArtistDescription, filmLinks } from "@/lib/film-data";
-import { links } from "@/lib/data";
 import { musicArtistDescription, musicPlatformLinks } from "@/lib/music-data";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -233,14 +232,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                     ))}
                   </div>
                 </div>
-                <nav aria-label="Contacts" className="contact-chip-row designer-contact-row flex flex-wrap gap-2">
-                  {links.map((link) => (
-                    <ExternalLink href={link.href} className="soft-chip" key={link.label}>
-                      {link.label}
-                    </ExternalLink>
-                  ))}
-                  <EmailCopyButton className="soft-chip" label="Email" />
-                </nav>
+                <ContactChips className="designer-contact-row" />
               </div>
             </>
           )}
