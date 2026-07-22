@@ -141,25 +141,14 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
         {!hasStaticPortrait && isPortraitLayerMounted ? (
           <div className={`portrait-animation-layer ${showAltPortrait ? "is-open" : ""}`}>
             <div
-              role="button"
-              tabIndex={showAltPortrait ? 0 : -1}
               className={`portrait-video-panel chord-story-panel ${showAltPortrait ? "is-open" : ""}`}
-              aria-label="Open Chord Tulza in a new tab"
-              aria-disabled={!showAltPortrait}
-              onClick={() => {
-                window.open("https://chords-xi.vercel.app/", "_blank", "noopener,noreferrer");
-              }}
-              onKeyDown={(event) => {
-                if (event.key !== "Enter" && event.key !== " ") {
-                  return;
-                }
-
-                event.preventDefault();
-                window.open("https://chords-xi.vercel.app/", "_blank", "noopener,noreferrer");
-              }}
             >
-              <div className="chord-story-preview" aria-hidden="true">
-                <iframe src="https://chords-xi.vercel.app/" title="Chord Tulza preview" loading="lazy" />
+              <div className="chord-story-preview">
+                <iframe
+                  src="https://chords-xi.vercel.app/?embed=1&settings=hidden"
+                  title="Chord Tulza preview"
+                  loading="lazy"
+                />
               </div>
               <div className="chord-story-copy">
                 <div className="chord-story-heading">
@@ -170,6 +159,9 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                   A fully vibe-coded chord workspace for sketching progressions, trying song ideas, and keeping music
                   drafts close while I write.
                 </p>
+                <a href="https://venyavekk.com/chords" target="_blank" rel="noopener noreferrer" className="soft-chip chord-story-cta">
+                  Open Chord Tulza
+                </a>
               </div>
             </div>
           </div>
@@ -182,7 +174,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               </div>
               <div className="intro-tools-block">
                 <p className="intro-tools-label">Instruments</p>
-                <a href="https://chords-xi.vercel.app/" target="_blank" rel="noopener noreferrer" className="tool-chip">
+                <a href="https://venyavekk.com/chords" target="_blank" rel="noopener noreferrer" className="tool-chip">
                   <ChordTulzaLogo className="tool-chip-logo" />
                   <span>Chord Tulza</span>
                 </a>
