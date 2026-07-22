@@ -1,13 +1,16 @@
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
-import { links } from "@/lib/data";
+
+type ChipLink = { label: string; href: string };
 
 type ContactChipsProps = {
+  links: readonly ChipLink[];
+  showEmail?: boolean;
   className?: string;
   ariaLabel?: string;
 };
 
-export function ContactChips({ className = "", ariaLabel = "Contacts" }: ContactChipsProps) {
+export function ContactChips({ links, showEmail = false, className = "", ariaLabel = "Contacts" }: ContactChipsProps) {
   return (
     <nav aria-label={ariaLabel} className={`contact-chip-row flex flex-wrap gap-2 ${className}`.trim()}>
       {links.map((link) => (
@@ -15,7 +18,7 @@ export function ContactChips({ className = "", ariaLabel = "Contacts" }: Contact
           {link.label}
         </ExternalLink>
       ))}
-      <EmailCopyButton className="soft-chip" label="Email" />
+      {showEmail ? <EmailCopyButton className="soft-chip" label="Email" /> : null}
     </nav>
   );
 }

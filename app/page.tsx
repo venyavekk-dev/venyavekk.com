@@ -3,7 +3,7 @@ import { Intro } from "@/components/sections/Intro";
 import { ProductSection } from "@/components/sections/ProductSection";
 import { PublicTalks } from "@/components/sections/PublicTalks";
 import { Testimonials } from "@/components/sections/Testimonials";
-import { companySections } from "@/lib/data";
+import { companySections, links } from "@/lib/data";
 
 export default function Home() {
   return (
@@ -17,10 +17,10 @@ export default function Home() {
         <PublicTalks />
       </div>
       <div className="block pt-10 sm:hidden">
-        <Footer />
+        <Footer links={links} showEmail />
       </div>
       <div className="hidden sm:block">
-        <Footer />
+        <Footer links={links} showEmail />
       </div>
     </main>
   );
