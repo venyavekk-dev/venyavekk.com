@@ -1,7 +1,7 @@
 import { CollectionSection } from "@/components/sections/CollectionSection";
 import { Footer } from "@/components/Footer";
 import { Intro } from "@/components/sections/Intro";
-import { musicSections } from "@/lib/music-data";
+import { musicPlatformLinks, musicSections } from "@/lib/music-data";
 
 export default function MusicPage() {
   return (
@@ -13,7 +13,7 @@ export default function MusicPage() {
           <CollectionSection section={section} key={`${section.title}-${section.years}`} />
         ))}
       </div>
-      <Footer />
+      <Footer links={musicPlatformLinks} />
     </main>
   );
 }

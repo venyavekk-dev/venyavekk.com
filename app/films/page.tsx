@@ -1,7 +1,7 @@
 import { FilmSection } from "@/components/sections/FilmSection";
 import { Footer } from "@/components/Footer";
 import { Intro } from "@/components/sections/Intro";
-import { filmSections } from "@/lib/film-data";
+import { filmLinks, filmSections } from "@/lib/film-data";
 
 export default function FilmsPage() {
   return (
@@ -13,7 +13,7 @@ export default function FilmsPage() {
           <FilmSection section={section} key={`${section.title}-${section.years}`} />
         ))}
       </div>
-      <Footer />
+      <Footer links={filmLinks} />
     </main>
   );
 }

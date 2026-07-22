@@ -1,7 +1,7 @@
 "use client";
 
 import { ExternalLink } from "@/components/ui/ExternalLink";
-import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
+import { ContactChips } from "@/components/ui/ContactChips";
 import { filmArtistDescription, filmLinks } from "@/lib/film-data";
 import { links } from "@/lib/data";
 import { musicArtistDescription, musicPlatformLinks } from "@/lib/music-data";
@@ -180,13 +180,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 </a>
               </div>
               <div className="intro-meta-block">
-                <nav aria-label="Music platforms" className="contact-chip-row flex flex-wrap gap-2">
-                  {musicPlatformLinks.map((link) => (
-                    <ExternalLink href={link.href} className="soft-chip" key={link.label}>
-                      {link.label}
-                    </ExternalLink>
-                  ))}
-                </nav>
+                <ContactChips links={musicPlatformLinks} ariaLabel="Music platforms" />
               </div>
             </>
           ) : isFilms ? (
@@ -195,13 +189,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 {filmArtistDescription.split("\n\n").map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </div>
               <div className="intro-meta-block">
-                <nav aria-label="Video links" className="contact-chip-row flex flex-wrap gap-2">
-                  {filmLinks.map((link) => (
-                    <ExternalLink href={link.href} className="soft-chip" key={link.label}>
-                      {link.label}
-                    </ExternalLink>
-                  ))}
-                </nav>
+                <ContactChips links={filmLinks} ariaLabel="Video links" />
               </div>
             </>
           ) : (
@@ -233,14 +221,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                     ))}
                   </div>
                 </div>
-                <nav aria-label="Contacts" className="contact-chip-row designer-contact-row flex flex-wrap gap-2">
-                  {links.map((link) => (
-                    <ExternalLink href={link.href} className="soft-chip" key={link.label}>
-                      {link.label}
-                    </ExternalLink>
-                  ))}
-                  <EmailCopyButton className="soft-chip" label="Email" />
-                </nav>
+                <ContactChips links={links} showEmail className="designer-contact-row" />
               </div>
             </>
           )}
