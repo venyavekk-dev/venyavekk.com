@@ -15,21 +15,7 @@ type IntroProps = {
 };
 
 function ChordTulzaLogo({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <rect width="48" height="48" rx="16" fill="currentColor" opacity="0.12" />
-      <path
-        d="M15.5 31.5V16.5M24 31.5V16.5M32.5 31.5V16.5M12.5 20.5H35.5M12.5 27.5H35.5"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="2.6"
-      />
-      <circle cx="15.5" cy="27.5" r="2.3" fill="currentColor" />
-      <circle cx="24" cy="20.5" r="2.3" fill="currentColor" />
-      <circle cx="32.5" cy="27.5" r="2.3" fill="currentColor" />
-    </svg>
-  );
+  return <img src="/assets/chord-tulza-logo.svg" alt="" className={className} aria-hidden="true" />;
 }
 
 export function Intro({ activeSection = "design", disablePortraitEffects = false, className = "" }: IntroProps) {
@@ -158,11 +144,10 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               role="button"
               tabIndex={showAltPortrait ? 0 : -1}
               className={`portrait-video-panel chord-story-panel ${showAltPortrait ? "is-open" : ""}`}
-              aria-label="Hide Chord Tulza preview"
+              aria-label="Open Chord Tulza in a new tab"
               aria-disabled={!showAltPortrait}
               onClick={() => {
-                setShowAltPortrait(false);
-                window.setTimeout(() => setIsPortraitLayerMounted(false), 540);
+                window.open("https://chords-xi.vercel.app/", "_blank", "noopener,noreferrer");
               }}
               onKeyDown={(event) => {
                 if (event.key !== "Enter" && event.key !== " ") {
@@ -170,8 +155,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 }
 
                 event.preventDefault();
-                setShowAltPortrait(false);
-                window.setTimeout(() => setIsPortraitLayerMounted(false), 540);
+                window.open("https://chords-xi.vercel.app/", "_blank", "noopener,noreferrer");
               }}
             >
               <div className="chord-story-preview" aria-hidden="true">
@@ -198,10 +182,10 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               </div>
               <div className="intro-tools-block">
                 <p className="intro-tools-label">Instruments</p>
-                <Link href="/chords" className="tool-chip">
+                <a href="https://chords-xi.vercel.app/" target="_blank" rel="noopener noreferrer" className="tool-chip">
                   <ChordTulzaLogo className="tool-chip-logo" />
                   <span>Chord Tulza</span>
-                </Link>
+                </a>
               </div>
               <div className="intro-meta-block">
                 <nav aria-label="Music platforms" className="contact-chip-row flex flex-wrap gap-2">

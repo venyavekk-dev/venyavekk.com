@@ -779,6 +779,7 @@ a:hover {
   .chord-story-panel.is-open {
     width: 100%;
     height: auto;
+    padding-bottom: 12px;
   }
 
   .chord-story-preview {
