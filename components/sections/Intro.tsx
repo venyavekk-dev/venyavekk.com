@@ -14,6 +14,10 @@ type IntroProps = {
   className?: string;
 };
 
+function ChordTulzaLogo({ className = "" }: { className?: string }) {
+  return <img src="/assets/chord-tulza-logo.svg" alt="" className={className} aria-hidden="true" />;
+}
+
 export function Intro({ activeSection = "design", disablePortraitEffects = false, className = "" }: IntroProps) {
   const isMusic = activeSection === "music";
   const isFilms = activeSection === "films";
@@ -75,7 +79,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               className={`portrait-trigger h-10 w-10 sm:h-[54px] sm:w-[54px] group ${
                 isPortraitRingVisible ? "is-ring-visible" : ""
               } ${hasPortraitBeenOpened ? "is-ring-seen" : ""}`}
-              aria-label={showAltPortrait ? "Hide portrait video" : "Show portrait video"}
+              aria-label={showAltPortrait ? "Hide Chord Tulza preview" : "Show Chord Tulza preview"}
               onClick={() => {
                 setHasPortraitBeenOpened(true);
                 if (showAltPortrait || isPortraitLayerMounted) {
@@ -136,26 +140,30 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
       <div className="intro-frame relative max-w-[620px] text-bio sm:pt-[66px]">
         {!hasStaticPortrait && isPortraitLayerMounted ? (
           <div className={`portrait-animation-layer ${showAltPortrait ? "is-open" : ""}`}>
-            <button
-              type="button"
-              className={`portrait-video-panel ${showAltPortrait ? "is-open" : ""}`}
-              aria-label="Hide portrait video"
-              disabled={!showAltPortrait}
-              onClick={() => {
-                setShowAltPortrait(false);
-                window.setTimeout(() => setIsPortraitLayerMounted(false), 540);
-              }}
+            <div
+              className={`portrait-video-panel chord-story-panel ${showAltPortrait ? "is-open" : ""}`}
             >
-              <video
-                src="/assets/video/compressed/avatar-alt-pingpong.webm"
-                className="h-full w-full rounded-full object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-              />
-            </button>
+              <div className="chord-story-preview">
+                <iframe
+                  src="https://chords-xi.vercel.app/?embed=1&settings=hidden"
+                  title="Chord Tulza preview"
+                  loading="lazy"
+                />
+              </div>
+              <div className="chord-story-copy">
+                <div className="chord-story-heading">
+                  <ChordTulzaLogo className="chord-story-logo" />
+                  <h2>Chord Tulza</h2>
+                </div>
+                <p>
+                  A fully vibe-coded chord workspace for sketching progressions, trying song ideas, and keeping music
+                  drafts close while I write.
+                </p>
+                <a href="https://venyavekk.com/chords" target="_blank" rel="noopener noreferrer" className="soft-chip chord-story-cta">
+                  Open Chord Tulza
+                </a>
+              </div>
+            </div>
           </div>
         ) : null}
         <div className={`intro-content-flow space-y-8 ${showAltPortrait ? "is-centered" : ""}`}>
@@ -163,6 +171,13 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
             <>
               <div className="intro-copy-block space-y-8">
                 {musicArtistDescription.split("\n\n").map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </div>
+              <div className="intro-tools-block">
+                <p className="intro-tools-label">Instruments</p>
+                <a href="https://venyavekk.com/chords" target="_blank" rel="noopener noreferrer" className="tool-chip">
+                  <ChordTulzaLogo className="tool-chip-logo" />
+                  <span>Chord Tulza</span>
+                </a>
               </div>
               <div className="intro-meta-block">
                 <nav aria-label="Music platforms" className="contact-chip-row flex flex-wrap gap-2">
