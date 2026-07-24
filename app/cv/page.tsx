@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
+import { ExternalLink } from "@/components/ui/ExternalLink";
+import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { links } from "@/lib/data";
 import { cvExperience, cvFiles, cvLanguages, cvProfile, cvSkills } from "@/lib/cv-data";
 
@@ -25,7 +27,9 @@ export default function CvPage() {
           <h1 className="text-bio font-semibold">{cvProfile.name}</h1>
           <p className="text-muted">{cvProfile.title}</p>
           <p className="text-muted text-sm">
-            {cvProfile.location} &nbsp;•&nbsp; {cvProfile.email} &nbsp;•&nbsp; {cvProfile.linkedin} &nbsp;•&nbsp; {cvProfile.site}
+            {cvProfile.location} &nbsp;•&nbsp;{" "}
+            <EmailCopyButton email={cvProfile.email} label={cvProfile.email} /> &nbsp;•&nbsp; {cvProfile.linkedin} &nbsp;•&nbsp;{" "}
+            <ExternalLink href="/">{cvProfile.site}</ExternalLink>
           </p>
         </header>
 
