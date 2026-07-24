@@ -159,7 +159,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                   A fully vibe-coded chord workspace for sketching progressions, trying song ideas, and keeping music
                   drafts close while I write.
                 </p>
-                <a href="https://venyavekk.com/chords" target="_blank" rel="noopener noreferrer" className="soft-chip chord-story-cta">
+                <a href="https://venyavekk.com/chords" target="_blank" rel="noopener noreferrer" className="chord-story-cta">
                   Open Chord Tulza
                 </a>
               </div>
