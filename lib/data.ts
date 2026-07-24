@@ -1,7 +1,7 @@
 export const links = [
   {
     label: "CV",
-    href: "https://drive.google.com/file/d/17Zl3kA6sJNceSh-B2MzVVKJ7wT_WrKFD/view?usp=sharing"
+    href: "/cv"
   },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/vekk/" },
   {
