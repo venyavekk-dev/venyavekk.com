@@ -160,7 +160,10 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                   drafts close while I write.
                 </p>
                 <a href="https://venyavekk.com/chords" target="_blank" rel="noopener noreferrer" className="chord-story-cta">
-                  Open Chord Tulza
+                  Open
+                  <svg className="chord-story-cta-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M4 12L12 4M12 4H5.5M12 4V10.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </a>
               </div>
             </div>
