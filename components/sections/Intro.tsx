@@ -144,10 +144,15 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               className={`portrait-video-panel chord-story-panel ${showAltPortrait ? "is-open" : ""}`}
             >
               <div className="chord-story-preview">
-                <iframe
-                  src="https://chords-xi.vercel.app/?embed=1&settings=hidden"
-                  title="Chord Tulza preview"
-                  loading="lazy"
+                <video
+                  src="/assets/video/compressed/chord-tulza-story-preview.webm"
+                  poster="/assets/video/compressed/chord-tulza-story-preview-poster.jpg"
+                  aria-label="Chord Tulza preview"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
                 />
               </div>
               <div className="chord-story-copy">
