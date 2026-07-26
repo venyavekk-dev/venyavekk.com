@@ -261,12 +261,12 @@ a:hover {
   background: #111;
 }
 
-.chord-story-preview iframe {
+.chord-story-preview video {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover;
   border: 0;
-  pointer-events: auto;
 }
 
 .chord-story-copy {
