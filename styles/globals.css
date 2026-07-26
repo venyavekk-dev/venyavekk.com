@@ -88,6 +88,22 @@ a:hover {
   }
 }
 
+.pill-primary:hover {
+  color: #ffffff;
+}
+
+.pill-secondary:hover {
+  color: #2997ff;
+}
+
+.quiet-link:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.toc-link:hover {
+  color: #ffffff;
+}
+
 :focus-visible {
   outline: 1px solid currentColor;
   outline-offset: 4px;
