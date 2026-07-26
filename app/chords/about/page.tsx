@@ -2,10 +2,110 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 
+const PAGE_TITLE = "Chord Tulza - конструктор аккордов и прогрессий - Veniamin Vekk";
+const PAGE_DESCRIPTION =
+  "Chord Tulza — бесплатный конструктор аккордов, тональностей и прогрессий для гитары и пианино. Как работают 7 аккордов тональности, цифры ступеней, формы на грифе, капо, севентаккорды и секвенсор.";
+const PAGE_PATH = "/chords/about";
+const OG_IMAGE = "/assets/zhoGyz3txRaZFjgEq7BreUwhbQ.jpeg";
+
 export const metadata: Metadata = {
-  title: "Chord Tulza - конструктор аккордов и прогрессий - Veniamin Vekk",
-  description:
-    "Chord Tulza — бесплатный конструктор аккордов, тональностей и прогрессий для гитары и пианино. Как работают 7 аккордов тональности, цифры ступеней, формы на грифе, капо и септаккорды."
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  alternates: {
+    canonical: PAGE_PATH
+  },
+  openGraph: {
+    title: "Chord Tulza — конструктор аккордов и прогрессий",
+    description: PAGE_DESCRIPTION,
+    url: PAGE_PATH,
+    siteName: "Veniamin Vekk",
+    images: [OG_IMAGE],
+    locale: "ru_RU",
+    type: "article"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Chord Tulza — конструктор аккордов и прогрессий",
+    description: PAGE_DESCRIPTION,
+    images: [OG_IMAGE]
+  }
+};
+
+const FAQ_ITEMS = [
+  {
+    question: "Почему аккордов в тональности всегда ровно 7?",
+    answer:
+      "Тональность — это гамма из семи нот, выстроенных по шаблону тонов и полутонов (для мажора тон-тон-полутон-тон-тон-тон-полутон). На каждой из семи нот строится трезвучие, поэтому диатонических аккордов тональности всегда ровно семь — например, в до мажоре это C, Dm, Em, F, G, Am, Bdim."
+  },
+  {
+    question: "Что означают римские цифры I—VII под аккордами?",
+    answer:
+      "Римская цифра — это номер ступени аккорда в гамме. Заглавная цифра (I, IV, V) означает мажорное трезвучие, строчная (ii, iii, vi) — минорное, строчная с кружком (vii°) — уменьшённое. Порядок фиксирован для лада: в мажоре I ii iii IV V vi vii°, в миноре i ii° III iv v VI VII."
+  },
+  {
+    question: "Что означают функции дом, прогулка и напряжение в аккордах?",
+    answer:
+      "Это бытовое название трёх музыкальных функций ступеней: тоника (дом, самая устойчивая), субдоминанта (прогулка, уводит от тоники) и доминанта (напряжение, тянет обратно к тонике). Цветной индикатор между аккордами в Chord Tulza показывает, насколько естественен переход между этими ролями."
+  },
+  {
+    question: "Как один аккорд превращается в несколько форм (аппликатур) на гитаре?",
+    answer:
+      "Chord Tulza сначала предлагает известные формы: открытую аппликатуру и подвижные баррэ-формы E-shape и A-shape из системы CAGED. Если готовых форм не хватает, инструмент перебирает весь гриф, оставляет только удобные варианты (не шире четырёх ладов) и показывает до десяти штук, от самых простых к сложным."
+  },
+  {
+    question: "Что такое тональность и как она влияет на аккорды?",
+    answer:
+      "Тональность — это выбор главной ноты и лада (мажор или минор). Вместе они задают гамму из семи нот и, соответственно, весь набор диатонических аккордов, их ролей и допустимых sus- и севентаккорд-вариантов. Всего в инструменте 12 нот × 2 лада — 24 тональности."
+  },
+  {
+    question: "Как капо (каподастр) меняет тональность и аппликатуры?",
+    answer:
+      "Капо укорачивает струны и поднимает их открытый звук на число полутонов, равное номеру лада. В Chord Tulza клик по ладу на грифе поднимает тональность на столько же полутонов и пересчитывает аппликатуры так, чтобы ни одна не требовала зажимать струну до капо."
+  },
+  {
+    question: "Что такое севентаккорды (септаккорды) и почему они разные на каждой ступени?",
+    answer:
+      "Севентаккорд — это трезвучие плюс ещё одна нота из той же гаммы. Тип получившегося септаккорда зависит от ступени: на уменьшенной — полууменьшенный, на минорных — минорный, на доминанте — доминантсептаккорд, на остальных мажорных — большой мажорный (maj7). В до мажоре это Cmaj7, Dm7, Em7, Fmaj7, G7, Am7, Bm7♭5."
+  }
+];
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Veniamin Vekk", item: "https://venyavekk.com/" },
+        { "@type": "ListItem", position: 2, name: "Chord Tulza", item: "https://venyavekk.com/chords" },
+        { "@type": "ListItem", position: 3, name: "Как устроен Chord Tulza", item: `https://venyavekk.com${PAGE_PATH}` }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      name: "Chord Tulza",
+      url: "https://venyavekk.com/chords",
+      description:
+        "Бесплатный конструктор аккордов, тональностей и прогрессий для гитары и пианино: диатонические аккорды тональности, аппликатуры, капо, севентаккорды и шаговый секвенсор.",
+      applicationCategory: "MusicApplication",
+      operatingSystem: "Web",
+      author: {
+        "@type": "Person",
+        name: "Veniamin Vekk",
+        url: "https://venyavekk.com/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQ_ITEMS.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer
+        }
+      }))
+    }
+  ]
 };
 
 function PillButton({ href, children, variant = "primary" }: { href: string; children: ReactNode; variant?: "primary" | "secondary" }) {
@@ -81,28 +181,31 @@ const TOC_GROUPS: Array<{ label: string; items: Array<{ href: string; label: str
 
 function TableOfContents() {
   return (
-    <nav aria-label="Разделы страницы" className="order-first flex flex-col gap-6 lg:sticky lg:top-10 lg:order-2 lg:w-[230px] lg:shrink-0">
-      {TOC_GROUPS.map((group) => (
-        <div key={group.label}>
-          <p className="mb-2 text-xs uppercase tracking-wide text-white/45">{group.label}</p>
-          <ul className="flex flex-col gap-1.5 border-l border-white/10 pl-3">
-            {group.items.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} className="toc-link block text-[0.9rem] leading-snug text-white/62 transition-colors">
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </nav>
+    <aside className="order-first flex flex-col gap-6 lg:sticky lg:top-10 lg:order-2 lg:w-[230px] lg:shrink-0">
+      <nav aria-label="Разделы страницы" className="flex flex-col gap-6">
+        {TOC_GROUPS.map((group) => (
+          <div key={group.label}>
+            <p className="mb-2 text-xs uppercase tracking-wide text-white/45">{group.label}</p>
+            <ul className="flex flex-col gap-1.5 border-l border-white/10 pl-3">
+              {group.items.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href} className="toc-link block text-[0.9rem] leading-snug text-white/62 transition-colors">
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </aside>
   );
 }
 
 export default function ChordsAboutPage() {
   return (
-    <main className="min-h-screen bg-[#1c1c1c] px-5 py-14 text-white sm:px-8 sm:py-20">
+    <main lang="ru" className="min-h-screen bg-[#1c1c1c] px-5 py-14 text-white sm:px-8 sm:py-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
       <div className="mx-auto max-w-[720px]">
         <section className="flex flex-col items-center gap-5 text-center">
           <span className="inline-flex rounded-full border border-white/24 px-3 py-1 text-xs uppercase tracking-wide text-white/62">
@@ -127,7 +230,7 @@ export default function ChordsAboutPage() {
       <div className="mx-auto flex max-w-[980px] flex-col gap-10 pt-12 lg:flex-row lg:items-start lg:gap-12">
         <TableOfContents />
 
-        <div className="flex flex-1 flex-col gap-8 lg:order-1 lg:max-w-[680px]">
+        <article className="flex flex-1 flex-col gap-8 lg:order-1 lg:max-w-[680px]">
           <Card id="made-by">
             <h2 className="mb-4 text-[clamp(1.375rem,3vw,1.75rem)] font-bold tracking-tight text-white">
               Кто это сделал
@@ -212,7 +315,7 @@ export default function ChordsAboutPage() {
             </div>
           </Card>
 
-          <TheoryCard id="degrees-seven" title="Почему аккордов всегда ровно 7">
+          <TheoryCard id="degrees-seven" title="Почему аккордов всегда ровно 7?">
             <p>
               Тональность — это не&nbsp;просто одна нота, а&nbsp;целая гамма из&nbsp;семи нот, выстроенных
               по&nbsp;определённому шаблону расстояний между ними. Для мажора это тон-тон-полутон-тон-тон-тон-полутон,
@@ -232,7 +335,7 @@ export default function ChordsAboutPage() {
             </p>
           </TheoryCard>
 
-          <TheoryCard id="roman-numerals" title="Что означают цифры I—VII">
+          <TheoryCard id="roman-numerals" title="Что означают цифры I—VII?">
             <p>
               Римская цифра под каждым аккордом — это его ступень: место в&nbsp;гамме, от&nbsp;первой ноты тональности
               (I) до&nbsp;седьмой (VII). Регистр цифры сразу говорит, какой это аккорд:
@@ -255,7 +358,7 @@ export default function ChordsAboutPage() {
             </p>
           </TheoryCard>
 
-          <TheoryCard id="functions" title="Дом, прогулка, напряжение — зачем цветные точки">
+          <TheoryCard id="functions" title="Дом, прогулка, напряжение: зачем нужны цветные точки?">
             <p>Каждая ступень тяготеет к&nbsp;одной из&nbsp;трёх ролей:</p>
             <ul className="list-disc space-y-1.5 pl-5">
               <li>тоника (I, iii, vi в&nbsp;мажоре) — самая устойчивая, «дом»;</li>
@@ -276,7 +379,7 @@ export default function ChordsAboutPage() {
             </p>
           </TheoryCard>
 
-          <TheoryCard id="voicings" title="Как один аккорд превращается в несколько форм на грифе">
+          <TheoryCard id="voicings" title="Как один аккорд превращается в несколько форм на грифе?">
             <p>
               Один и&nbsp;тот&nbsp;же аккорд можно взять на&nbsp;гитаре десятком разных способов — просто зажимая
               разные струны в&nbsp;разных ладах. Chord&nbsp;Tulza сначала предлагает знакомые формы: открытую
@@ -298,7 +401,7 @@ export default function ChordsAboutPage() {
             </p>
           </TheoryCard>
 
-          <TheoryCard id="tonality" title="Тональность — что это и как она всё меняет">
+          <TheoryCard id="tonality" title="Тональность: что это и как она всё меняет?">
             <p>
               Тональность — это выбор двух вещей: главной ноты (например, ля) и&nbsp;лада (мажор или минор). Вместе они
               задают ту&nbsp;самую гамму из&nbsp;семи нот и,&nbsp;значит, все семь диатонических аккордов, их&nbsp;роли
@@ -313,7 +416,7 @@ export default function ChordsAboutPage() {
             </p>
           </TheoryCard>
 
-          <TheoryCard id="capo" title="Как капо сдвигает тональность">
+          <TheoryCard id="capo" title="Как капо сдвигает тональность?">
             <p>
               Каподастр — механическая «зажимка» на&nbsp;грифе, которая укорачивает все струны разом и&nbsp;поднимает
               их&nbsp;открытый звук на&nbsp;нужное число полутонов. Играя привычную форму ре, но&nbsp;с&nbsp;капо
@@ -328,7 +431,7 @@ export default function ChordsAboutPage() {
             </p>
           </TheoryCard>
 
-          <TheoryCard id="sevenths" title="Севентаккорды (sevenths): почему они разные на каждой ступени">
+          <TheoryCard id="sevenths" title="Севентаккорды (sevenths): почему они разные на каждой ступени?">
             <p>
               Севентаккорд, он же септаккорд, — это трезвучие плюс ещё одна нота, через ступень выше третьей. Если
               брать эту дополнительную ноту строго из&nbsp;той&nbsp;же гаммы, ничего не&nbsp;повышая и&nbsp;не&nbsp;понижая,
@@ -429,7 +532,7 @@ export default function ChordsAboutPage() {
             </p>
             <PillButton href="/chords">Открыть Chord&nbsp;Tulza</PillButton>
           </section>
-        </div>
+        </article>
       </div>
     </main>
   );
