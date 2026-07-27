@@ -76,14 +76,14 @@ const JSON_LD = {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Veniamin Vekk", item: "https://venyavekk.com/" },
-        { "@type": "ListItem", position: 2, name: "Chord Tulza", item: "https://venyavekk.com/chords" },
+        { "@type": "ListItem", position: 2, name: "Chord Tulza", item: "https://chords.venyavekk.com" },
         { "@type": "ListItem", position: 3, name: "Как устроен Chord Tulza", item: `https://venyavekk.com${PAGE_PATH}` }
       ]
     },
     {
       "@type": "WebApplication",
       name: "Chord Tulza",
-      url: "https://venyavekk.com/chords",
+      url: "https://chords.venyavekk.com",
       description:
         "Бесплатный конструктор аккордов, тональностей и прогрессий для гитары и пианино: диатонические аккорды тональности, аппликатуры, капо, севентаккорды и шаговый секвенсор.",
       applicationCategory: "MusicApplication",
@@ -219,7 +219,7 @@ export default function ChordsAboutPage() {
             на&nbsp;грифе и&nbsp;клавишах и&nbsp;помогает на&nbsp;слух собирать прогрессии.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <PillButton href="/chords">Открыть Chord&nbsp;Tulza</PillButton>
+            <PillButton href="https://chords.venyavekk.com">Открыть Chord&nbsp;Tulza</PillButton>
             <PillButton href="/" variant="secondary">
               На&nbsp;сайт Вени
             </PillButton>
@@ -530,7 +530,7 @@ export default function ChordsAboutPage() {
             <p className="max-w-[46ch] text-[1rem] leading-relaxed text-white/78">
               Проще один раз покликать по&nbsp;тональностям и&nbsp;аккордам, чем читать про них.
             </p>
-            <PillButton href="/chords">Открыть Chord&nbsp;Tulza</PillButton>
+            <PillButton href="https://chords.venyavekk.com">Открыть Chord&nbsp;Tulza</PillButton>
           </section>
         </article>
       </div>
