@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         source: "/chords",
         destination: "https://chords.venyavekk.com",
         permanent: true
+      },
+      {
+        source: "/chords/about",
+        destination: "https://chords.venyavekk.com/about",
+        permanent: true
       }
     ];
   }
