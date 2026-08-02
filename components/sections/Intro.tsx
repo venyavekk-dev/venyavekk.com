@@ -304,7 +304,10 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                       />
                       <span>Tulzy</span>
                     </ExternalLink>
-                    <span className="intro-ai-project-chip intro-ai-project-chip-headrush">
+                    <ExternalLink
+                      href="https://github.com/venyavekk-dev/headrush-core-toolkit"
+                      className="intro-ai-project-chip intro-ai-project-chip-headrush"
+                    >
                       <img
                         src="/assets/headrush-logo.png"
                         alt=""
@@ -312,7 +315,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                         aria-hidden="true"
                       />
                       <span>Skill</span>
-                    </span>
+                    </ExternalLink>
                   </div>
                 </div>
                 <div className="space-y-2">
