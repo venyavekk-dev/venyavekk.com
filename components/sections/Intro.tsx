@@ -206,6 +206,18 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                       <span>Tulzy</span>
                     </ExternalLink>
                     <ExternalLink
+                      href="https://github.com/venyavekk-dev/deveq/tree/main/ship-safe-pull-request"
+                      className="intro-ai-project-chip"
+                    >
+                      <img
+                        src="/assets/ship-skill-logo.svg"
+                        alt=""
+                        className="intro-ai-project-logo"
+                        aria-hidden="true"
+                      />
+                      <span>Ship Skill</span>
+                    </ExternalLink>
+                    <ExternalLink
                       href="https://github.com/venyavekk-dev/headrush-core-toolkit"
                       className="intro-ai-project-chip intro-ai-project-chip-headrush"
                     >

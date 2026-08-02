@@ -367,7 +367,7 @@ a:hover {
 
 .intro-ai-project-ribbon {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 5px;
   width: max-content;
   max-width: 100%;
