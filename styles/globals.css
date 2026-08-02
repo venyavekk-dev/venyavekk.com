@@ -160,37 +160,29 @@ a:hover {
   width: 100%;
   height: 100%;
   overflow: visible;
-  transform: rotate(-90deg) scaleX(-1);
-}
-
-.story-ring-segment,
-.story-ring-cover {
-  fill: none;
-  stroke-width: 2.2;
-  vector-effect: non-scaling-stroke;
 }
 
 .story-ring-segment {
+  fill: none;
   stroke: #3777ff;
+  stroke-width: 2.2;
   stroke-linecap: round;
-  stroke-dasharray: 86.55 95.66;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  vector-effect: non-scaling-stroke;
   transition: stroke 280ms ease;
 }
 
-.story-ring-segment-second {
-  stroke-dashoffset: -91.1;
+.portrait-trigger.is-ring-visible .story-ring-segment {
+  animation: story-ring-segment-fill 460ms cubic-bezier(0.66, 0, 0.34, 1) forwards;
+}
+
+.portrait-trigger.is-ring-visible .story-ring-segment-second {
+  animation-delay: 460ms;
 }
 
 .story-ring-segment.is-seen {
   stroke: color-mix(in srgb, var(--muted) 52%, transparent);
-}
-
-.story-ring-cover {
-  stroke: var(--background);
-  stroke-linecap: butt;
-  stroke-dasharray: 182.3;
-  stroke-dashoffset: 0;
-  opacity: 1;
 }
 
 .portrait-trigger.is-ring-visible .story-ring {
@@ -199,74 +191,41 @@ a:hover {
   filter: drop-shadow(0 0 10px color-mix(in srgb, #3777ff 26%, transparent));
 }
 
-.portrait-trigger.is-ring-visible .story-ring-cover {
-  stroke-dashoffset: 182.3;
-  animation: story-ring-reveal 920ms cubic-bezier(0.66, 0, 0.34, 1) 1 forwards;
-}
-
 .portrait-trigger.are-stories-seen .story-ring {
   filter: none;
 }
 
-.portrait-trigger.are-stories-seen .story-ring-cover {
-  stroke: transparent;
-}
-
-@keyframes story-ring-reveal {
+@keyframes story-ring-segment-fill {
   from {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-
-  99% {
-    stroke-dashoffset: 182.3;
-    opacity: 1;
+    stroke-dashoffset: 1;
   }
 
   to {
-    stroke-dashoffset: 182.3;
-    opacity: 0;
+    stroke-dashoffset: 0;
   }
 }
 
-.portrait-video-panel {
-  width: 0;
-  height: 0;
-  opacity: 0;
-  overflow: hidden;
-  display: block;
-  border-radius: 999px;
-  transition: width 620ms cubic-bezier(0.2, 0.8, 0.2, 1), height 620ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 260ms ease,
-    transform 420ms ease;
-}
-
-.portrait-video-panel.is-open {
-  width: 296px;
-  height: 296px;
-  opacity: 1;
-}
-
-.portrait-video-panel.is-open:hover {
-  transform: scale(0.98);
-}
-
 .project-story-panel {
-  width: 0;
+  width: 100%;
   max-width: 100%;
-  height: auto;
   min-height: 0;
+  overflow: hidden;
   border-radius: 28px;
   background: #0a0a0a;
-  padding: 0;
+  padding: 0 22px;
   color: #fff;
   cursor: default;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.985);
   text-align: left;
+  transition: padding 520ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease,
+    transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .project-story-panel.is-open {
-  width: min(100%, 620px);
-  height: auto;
   padding: 22px 22px 34px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .project-story-content {
@@ -368,22 +327,22 @@ a:hover {
 }
 
 .portrait-animation-layer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 620ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: grid;
+  grid-template-rows: minmax(0, 0fr);
+  width: 100%;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: grid-template-rows 520ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease,
+    transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1), padding-bottom 520ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    margin-bottom 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .portrait-animation-layer.is-open {
+  grid-template-rows: minmax(0, 1fr);
   padding-bottom: 48px;
   margin-bottom: 22px;
-}
-
-.portrait-animation-layer:has(.portrait-video-panel.is-open) {
-  max-height: 980px;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .intro-content-flow {
@@ -834,14 +793,7 @@ a:hover {
 }
 
 @media (max-width: 520px) {
-  .portrait-video-panel.is-open {
-    width: min(296px, calc(100vw - 48px));
-    height: min(296px, calc(100vw - 48px));
-  }
-
   .project-story-panel.is-open {
-    width: 100%;
-    height: auto;
     padding: 16px 16px 30px;
   }
 

@@ -23,7 +23,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const isFilms = activeSection === "films";
   const showHobbies = false;
   const hasStaticPortrait = isMusic || isFilms || disablePortraitEffects;
-  const [showAltPortrait, setShowAltPortrait] = useState(false);
+  const [isStoryOpen, setIsStoryOpen] = useState(false);
   const [isPortraitLayerMounted, setIsPortraitLayerMounted] = useState(false);
   const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
   const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
@@ -95,11 +95,11 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 }
 
                 if (activeStoryIndex === 1) {
-                  setShowAltPortrait(false);
+                  setIsStoryOpen(false);
                   window.setTimeout(() => {
                     setIsPortraitLayerMounted(false);
                     setActiveStoryIndex(null);
-                  }, 540);
+                  }, 520);
                   return;
                 }
 
@@ -107,25 +107,22 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 setViewedStoryCount((count) => Math.max(count, 1));
                 setIsPortraitLayerMounted(true);
                 window.requestAnimationFrame(() => {
-                  window.requestAnimationFrame(() => setShowAltPortrait(true));
+                  window.requestAnimationFrame(() => setIsStoryOpen(true));
                 });
               }}
             >
               <span className="story-ring" aria-hidden="true">
                 <svg viewBox="0 0 64 64">
-                  <circle
+                  <path
                     className={`story-ring-segment story-ring-segment-first ${viewedStoryCount >= 1 ? "is-seen" : ""}`}
-                    cx="32"
-                    cy="32"
-                    r="29"
+                    d="M34.02 3.07A29 29 0 0 1 34.02 60.93"
+                    pathLength="1"
                   />
-                  <circle
+                  <path
                     className={`story-ring-segment story-ring-segment-second ${viewedStoryCount >= 2 ? "is-seen" : ""}`}
-                    cx="32"
-                    cy="32"
-                    r="29"
+                    d="M29.98 60.93A29 29 0 0 1 29.98 3.07"
+                    pathLength="1"
                   />
-                  <circle className="story-ring-cover" cx="32" cy="32" r="29" />
                 </svg>
               </span>
               <img
@@ -134,7 +131,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 height={54}
                 alt="Veniamin Vekk portrait"
                 className={`h-full w-full rounded-full object-cover transition duration-500 ease-out group-hover:scale-95 group-active:scale-[0.93] ${
-                  showAltPortrait ? "opacity-50" : ""
+                  isStoryOpen ? "opacity-50" : ""
                 }`}
               />
             </button>
@@ -166,10 +163,8 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
 
       <div className="intro-frame relative max-w-[620px] text-bio sm:pt-[66px]">
         {!hasStaticPortrait && isPortraitLayerMounted ? (
-          <div className={`portrait-animation-layer ${showAltPortrait ? "is-open" : ""}`}>
-            <div
-              className={`portrait-video-panel project-story-panel ${showAltPortrait ? "is-open" : ""}`}
-            >
+          <div className={`portrait-animation-layer ${isStoryOpen ? "is-open" : ""}`}>
+            <div className={`project-story-panel ${isStoryOpen ? "is-open" : ""}`}>
               <div className="project-story-content" key={activeStoryIndex}>
                 <div className="project-story-preview">
                   {activeStoryIndex === 1 ? (
@@ -213,7 +208,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
             </div>
           </div>
         ) : null}
-        <div className={`intro-content-flow space-y-8 ${showAltPortrait ? "is-centered" : ""}`}>
+        <div className={`intro-content-flow space-y-8 ${isStoryOpen ? "is-centered" : ""}`}>
           {isMusic ? (
             <>
               <div className="intro-copy-block space-y-8">
