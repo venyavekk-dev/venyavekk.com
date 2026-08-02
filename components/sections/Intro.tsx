@@ -6,7 +6,7 @@ import { filmArtistDescription, filmLinks } from "@/lib/film-data";
 import { links } from "@/lib/data";
 import { musicArtistDescription, musicPlatformLinks } from "@/lib/music-data";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type IntroProps = {
   activeSection?: "design" | "music" | "films";
@@ -18,28 +18,60 @@ function ChordTulzaLogo({ className = "" }: { className?: string }) {
   return <img src="/assets/chord-tulza-logo.svg" alt="" className={className} aria-hidden="true" />;
 }
 
-function CodexLogo({ pulseKey, onClick, className = "" }: { pulseKey: number; onClick: () => void; className?: string }) {
+function CodexLogo({ className = "" }: { className?: string }) {
+  const logoRef = useRef<HTMLImageElement>(null);
+
   return (
     <button
       type="button"
       className={`intro-ai-brand-logo intro-ai-brand-logo-codex ${className}`}
       aria-label="Animate Codex logo"
-      onClick={onClick}
+      onClick={() => {
+        const logo = logoRef.current;
+        if (!logo || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        logo.getAnimations().forEach((animation) => animation.cancel());
+        logo.animate(
+          [
+            { transform: "scale(1)", offset: 0 },
+            { transform: "scale(1.2)", offset: 0.48 },
+            { transform: "scale(0.96)", offset: 0.72 },
+            { transform: "scale(1)", offset: 1 }
+          ],
+          { duration: 620, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+        );
+      }}
     >
-      <img src="/assets/codex-mark.png" alt="" className={pulseKey > 0 ? "is-pulsing" : ""} key={pulseKey} />
+      <img src="/assets/codex-mark.png" alt="" ref={logoRef} />
     </button>
   );
 }
 
-function ClaudeLogo({ morphKey, onClick, className = "" }: { morphKey: number; onClick: () => void; className?: string }) {
+function ClaudeLogo({ className = "" }: { className?: string }) {
+  const logoRef = useRef<HTMLImageElement>(null);
+
   return (
     <button
       type="button"
       className={`intro-ai-brand-logo intro-ai-brand-logo-claude ${className}`}
       aria-label="Animate Claude logo"
-      onClick={onClick}
+      onClick={() => {
+        const logo = logoRef.current;
+        if (!logo || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        logo.getAnimations().forEach((animation) => animation.cancel());
+        logo.animate(
+          [
+            { transform: "rotate(0deg) scale(1)", offset: 0 },
+            { transform: "rotate(8deg) scaleX(1.14) scaleY(0.82)", offset: 0.34 },
+            { transform: "rotate(-5deg) scaleX(0.86) scaleY(1.16)", offset: 0.68 },
+            { transform: "rotate(0deg) scale(1)", offset: 1 }
+          ],
+          { duration: 680, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+        );
+      }}
     >
-      <img src="/assets/claude-mark.svg" alt="" className={morphKey > 0 ? "is-morphing" : ""} key={morphKey} />
+      <img src="/assets/claude-mark.svg" alt="" ref={logoRef} />
     </button>
   );
 }
@@ -53,8 +85,6 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const [isPortraitLayerMounted, setIsPortraitLayerMounted] = useState(false);
   const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
   const [hasPortraitBeenOpened, setHasPortraitBeenOpened] = useState(false);
-  const [claudeLogoMorphKey, setClaudeLogoMorphKey] = useState(0);
-  const [codexLogoPulseKey, setCodexLogoPulseKey] = useState(0);
 
   useEffect(() => {
     if (hasStaticPortrait) {
@@ -251,12 +281,12 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                   <p className="intro-ai-credit">
                     <span>Built with</span>
                     <span className="intro-ai-tool-pair">
-                      <ClaudeLogo morphKey={claudeLogoMorphKey} onClick={() => setClaudeLogoMorphKey((key) => key + 1)} />
+                      <ClaudeLogo />
                       <span>Claude</span>
                     </span>
                     <span>and</span>
                     <span className="intro-ai-tool-pair">
-                      <CodexLogo pulseKey={codexLogoPulseKey} onClick={() => setCodexLogoPulseKey((key) => key + 1)} />
+                      <CodexLogo />
                       <span>Codex</span>
                     </span>
                   </p>
