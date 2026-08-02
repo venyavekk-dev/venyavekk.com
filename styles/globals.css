@@ -134,35 +134,36 @@ a:hover {
   line-height: 1.45;
 }
 
-.portrait-trigger {
+.portfolio-story-trigger {
   position: relative;
   overflow: visible;
   border-radius: 999px;
 }
 
-.portrait-trigger img {
+.portfolio-story-trigger > img {
   position: relative;
   z-index: 1;
 }
 
-.story-ring {
+.portfolio-story-ring {
   position: absolute;
   inset: -8px;
   z-index: 0;
   display: block;
   opacity: 0;
-  transform: scale(0.86);
-  transition: opacity 420ms ease, transform 620ms cubic-bezier(0.16, 1, 0.3, 1), filter 280ms ease;
+  transform: scale(0.9);
   pointer-events: none;
+  transition: opacity 240ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1), filter 200ms ease;
 }
 
-.story-ring svg {
+.portfolio-story-ring svg {
+  display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-.story-ring-segment {
+.portfolio-story-arc {
   fill: none;
   stroke: #3777ff;
   stroke-width: 2.2;
@@ -170,32 +171,32 @@ a:hover {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   vector-effect: non-scaling-stroke;
-  transition: stroke 280ms ease;
+  transition: stroke 200ms ease;
 }
 
-.portrait-trigger.is-ring-visible .story-ring-segment {
-  animation: story-ring-segment-fill 460ms cubic-bezier(0.66, 0, 0.34, 1) forwards;
-}
-
-.portrait-trigger.is-ring-visible .story-ring-segment-second {
-  animation-delay: 460ms;
-}
-
-.story-ring-segment.is-seen {
-  stroke: color-mix(in srgb, var(--muted) 52%, transparent);
-}
-
-.portrait-trigger.is-ring-visible .story-ring {
+.portfolio-story-trigger.is-ready .portfolio-story-ring {
   opacity: 1;
   transform: scale(1);
   filter: drop-shadow(0 0 10px color-mix(in srgb, #3777ff 26%, transparent));
 }
 
-.portrait-trigger.are-stories-seen .story-ring {
+.portfolio-story-trigger.is-ready .portfolio-story-arc {
+  animation: portfolio-story-draw 460ms cubic-bezier(0.66, 0, 0.34, 1) forwards;
+}
+
+.portfolio-story-trigger.is-ready .portfolio-story-arc-second {
+  animation-delay: 460ms;
+}
+
+.portfolio-story-arc.is-viewed {
+  stroke: color-mix(in srgb, var(--muted) 52%, transparent);
+}
+
+.portfolio-story-trigger.is-complete .portfolio-story-ring {
   filter: none;
 }
 
-@keyframes story-ring-segment-fill {
+@keyframes portfolio-story-draw {
   from {
     stroke-dashoffset: 1;
   }
@@ -205,34 +206,45 @@ a:hover {
   }
 }
 
-.project-story-panel {
+.portfolio-story-stage {
+  display: grid;
+  grid-template-rows: 0fr;
   width: 100%;
-  max-width: 100%;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: grid-template-rows 440ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 180ms ease,
+    transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1), padding-bottom 440ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    margin-bottom 440ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.portfolio-story-stage.is-open {
+  grid-template-rows: 1fr;
+  padding-bottom: 48px;
+  margin-bottom: 22px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.portfolio-story-card {
   min-height: 0;
   overflow: hidden;
   border-radius: 28px;
   background: #0a0a0a;
   padding: 0 22px;
   color: #fff;
-  cursor: default;
-  opacity: 0;
-  transform: translateY(-8px) scale(0.985);
   text-align: left;
-  transition: padding 520ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease,
-    transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: padding 440ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.project-story-panel.is-open {
+.portfolio-story-stage.is-open .portfolio-story-card {
   padding: 22px 22px 34px;
-  opacity: 1;
-  transform: translateY(0) scale(1);
 }
 
-.project-story-content {
-  animation: project-story-content-in 260ms ease both;
+.portfolio-story-content {
+  animation: portfolio-story-content-in 220ms ease both;
 }
 
-.project-story-preview {
+.portfolio-story-preview {
   aspect-ratio: 16 / 10;
   width: 100%;
   overflow: hidden;
@@ -240,8 +252,8 @@ a:hover {
   background: #111;
 }
 
-.project-story-preview video,
-.project-story-preview img {
+.portfolio-story-preview video,
+.portfolio-story-preview img {
   display: block;
   width: 100%;
   height: 100%;
@@ -249,21 +261,21 @@ a:hover {
   border: 0;
 }
 
-.project-story-copy {
+.portfolio-story-copy {
   display: grid;
   gap: 0.85rem;
   padding: 1.75rem 0.5rem 0.25rem;
   text-align: center;
 }
 
-.project-story-heading {
+.portfolio-story-heading {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
 }
 
-.project-story-heading h2 {
+.portfolio-story-heading h2 {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -271,14 +283,14 @@ a:hover {
   color: #fff;
 }
 
-.project-story-logo {
+.portfolio-story-logo {
   width: 2.25rem;
   height: 2.25rem;
   color: #fff;
   flex: 0 0 auto;
 }
 
-.project-story-copy p {
+.portfolio-story-copy p {
   max-width: 34rem;
   margin-inline: auto;
   color: rgba(255, 255, 255, 0.72);
@@ -286,7 +298,7 @@ a:hover {
   line-height: 1.4;
 }
 
-.project-story-cta {
+.portfolio-story-cta {
   display: inline-flex;
   justify-self: center;
   align-items: center;
@@ -304,17 +316,17 @@ a:hover {
   transition: background 180ms ease;
 }
 
-.project-story-cta:hover {
+.portfolio-story-cta:hover {
   background: #0077ed;
 }
 
-.project-story-cta-icon {
+.portfolio-story-cta-icon {
   width: 0.95rem;
   height: 0.95rem;
   flex: 0 0 auto;
 }
 
-@keyframes project-story-content-in {
+@keyframes portfolio-story-content-in {
   from {
     opacity: 0;
     transform: translateY(4px);
@@ -324,25 +336,6 @@ a:hover {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.portrait-animation-layer {
-  display: grid;
-  grid-template-rows: minmax(0, 0fr);
-  width: 100%;
-  opacity: 0;
-  transform: translateY(-8px);
-  transition: grid-template-rows 520ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease,
-    transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1), padding-bottom 520ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    margin-bottom 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.portrait-animation-layer.is-open {
-  grid-template-rows: minmax(0, 1fr);
-  padding-bottom: 48px;
-  margin-bottom: 22px;
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .intro-content-flow {
@@ -793,11 +786,11 @@ a:hover {
 }
 
 @media (max-width: 520px) {
-  .project-story-panel.is-open {
+  .portfolio-story-stage.is-open .portfolio-story-card {
     padding: 16px 16px 30px;
   }
 
-  .project-story-preview {
+  .portfolio-story-preview {
     aspect-ratio: 16 / 11;
     border-radius: 18px;
   }
@@ -819,14 +812,14 @@ a:hover {
     align-items: center;
   }
 
-  .mobile-identity .portrait-trigger {
+  .mobile-identity .portfolio-story-trigger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
   }
 
-  .mobile-identity .portrait-trigger img {
+  .mobile-identity .portfolio-story-trigger > img {
     width: calc(100% + 4px);
     height: calc(100% + 4px);
     max-width: none;

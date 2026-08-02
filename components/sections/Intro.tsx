@@ -2,11 +2,15 @@
 
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { ContactChips } from "@/components/ui/ContactChips";
+import {
+  PortfolioStoryPanel,
+  PortfolioStoryTrigger,
+  usePortfolioStories
+} from "@/components/ui/PortfolioStories";
 import { filmArtistDescription, filmLinks } from "@/lib/film-data";
 import { links } from "@/lib/data";
 import { musicArtistDescription, musicPlatformLinks } from "@/lib/music-data";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 type IntroProps = {
   activeSection?: "design" | "music" | "films";
@@ -23,25 +27,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const isFilms = activeSection === "films";
   const showHobbies = false;
   const hasStaticPortrait = isMusic || isFilms || disablePortraitEffects;
-  const [isStoryOpen, setIsStoryOpen] = useState(false);
-  const [isPortraitLayerMounted, setIsPortraitLayerMounted] = useState(false);
-  const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
-  const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
-  const [viewedStoryCount, setViewedStoryCount] = useState(0);
-
-  useEffect(() => {
-    if (hasStaticPortrait) {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      setIsPortraitRingVisible(true);
-    }, 1800);
-
-    return () => {
-      window.clearTimeout(timeout);
-    };
-  }, [hasStaticPortrait]);
+  const portfolioStories = usePortfolioStories(hasStaticPortrait);
 
   const travelStops = [
     { flag: "🇬🇧", label: "England" },
@@ -64,78 +50,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
     <section className={`intro-section grid gap-8 pb-12 pt-0 text-body sm:grid-cols-[minmax(210px,0.5fr)_minmax(0,1.5fr)] sm:pt-6 sm:pb-16 lg:gap-12 ${className}`}>
       <aside className="self-start sm:sticky sm:top-5">
         <div className="mobile-identity flex max-w-[220px] flex-col items-start gap-3">
-          {hasStaticPortrait ? (
-            <span className="portrait-trigger h-10 w-10 sm:h-[54px] sm:w-[54px]" aria-hidden="true">
-              <img
-                src="/assets/zhoGyz3txRaZFjgEq7BreUwhbQ.jpeg"
-                width={54}
-                height={54}
-                alt=""
-                className="h-full w-full rounded-full object-cover transition duration-500 ease-out"
-              />
-            </span>
-          ) : (
-            <button
-              type="button"
-              className={`portrait-trigger h-10 w-10 sm:h-[54px] sm:w-[54px] group ${
-                isPortraitRingVisible ? "is-ring-visible" : ""
-              } ${viewedStoryCount === 2 ? "are-stories-seen" : ""}`}
-              aria-label={
-                activeStoryIndex === 0
-                  ? "Show Tulzy story"
-                  : activeStoryIndex === 1
-                    ? "Close Tulzy story"
-                    : "Show Chord Tulza story"
-              }
-              onClick={() => {
-                if (activeStoryIndex === 0) {
-                  setActiveStoryIndex(1);
-                  setViewedStoryCount(2);
-                  return;
-                }
-
-                if (activeStoryIndex === 1) {
-                  setIsStoryOpen(false);
-                  window.setTimeout(() => {
-                    setIsPortraitLayerMounted(false);
-                    setActiveStoryIndex(null);
-                  }, 520);
-                  return;
-                }
-
-                setActiveStoryIndex(0);
-                setViewedStoryCount((count) => Math.max(count, 1));
-                setIsPortraitLayerMounted(true);
-                window.requestAnimationFrame(() => {
-                  window.requestAnimationFrame(() => setIsStoryOpen(true));
-                });
-              }}
-            >
-              <span className="story-ring" aria-hidden="true">
-                <svg viewBox="0 0 64 64">
-                  <path
-                    className={`story-ring-segment story-ring-segment-first ${viewedStoryCount >= 1 ? "is-seen" : ""}`}
-                    d="M34.02 3.07A29 29 0 0 1 34.02 60.93"
-                    pathLength="1"
-                  />
-                  <path
-                    className={`story-ring-segment story-ring-segment-second ${viewedStoryCount >= 2 ? "is-seen" : ""}`}
-                    d="M29.98 60.93A29 29 0 0 1 29.98 3.07"
-                    pathLength="1"
-                  />
-                </svg>
-              </span>
-              <img
-                src="/assets/zhoGyz3txRaZFjgEq7BreUwhbQ.jpeg"
-                width={54}
-                height={54}
-                alt="Veniamin Vekk portrait"
-                className={`h-full w-full rounded-full object-cover transition duration-500 ease-out group-hover:scale-95 group-active:scale-[0.93] ${
-                  isStoryOpen ? "opacity-50" : ""
-                }`}
-              />
-            </button>
-          )}
+          <PortfolioStoryTrigger controller={portfolioStories} isStatic={hasStaticPortrait} />
           <div className="space-y-0.5">
             <h1 className="font-semibold">Veniamin Vekk</h1>
             <p>
@@ -162,53 +77,8 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
       </aside>
 
       <div className="intro-frame relative max-w-[620px] text-bio sm:pt-[66px]">
-        {!hasStaticPortrait && isPortraitLayerMounted ? (
-          <div className={`portrait-animation-layer ${isStoryOpen ? "is-open" : ""}`}>
-            <div className={`project-story-panel ${isStoryOpen ? "is-open" : ""}`}>
-              <div className="project-story-content" key={activeStoryIndex}>
-                <div className="project-story-preview">
-                  {activeStoryIndex === 1 ? (
-                    <img src="/assets/tulzy-story-preview.png" alt="Tulzy project gallery preview" />
-                  ) : (
-                    <video
-                      src="/assets/video/compressed/chord-tulza-story-preview.webm"
-                      poster="/assets/video/compressed/chord-tulza-story-preview-poster.jpg"
-                      aria-label="Chord Tulza preview"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="auto"
-                    />
-                  )}
-                </div>
-                <div className="project-story-copy">
-                  <div className="project-story-heading">
-                    {activeStoryIndex === 0 ? <ChordTulzaLogo className="project-story-logo" /> : null}
-                    <h2>{activeStoryIndex === 1 ? "Tulzy" : "Chord Tulza"}</h2>
-                  </div>
-                  <p>
-                    {activeStoryIndex === 1
-                      ? "A curated gallery of useful AI-built tools created by designers."
-                      : "A fully vibe-coded chord workspace for sketching progressions, trying song ideas, and keeping music drafts close while I write."}
-                  </p>
-                  <a
-                    href={activeStoryIndex === 1 ? "https://tools.venyavekk.com/" : "https://chords.venyavekk.com"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-story-cta"
-                  >
-                    Open
-                    <svg className="project-story-cta-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                      <path d="M4 12L12 4M12 4H5.5M12 4V10.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : null}
-        <div className={`intro-content-flow space-y-8 ${isStoryOpen ? "is-centered" : ""}`}>
+        <PortfolioStoryPanel controller={portfolioStories} />
+        <div className={`intro-content-flow space-y-8 ${portfolioStories.isOpen ? "is-centered" : ""}`}>
           {isMusic ? (
             <>
               <div className="intro-copy-block space-y-8">
