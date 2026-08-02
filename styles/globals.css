@@ -168,7 +168,7 @@ a:hover {
   stroke-dasharray: 0 100;
   vector-effect: non-scaling-stroke;
   transform-origin: 32px 32px;
-  animation: vv-storydeck-fill-half 560ms linear forwards;
+  animation: vv-storydeck-fill-half 560ms linear both;
 }
 
 .vv-storydeck-half-one {
@@ -185,11 +185,17 @@ a:hover {
 }
 
 @keyframes vv-storydeck-fill-half {
-  from {
+  0% {
+    opacity: 0;
     stroke-dasharray: 0 100;
   }
 
-  to {
+  2% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
     stroke-dasharray: 48 100;
   }
 }
