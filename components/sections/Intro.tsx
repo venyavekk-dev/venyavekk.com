@@ -18,11 +18,16 @@ function ChordTulzaLogo({ className = "" }: { className?: string }) {
   return <img src="/assets/chord-tulza-logo.svg" alt="" className={className} aria-hidden="true" />;
 }
 
-function CodexLogo({ className = "" }: { className?: string }) {
+function CodexLogo({ spinKey, onClick, className = "" }: { spinKey: number; onClick: () => void; className?: string }) {
   return (
-    <span className={`intro-ai-brand-logo intro-ai-brand-logo-codex ${className}`} aria-hidden="true">
-      <img src="/assets/codex-mark.png" alt="" />
-    </span>
+    <button
+      type="button"
+      className={`intro-ai-brand-logo intro-ai-brand-logo-codex ${className}`}
+      aria-label="Spin Codex logo"
+      onClick={onClick}
+    >
+      <img src="/assets/codex-mark.png" alt="" className={spinKey > 0 ? "is-spinning" : ""} key={spinKey} />
+    </button>
   );
 }
 
@@ -34,16 +39,7 @@ function ClaudeLogo({ morphKey, onClick, className = "" }: { morphKey: number; o
       aria-label="Animate Claude logo"
       onClick={onClick}
     >
-      <svg viewBox="0 0 24 24" fill="none" className={morphKey > 0 ? "is-morphing" : ""} key={morphKey} aria-hidden="true">
-        <line className="claude-ray claude-ray-1" x1="12" y1="3.25" x2="12" y2="9.1" />
-        <line className="claude-ray claude-ray-2" x1="12" y1="3.25" x2="12" y2="9.1" />
-        <line className="claude-ray claude-ray-3" x1="12" y1="3.25" x2="12" y2="9.1" />
-        <line className="claude-ray claude-ray-4" x1="12" y1="3.25" x2="12" y2="9.1" />
-        <line className="claude-ray claude-ray-5" x1="12" y1="3.25" x2="12" y2="9.1" />
-        <line className="claude-ray claude-ray-6" x1="12" y1="3.25" x2="12" y2="9.1" />
-        <line className="claude-ray claude-ray-7" x1="12" y1="3.25" x2="12" y2="9.1" />
-        <line className="claude-ray claude-ray-8" x1="12" y1="3.25" x2="12" y2="9.1" />
-      </svg>
+      <img src="/assets/claude-mark.svg" alt="" className={morphKey > 0 ? "is-morphing" : ""} key={morphKey} />
     </button>
   );
 }
@@ -58,6 +54,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
   const [hasPortraitBeenOpened, setHasPortraitBeenOpened] = useState(false);
   const [claudeLogoMorphKey, setClaudeLogoMorphKey] = useState(0);
+  const [codexLogoSpinKey, setCodexLogoSpinKey] = useState(0);
 
   useEffect(() => {
     if (hasStaticPortrait) {
@@ -252,12 +249,21 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               <div className="intro-meta-block space-y-8">
                 <div className="intro-ai-block space-y-2">
                   <p className="intro-ai-credit">
-                    Made with <ClaudeLogo morphKey={claudeLogoMorphKey} onClick={() => setClaudeLogoMorphKey((key) => key + 1)} /> Claude and <CodexLogo /> Codex
+                    <span>Made with</span>
+                    <span className="intro-ai-tool-pair">
+                      <ClaudeLogo morphKey={claudeLogoMorphKey} onClick={() => setClaudeLogoMorphKey((key) => key + 1)} />
+                      <span>Claude</span>
+                    </span>
+                    <span>and</span>
+                    <span className="intro-ai-tool-pair">
+                      <CodexLogo spinKey={codexLogoSpinKey} onClick={() => setCodexLogoSpinKey((key) => key + 1)} />
+                      <span>Codex</span>
+                    </span>
                   </p>
                   <div className="intro-ai-project-ribbon" aria-label="Independent AI projects">
                     <ExternalLink href="https://chords.venyavekk.com" className="intro-ai-project-chip">
                       <ChordTulzaLogo className="intro-ai-project-logo intro-ai-project-logo-chord" />
-                      <span>Chord Tulza</span>
+                      <span>Chords</span>
                     </ExternalLink>
                     <ExternalLink href="https://tools.venyavekk.com" className="intro-ai-project-chip">
                       <span className="intro-ai-project-logo intro-ai-project-logo-tulzy" aria-hidden="true">Т</span>
