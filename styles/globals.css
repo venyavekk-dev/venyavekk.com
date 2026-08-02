@@ -160,7 +160,7 @@ a:hover {
   overflow: visible;
 }
 
-.vv-storydeck-half {
+.vv-storydeck-segment {
   fill: none;
   stroke: #3777ff;
   stroke-width: 2.2;
@@ -168,23 +168,15 @@ a:hover {
   stroke-dasharray: 0 100;
   vector-effect: non-scaling-stroke;
   transform-origin: 32px 32px;
-  animation: vv-storydeck-fill-half 560ms linear both;
+  transform: rotate(var(--vv-storydeck-rotation));
+  animation: vv-storydeck-fill-segment var(--vv-storydeck-duration) linear var(--vv-storydeck-delay) both;
 }
 
-.vv-storydeck-half-one {
-  transform: rotate(-90deg);
-}
-
-.vv-storydeck-half-two {
-  transform: rotate(90deg);
-  animation-delay: 560ms;
-}
-
-.vv-storydeck-half.is-viewed {
+.vv-storydeck-segment.is-viewed {
   stroke: color-mix(in srgb, var(--muted) 52%, transparent);
 }
 
-@keyframes vv-storydeck-fill-half {
+@keyframes vv-storydeck-fill-segment {
   0% {
     opacity: 0;
     stroke-dasharray: 0 100;
@@ -196,52 +188,51 @@ a:hover {
 
   100% {
     opacity: 1;
-    stroke-dasharray: 48 100;
+    stroke-dasharray: var(--vv-storydeck-length) 100;
   }
 }
 
 .vv-storydeck-slot {
-  display: grid;
-  grid-template-rows: 0fr;
+  position: relative;
   width: 100%;
   margin-bottom: 0;
-  transition: grid-template-rows 480ms cubic-bezier(0.2, 0.8, 0.2, 1), margin-bottom 480ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: height 520ms cubic-bezier(0.2, 0.8, 0.2, 1), margin-bottom 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .vv-storydeck-slot.is-open {
-  grid-template-rows: 1fr;
   margin-bottom: 22px;
 }
 
 .vv-storydeck-card {
-  min-height: 0;
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
   overflow: hidden;
   border-radius: 28px;
   background: #0a0a0a;
-  padding: 0 22px;
+  padding: 22px 22px 34px;
   color: #fff;
   text-align: left;
-  transform: scale(1);
-  transform-origin: center;
+  transform: scale(0);
+  transform-origin: top center;
   visibility: hidden;
-  transition: padding 480ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 480ms,
-    transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 520ms;
 }
 
 .vv-storydeck-slot.is-open .vv-storydeck-card {
-  padding: 22px 22px 34px;
-  visibility: visible;
-  transition: padding 480ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0s,
-    transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.vv-storydeck-card.is-shrinking {
-  transform: scale(0.9);
-}
-
-.vv-storydeck-card.is-growing,
-.vv-storydeck-card.is-idle {
   transform: scale(1);
+  visibility: visible;
+  transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0s;
+}
+
+.vv-storydeck-slot.is-open .vv-storydeck-card.is-shrinking {
+  transform: scale(0.9);
+  transition-duration: 180ms, 0s;
+}
+
+.vv-storydeck-slot.is-open .vv-storydeck-card.is-growing {
+  transform: scale(1);
+  transition-duration: 180ms, 0s;
 }
 
 .vv-storydeck-preview {
@@ -760,7 +751,7 @@ a:hover {
 }
 
 @media (max-width: 520px) {
-  .vv-storydeck-slot.is-open .vv-storydeck-card {
+  .vv-storydeck-card {
     padding: 16px 16px 30px;
   }
 

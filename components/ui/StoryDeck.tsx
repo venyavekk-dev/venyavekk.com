@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 
-type StoryId = "chords" | "tulzy";
+type PresenceStep = "closed" | "opening" | "open" | "closing";
 type SwitchStep = "idle" | "shrinking" | "growing";
 
 type Story = {
-  id: StoryId;
+  id: string;
   title: string;
   description: string;
   href: string;
@@ -17,6 +17,7 @@ type Story = {
   poster?: string;
 };
 
+// Add future projects here; navigation and ring segments are derived from this list.
 const storyList: readonly Story[] = [
   {
     id: "chords",
@@ -39,54 +40,64 @@ const storyList: readonly Story[] = [
 ];
 
 export type StoryDeckController = {
-  currentStory: StoryId;
-  isOpen: boolean;
+  activeIndex: number;
+  presenceStep: PresenceStep;
   switchStep: SwitchStep;
-  viewed: readonly [boolean, boolean];
+  viewedCount: number;
   advance: () => void;
-  finishSwitchStep: () => void;
+  finishCardTransition: () => void;
 };
 
 export function useStoryDeck(disabled = false): StoryDeckController {
-  const [currentStory, setCurrentStory] = useState<StoryId>("chords");
-  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [presenceStep, setPresenceStep] = useState<PresenceStep>("closed");
   const [switchStep, setSwitchStep] = useState<SwitchStep>("idle");
-  const [viewed, setViewed] = useState<[boolean, boolean]>([false, false]);
+  const [viewedCount, setViewedCount] = useState(0);
 
   const advance = useCallback(() => {
-    if (disabled || switchStep !== "idle") {
+    if (disabled || switchStep !== "idle" || presenceStep === "opening" || presenceStep === "closing") {
       return;
     }
 
-    if (!isOpen) {
-      setCurrentStory("chords");
-      setViewed((current) => [true, current[1]]);
-      setIsOpen(true);
+    if (presenceStep === "closed") {
+      setActiveIndex(0);
+      setViewedCount((count) => Math.max(count, 1));
+      setPresenceStep("opening");
       return;
     }
 
-    if (currentStory === "chords") {
-      setViewed([true, true]);
+    if (activeIndex < storyList.length - 1) {
+      setViewedCount((count) => Math.max(count, activeIndex + 2));
       setSwitchStep("shrinking");
       return;
     }
 
-    setIsOpen(false);
-  }, [currentStory, disabled, isOpen, switchStep]);
+    setPresenceStep("closing");
+  }, [activeIndex, disabled, presenceStep, switchStep]);
 
-  const finishSwitchStep = useCallback(() => {
+  const finishCardTransition = useCallback(() => {
     if (switchStep === "shrinking") {
-      setCurrentStory("tulzy");
+      setActiveIndex((index) => Math.min(index + 1, storyList.length - 1));
       setSwitchStep("growing");
       return;
     }
 
     if (switchStep === "growing") {
       setSwitchStep("idle");
+      return;
     }
-  }, [switchStep]);
 
-  return { currentStory, isOpen, switchStep, viewed, advance, finishSwitchStep };
+    if (presenceStep === "opening") {
+      setPresenceStep("open");
+      return;
+    }
+
+    if (presenceStep === "closing") {
+      setPresenceStep("closed");
+    }
+  }, [presenceStep, switchStep]);
+
+  return { activeIndex, presenceStep, switchStep, viewedCount, advance, finishCardTransition };
 }
 
 type StoryDeckAvatarProps = {
@@ -113,12 +124,18 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
     );
   }
 
-  const label =
-    !controller.isOpen
-      ? "Show Chord Tulza story"
-      : controller.currentStory === "chords"
-      ? "Show Tulzy story"
-      : "Close Tulzy story";
+  const isClosed = controller.presenceStep === "closed";
+  const isTransitioning =
+    controller.presenceStep === "opening" || controller.presenceStep === "closing" || controller.switchStep !== "idle";
+  const nextStory = storyList[controller.activeIndex + 1];
+  const label = isClosed
+    ? `Show ${storyList[0].title} story`
+    : nextStory
+      ? `Show ${nextStory.title} story`
+      : `Close ${storyList[controller.activeIndex].title} story`;
+  const segmentSpan = 100 / storyList.length;
+  const segmentLength = segmentSpan - 2;
+  const segmentDuration = Math.max(180, 1120 / storyList.length);
 
   return (
     <button
@@ -126,24 +143,28 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
       className="vv-storydeck-avatar h-10 w-10 sm:h-[54px] sm:w-[54px] group"
       aria-label={label}
       onClick={controller.advance}
-      disabled={controller.switchStep !== "idle"}
+      disabled={isTransitioning}
     >
       <span className="vv-storydeck-ring" aria-hidden="true">
         <svg viewBox="0 0 64 64">
-          <circle
-            className={`vv-storydeck-half vv-storydeck-half-one ${controller.viewed[0] ? "is-viewed" : ""}`}
-            cx="32"
-            cy="32"
-            r="29"
-            pathLength="100"
-          />
-          <circle
-            className={`vv-storydeck-half vv-storydeck-half-two ${controller.viewed[1] ? "is-viewed" : ""}`}
-            cx="32"
-            cy="32"
-            r="29"
-            pathLength="100"
-          />
+          {storyList.map((story, index) => (
+            <circle
+              className={`vv-storydeck-segment ${index < controller.viewedCount ? "is-viewed" : ""}`}
+              cx="32"
+              cy="32"
+              r="29"
+              pathLength="100"
+              key={story.id}
+              style={
+                {
+                  "--vv-storydeck-delay": `${index * segmentDuration}ms`,
+                  "--vv-storydeck-duration": `${segmentDuration}ms`,
+                  "--vv-storydeck-length": segmentLength,
+                  "--vv-storydeck-rotation": `${-90 + index * (360 / storyList.length)}deg`
+                } as CSSProperties
+              }
+            />
+          ))}
         </svg>
       </span>
       {portrait}
@@ -152,23 +173,45 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
 }
 
 export function StoryDeckCard({ controller }: { controller: StoryDeckController }) {
-  const story = storyList.find((item) => item.id === controller.currentStory);
+  const cardRef = useRef<HTMLElement>(null);
+  const [cardHeight, setCardHeight] = useState(0);
+  const story = storyList[controller.activeIndex];
+
+  useLayoutEffect(() => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
+    }
+
+    const updateHeight = () => setCardHeight(card.offsetHeight);
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [story.id]);
+
   if (!story) {
     return null;
   }
 
+  const isExpanded = controller.presenceStep === "opening" || controller.presenceStep === "open";
+  const isInteractive = controller.presenceStep === "open" && controller.switchStep === "idle";
+
   return (
     <div
-      className={`vv-storydeck-slot ${controller.isOpen ? "is-open" : ""}`}
-      aria-hidden={!controller.isOpen}
-      inert={!controller.isOpen ? true : undefined}
+      className={`vv-storydeck-slot ${isExpanded ? "is-open" : ""}`}
+      aria-hidden={!isInteractive}
+      inert={!isInteractive ? true : undefined}
+      style={{ height: isExpanded ? `${cardHeight}px` : "0px" }}
     >
       <article
         className={`vv-storydeck-card is-${controller.switchStep}`}
         aria-live="polite"
+        ref={cardRef}
         onTransitionEnd={(event) => {
           if (event.currentTarget === event.target && event.propertyName === "transform") {
-            controller.finishSwitchStep();
+            controller.finishCardTransition();
           }
         }}
       >
