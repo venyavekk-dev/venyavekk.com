@@ -165,10 +165,8 @@ a:hover {
   stroke: #3777ff;
   stroke-width: 2.2;
   stroke-linecap: round;
-  stroke-dasharray: 0 100;
+  stroke-dasharray: 0 1;
   vector-effect: non-scaling-stroke;
-  transform-origin: 32px 32px;
-  transform: rotate(var(--vv-storydeck-rotation));
   animation: vv-storydeck-fill-segment var(--vv-storydeck-duration) linear var(--vv-storydeck-delay) both;
 }
 
@@ -179,7 +177,7 @@ a:hover {
 @keyframes vv-storydeck-fill-segment {
   0% {
     opacity: 0;
-    stroke-dasharray: 0 100;
+    stroke-dasharray: 0 1;
   }
 
   2% {
@@ -188,7 +186,7 @@ a:hover {
 
   100% {
     opacity: 1;
-    stroke-dasharray: var(--vv-storydeck-length) 100;
+    stroke-dasharray: 1 1;
   }
 }
 

@@ -47,6 +47,23 @@ export type StoryDeckController = {
   finishCardTransition: () => void;
 };
 
+function pointOnCircle(angle: number) {
+  const radians = (angle * Math.PI) / 180;
+
+  return {
+    x: 32 + 29 * Math.cos(radians),
+    y: 32 + 29 * Math.sin(radians)
+  };
+}
+
+function describeStoryArc(startAngle: number, endAngle: number) {
+  const start = pointOnCircle(startAngle);
+  const end = pointOnCircle(endAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A 29 29 0 ${largeArc} 1 ${end.x} ${end.y}`;
+}
+
 export function useStoryDeck(disabled = false): StoryDeckController {
   const [activeIndex, setActiveIndex] = useState(0);
   const [presenceStep, setPresenceStep] = useState<PresenceStep>("closed");
@@ -132,8 +149,8 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
     : nextStory
       ? `Show ${nextStory.title} story`
       : `Close ${storyList[controller.activeIndex].title} story`;
-  const segmentSpan = 100 / storyList.length;
-  const segmentLength = segmentSpan - 2;
+  const segmentSpan = 360 / storyList.length;
+  const segmentGap = segmentSpan * 0.04;
   const segmentDuration = Math.max(180, 1120 / storyList.length);
 
   return (
@@ -146,24 +163,25 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
     >
       <span className="vv-storydeck-ring" aria-hidden="true">
         <svg viewBox="0 0 64 64">
-          {storyList.map((story, index) => (
-            <circle
-              className={`vv-storydeck-segment ${index < controller.viewedCount ? "is-viewed" : ""}`}
-              cx="32"
-              cy="32"
-              r="29"
-              pathLength="100"
-              key={story.id}
-              style={
-                {
-                  "--vv-storydeck-delay": `${index * segmentDuration}ms`,
-                  "--vv-storydeck-duration": `${segmentDuration}ms`,
-                  "--vv-storydeck-length": segmentLength,
-                  "--vv-storydeck-rotation": `${-90 + index * (360 / storyList.length)}deg`
-                } as CSSProperties
-              }
-            />
-          ))}
+          {storyList.map((story, index) => {
+            const startAngle = -90 + index * segmentSpan + segmentGap / 2;
+            const endAngle = startAngle + segmentSpan - segmentGap;
+
+            return (
+              <path
+                className={`vv-storydeck-segment ${index < controller.viewedCount ? "is-viewed" : ""}`}
+                d={describeStoryArc(startAngle, endAngle)}
+                pathLength="1"
+                key={story.id}
+                style={
+                  {
+                    "--vv-storydeck-delay": `${index * segmentDuration}ms`,
+                    "--vv-storydeck-duration": `${segmentDuration}ms`
+                  } as CSSProperties
+                }
+              />
+            );
+          })}
         </svg>
       </span>
       {portrait}
