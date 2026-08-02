@@ -134,113 +134,6 @@ a:hover {
   line-height: 1.45;
 }
 
-.ai-maker-logos {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ai-maker-logo {
-  display: inline-flex;
-  width: 52px;
-  height: 52px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-}
-
-.ai-maker-logo svg {
-  width: 31px;
-  height: 31px;
-}
-
-.ai-maker-logo-codex {
-  background: #111111;
-  color: #ffffff;
-}
-
-.ai-maker-logo-codex svg {
-  stroke: currentColor;
-  stroke-width: 1.45;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.ai-maker-logo-claude {
-  background: #d97757;
-  color: #fff8ef;
-}
-
-.ai-maker-logo-claude svg {
-  stroke: currentColor;
-  stroke-width: 2.15;
-  stroke-linecap: round;
-}
-
-.ai-projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.ai-project-card {
-  min-width: 0;
-}
-
-.ai-project-logo-stage {
-  display: grid;
-  aspect-ratio: 1 / 0.78;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 8px;
-  background: var(--surface);
-  padding: 24px;
-}
-
-.ai-project-logo,
-.ai-project-wordmark {
-  transition: transform 300ms ease;
-}
-
-.ai-project-card:hover .ai-project-logo,
-.ai-project-card:hover .ai-project-wordmark {
-  transform: scale(1.035);
-}
-
-.ai-project-logo-chord {
-  width: min(82%, 180px);
-  height: auto;
-}
-
-.ai-project-wordmark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--foreground);
-  line-height: 1;
-}
-
-.ai-project-wordmark-tulzy {
-  font-size: clamp(31px, 4.2vw, 58px);
-  font-weight: 600;
-  letter-spacing: -0.045em;
-}
-
-.ai-project-wordmark-headrush {
-  flex-direction: column;
-  align-items: stretch;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(19px, 2.4vw, 34px);
-  font-weight: 800;
-  letter-spacing: -0.075em;
-  line-height: 0.74;
-  transform: skew(-7deg);
-}
-
-.ai-project-card:hover .ai-project-wordmark-headrush {
-  transform: skew(-7deg) scale(1.035);
-}
-
 .portrait-trigger {
   position: relative;
   overflow: visible;
@@ -498,6 +391,109 @@ a:hover {
 .intro-tools-label {
   color: var(--muted);
   font-size: 0.82em;
+}
+
+.intro-ai-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.32em;
+}
+
+.intro-ai-brand-logo {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.intro-ai-brand-logo svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-linecap: round;
+}
+
+.intro-ai-brand-logo-codex {
+  background: #111111;
+  color: #ffffff;
+}
+
+.intro-ai-brand-logo-codex svg {
+  stroke-width: 1.15;
+  stroke-linejoin: round;
+}
+
+.intro-ai-brand-logo-claude {
+  background: #d97757;
+  color: #fff8ef;
+}
+
+.intro-ai-brand-logo-claude svg {
+  stroke-width: 1.65;
+}
+
+.intro-ai-project-ribbon {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+  width: max-content;
+  max-width: 100%;
+}
+
+.intro-ai-project-chip {
+  display: inline-flex;
+  min-height: 32px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  padding: 3px 11px 3px 4px;
+  font-size: 0.76em;
+  line-height: 1;
+  opacity: 0.82;
+  transition: opacity 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.intro-ai-project-chip:hover {
+  color: var(--foreground);
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.intro-ai-project-logo {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  object-fit: contain;
+  line-height: 1;
+}
+
+.intro-ai-project-logo-chord {
+  background: #080808;
+}
+
+.intro-ai-project-logo-tulzy {
+  background: #1c1c1c;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.intro-ai-project-logo-headrush {
+  background: #111111;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: -0.06em;
 }
 
 .tool-chip {
@@ -1023,32 +1019,17 @@ a:hover {
     font-size: 15px;
   }
 
-  .ai-maker-logo {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+  .intro-ai-project-ribbon {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 0 8px 1px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
 
-  .ai-maker-logo svg {
-    width: 26px;
-    height: 26px;
-  }
-
-  .ai-projects-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-
-  .ai-project-logo-stage {
-    aspect-ratio: 1.4 / 1;
-  }
-
-  .ai-project-wordmark-tulzy {
-    font-size: 56px;
-  }
-
-  .ai-project-wordmark-headrush {
-    font-size: 34px;
+  .intro-ai-project-ribbon::-webkit-scrollbar {
+    display: none;
   }
 
   .project-card {

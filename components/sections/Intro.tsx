@@ -18,6 +18,27 @@ function ChordTulzaLogo({ className = "" }: { className?: string }) {
   return <img src="/assets/chord-tulza-logo.svg" alt="" className={className} aria-hidden="true" />;
 }
 
+function CodexLogo({ className = "" }: { className?: string }) {
+  return (
+    <span className={`intro-ai-brand-logo intro-ai-brand-logo-codex ${className}`} aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3.25a3.9 3.9 0 0 1 3.38 1.95l3.87 6.7a3.9 3.9 0 0 1 0 3.9 3.9 3.9 0 0 1-3.38 1.95H8.13a3.9 3.9 0 0 1-3.38-1.95 3.9 3.9 0 0 1 0-3.9l3.87-6.7A3.9 3.9 0 0 1 12 3.25Z" />
+        <path d="m8.62 5.2 3.38 1.95 3.38-1.95m3.87 6.7-3.38 1.95v3.9M4.75 11.9l3.38 1.95v3.9M12 7.15v3.9m0 0-3.87 2.8m3.87-2.8 3.87 2.8" />
+      </svg>
+    </span>
+  );
+}
+
+function ClaudeLogo({ className = "" }: { className?: string }) {
+  return (
+    <span className={`intro-ai-brand-logo intro-ai-brand-logo-claude ${className}`} aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 4v16M4 12h16M6.5 6.5l11 11m0-11-11 11M9.2 4.6l5.6 14.8M4.6 9.2l14.8 5.6M14.8 4.6 9.2 19.4M19.4 9.2 4.6 14.8" />
+      </svg>
+    </span>
+  );
+}
+
 export function Intro({ activeSection = "design", disablePortraitEffects = false, className = "" }: IntroProps) {
   const isMusic = activeSection === "music";
   const isFilms = activeSection === "films";
@@ -219,6 +240,25 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                 ) : null}
               </div>
               <div className="intro-meta-block space-y-8">
+                <div className="intro-ai-block space-y-2">
+                  <p className="intro-ai-credit">
+                    Made with <ClaudeLogo /> Claude and <CodexLogo /> Codex
+                  </p>
+                  <div className="intro-ai-project-ribbon" aria-label="Independent AI projects">
+                    <ExternalLink href="https://chords.venyavekk.com" className="intro-ai-project-chip">
+                      <ChordTulzaLogo className="intro-ai-project-logo intro-ai-project-logo-chord" />
+                      <span>Chord Tulza</span>
+                    </ExternalLink>
+                    <ExternalLink href="https://github.com/venyavekk-dev/tulzy" className="intro-ai-project-chip">
+                      <span className="intro-ai-project-logo intro-ai-project-logo-tulzy" aria-hidden="true">Т</span>
+                      <span>Tulzy</span>
+                    </ExternalLink>
+                    <span className="intro-ai-project-chip">
+                      <span className="intro-ai-project-logo intro-ai-project-logo-headrush" aria-hidden="true">HR</span>
+                      <span>HeadRush Skill</span>
+                    </span>
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <p>🇷🇸 Belgrade, Serbia</p>
                   <div className="travel-flag-ribbon" aria-label="Countries visited, from Europe to Asia">
