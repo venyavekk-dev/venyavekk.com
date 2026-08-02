@@ -34,8 +34,7 @@ const storyList: readonly Story[] = [
     title: "Tulzy",
     description: "A curated gallery of useful AI-built tools created by designers.",
     href: "https://tools.venyavekk.com/",
-    video: "/assets/video/compressed/tulzy-story-preview.webm",
-    poster: "/assets/tulzy-story-preview.png"
+    video: "/assets/video/compressed/tulzy-story-preview.webm"
   }
 ];
 
