@@ -1,4 +1,5 @@
 import { Footer } from "@/components/Footer";
+import { AIProjectsSection } from "@/components/sections/AIProjectsSection";
 import { Intro } from "@/components/sections/Intro";
 import { ProductSection } from "@/components/sections/ProductSection";
 import { PublicTalks } from "@/components/sections/PublicTalks";
@@ -10,6 +11,7 @@ export default function Home() {
     <main className="mx-auto min-h-screen w-full max-w-[1440px] px-5 py-5 sm:px-8 lg:px-10">
       <Intro />
       <div className="space-y-12 pt-12 sm:space-y-16 sm:pt-16">
+        <AIProjectsSection />
         {companySections.map((section) => (
           <ProductSection key={section.company} section={section} />
         ))}
