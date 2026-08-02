@@ -26,7 +26,8 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const [showAltPortrait, setShowAltPortrait] = useState(false);
   const [isPortraitLayerMounted, setIsPortraitLayerMounted] = useState(false);
   const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
-  const [hasPortraitBeenOpened, setHasPortraitBeenOpened] = useState(false);
+  const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
+  const [viewedStoryCount, setViewedStoryCount] = useState(0);
 
   useEffect(() => {
     if (hasStaticPortrait) {
@@ -78,16 +79,32 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               type="button"
               className={`portrait-trigger h-10 w-10 sm:h-[54px] sm:w-[54px] group ${
                 isPortraitRingVisible ? "is-ring-visible" : ""
-              } ${hasPortraitBeenOpened ? "is-ring-seen" : ""}`}
-              aria-label={showAltPortrait ? "Hide Chord Tulza preview" : "Show Chord Tulza preview"}
+              } ${viewedStoryCount === 2 ? "are-stories-seen" : ""}`}
+              aria-label={
+                activeStoryIndex === 0
+                  ? "Show Tulzy story"
+                  : activeStoryIndex === 1
+                    ? "Close Tulzy story"
+                    : "Show Chord Tulza story"
+              }
               onClick={() => {
-                setHasPortraitBeenOpened(true);
-                if (showAltPortrait || isPortraitLayerMounted) {
-                  setShowAltPortrait(false);
-                  window.setTimeout(() => setIsPortraitLayerMounted(false), 540);
+                if (activeStoryIndex === 0) {
+                  setActiveStoryIndex(1);
+                  setViewedStoryCount(2);
                   return;
                 }
 
+                if (activeStoryIndex === 1) {
+                  setShowAltPortrait(false);
+                  window.setTimeout(() => {
+                    setIsPortraitLayerMounted(false);
+                    setActiveStoryIndex(null);
+                  }, 540);
+                  return;
+                }
+
+                setActiveStoryIndex(0);
+                setViewedStoryCount((count) => Math.max(count, 1));
                 setIsPortraitLayerMounted(true);
                 window.requestAnimationFrame(() => {
                   window.requestAnimationFrame(() => setShowAltPortrait(true));
@@ -96,8 +113,18 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
             >
               <span className="story-ring" aria-hidden="true">
                 <svg viewBox="0 0 64 64">
-                  <circle className="story-ring-track" cx="32" cy="32" r="29" />
-                  <circle className="story-ring-progress" cx="32" cy="32" r="29" />
+                  <circle
+                    className={`story-ring-segment story-ring-segment-first ${viewedStoryCount >= 1 ? "is-seen" : ""}`}
+                    cx="32"
+                    cy="32"
+                    r="29"
+                  />
+                  <circle
+                    className={`story-ring-segment story-ring-segment-second ${viewedStoryCount >= 2 ? "is-seen" : ""}`}
+                    cx="32"
+                    cy="32"
+                    r="29"
+                  />
                   <circle className="story-ring-cover" cx="32" cy="32" r="29" />
                 </svg>
               </span>
@@ -141,35 +168,47 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
         {!hasStaticPortrait && isPortraitLayerMounted ? (
           <div className={`portrait-animation-layer ${showAltPortrait ? "is-open" : ""}`}>
             <div
-              className={`portrait-video-panel chord-story-panel ${showAltPortrait ? "is-open" : ""}`}
+              className={`portrait-video-panel project-story-panel ${showAltPortrait ? "is-open" : ""}`}
             >
-              <div className="chord-story-preview">
-                <video
-                  src="/assets/video/compressed/chord-tulza-story-preview.webm"
-                  poster="/assets/video/compressed/chord-tulza-story-preview-poster.jpg"
-                  aria-label="Chord Tulza preview"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="auto"
-                />
-              </div>
-              <div className="chord-story-copy">
-                <div className="chord-story-heading">
-                  <ChordTulzaLogo className="chord-story-logo" />
-                  <h2>Chord Tulza</h2>
+              <div className="project-story-content" key={activeStoryIndex}>
+                <div className="project-story-preview">
+                  {activeStoryIndex === 1 ? (
+                    <img src="/assets/tulzy-story-preview.png" alt="Tulzy project gallery preview" />
+                  ) : (
+                    <video
+                      src="/assets/video/compressed/chord-tulza-story-preview.webm"
+                      poster="/assets/video/compressed/chord-tulza-story-preview-poster.jpg"
+                      aria-label="Chord Tulza preview"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="auto"
+                    />
+                  )}
                 </div>
-                <p>
-                  A fully vibe-coded chord workspace for sketching progressions, trying song ideas, and keeping music
-                  drafts close while I write.
-                </p>
-                <a href="https://chords.venyavekk.com" target="_blank" rel="noopener noreferrer" className="chord-story-cta">
-                  Open
-                  <svg className="chord-story-cta-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M4 12L12 4M12 4H5.5M12 4V10.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </a>
+                <div className="project-story-copy">
+                  <div className="project-story-heading">
+                    {activeStoryIndex === 0 ? <ChordTulzaLogo className="project-story-logo" /> : null}
+                    <h2>{activeStoryIndex === 1 ? "Tulzy" : "Chord Tulza"}</h2>
+                  </div>
+                  <p>
+                    {activeStoryIndex === 1
+                      ? "A curated gallery of useful AI-built tools created by designers."
+                      : "A fully vibe-coded chord workspace for sketching progressions, trying song ideas, and keeping music drafts close while I write."}
+                  </p>
+                  <a
+                    href={activeStoryIndex === 1 ? "https://tools.venyavekk.com/" : "https://chords.venyavekk.com"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="project-story-cta"
+                  >
+                    Open
+                    <svg className="project-story-cta-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M4 12L12 4M12 4H5.5M12 4V10.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
