@@ -274,14 +274,14 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                       />
                       <span>Tulzy</span>
                     </ExternalLink>
-                    <span className="intro-ai-project-chip">
+                    <span className="intro-ai-project-chip intro-ai-project-chip-headrush">
                       <img
                         src="/assets/headrush-logo.png"
                         alt=""
-                        className="intro-ai-project-logo intro-ai-project-logo-headrush"
+                        className="intro-ai-project-logo-headrush"
                         aria-hidden="true"
                       />
-                      <span>HeadRush Skill</span>
+                      <span>Skill</span>
                     </span>
                   </div>
                 </div>

@@ -505,12 +505,14 @@ a:hover {
 
 .intro-ai-project-logo-headrush {
   display: block;
-  width: 34px;
-  height: 24px;
-  flex: 0 0 34px;
-  border-radius: 0;
-  background: transparent;
+  width: 62px;
+  height: 10px;
+  flex: 0 0 62px;
   object-fit: contain;
+}
+
+.intro-ai-project-chip-headrush {
+  padding-left: 10px;
 }
 
 @media (prefers-color-scheme: dark) {
