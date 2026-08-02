@@ -200,15 +200,48 @@ a:hover {
   }
 }
 
-.vv-storydeck-card {
+.vv-storydeck-slot {
+  display: grid;
+  grid-template-rows: 0fr;
   width: 100%;
-  overflow: hidden;
+  margin-bottom: 0;
+  transition: grid-template-rows 480ms cubic-bezier(0.2, 0.8, 0.2, 1), margin-bottom 480ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.vv-storydeck-slot.is-open {
+  grid-template-rows: 1fr;
   margin-bottom: 22px;
+}
+
+.vv-storydeck-card {
+  min-height: 0;
+  overflow: hidden;
   border-radius: 28px;
   background: #0a0a0a;
-  padding: 22px 22px 34px;
+  padding: 0 22px;
   color: #fff;
   text-align: left;
+  transform: scale(1);
+  transform-origin: center;
+  visibility: hidden;
+  transition: padding 480ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 480ms,
+    transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vv-storydeck-slot.is-open .vv-storydeck-card {
+  padding: 22px 22px 34px;
+  visibility: visible;
+  transition: padding 480ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0s,
+    transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vv-storydeck-card.is-shrinking {
+  transform: scale(0.9);
+}
+
+.vv-storydeck-card.is-growing,
+.vv-storydeck-card.is-idle {
+  transform: scale(1);
 }
 
 .vv-storydeck-preview {
@@ -727,7 +760,7 @@ a:hover {
 }
 
 @media (max-width: 520px) {
-  .vv-storydeck-card {
+  .vv-storydeck-slot.is-open .vv-storydeck-card {
     padding: 16px 16px 30px;
   }
 

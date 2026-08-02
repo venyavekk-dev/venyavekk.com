@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 
 type StoryId = "chords" | "tulzy";
+type SwitchStep = "idle" | "shrinking" | "growing";
 
 type Story = {
   id: StoryId;
@@ -38,36 +39,54 @@ const storyList: readonly Story[] = [
 ];
 
 export type StoryDeckController = {
-  currentStory: StoryId | null;
+  currentStory: StoryId;
+  isOpen: boolean;
+  switchStep: SwitchStep;
   viewed: readonly [boolean, boolean];
   advance: () => void;
+  finishSwitchStep: () => void;
 };
 
 export function useStoryDeck(disabled = false): StoryDeckController {
-  const [currentStory, setCurrentStory] = useState<StoryId | null>(null);
+  const [currentStory, setCurrentStory] = useState<StoryId>("chords");
+  const [isOpen, setIsOpen] = useState(false);
+  const [switchStep, setSwitchStep] = useState<SwitchStep>("idle");
   const [viewed, setViewed] = useState<[boolean, boolean]>([false, false]);
 
   const advance = useCallback(() => {
-    if (disabled) {
+    if (disabled || switchStep !== "idle") {
       return;
     }
 
-    if (currentStory === null) {
-      setViewed((current) => [true, current[1]]);
+    if (!isOpen) {
       setCurrentStory("chords");
+      setViewed((current) => [true, current[1]]);
+      setIsOpen(true);
       return;
     }
 
     if (currentStory === "chords") {
       setViewed([true, true]);
-      setCurrentStory("tulzy");
+      setSwitchStep("shrinking");
       return;
     }
 
-    setCurrentStory(null);
-  }, [currentStory, disabled]);
+    setIsOpen(false);
+  }, [currentStory, disabled, isOpen, switchStep]);
 
-  return { currentStory, viewed, advance };
+  const finishSwitchStep = useCallback(() => {
+    if (switchStep === "shrinking") {
+      setCurrentStory("tulzy");
+      setSwitchStep("growing");
+      return;
+    }
+
+    if (switchStep === "growing") {
+      setSwitchStep("idle");
+    }
+  }, [switchStep]);
+
+  return { currentStory, isOpen, switchStep, viewed, advance, finishSwitchStep };
 }
 
 type StoryDeckAvatarProps = {
@@ -95,11 +114,11 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
   }
 
   const label =
-    controller.currentStory === "chords"
+    !controller.isOpen
+      ? "Show Chord Tulza story"
+      : controller.currentStory === "chords"
       ? "Show Tulzy story"
-      : controller.currentStory === "tulzy"
-        ? "Close Tulzy story"
-        : "Show Chord Tulza story";
+      : "Close Tulzy story";
 
   return (
     <button
@@ -107,6 +126,7 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
       className="vv-storydeck-avatar h-10 w-10 sm:h-[54px] sm:w-[54px] group"
       aria-label={label}
       onClick={controller.advance}
+      disabled={controller.switchStep !== "idle"}
     >
       <span className="vv-storydeck-ring" aria-hidden="true">
         <svg viewBox="0 0 64 64">
@@ -132,52 +152,66 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
 }
 
 export function StoryDeckCard({ controller }: { controller: StoryDeckController }) {
-  if (controller.currentStory === null) {
-    return null;
-  }
-
   const story = storyList.find((item) => item.id === controller.currentStory);
   if (!story) {
     return null;
   }
 
   return (
-    <article className="vv-storydeck-card" aria-live="polite">
-      <div className="vv-storydeck-preview">
-        {story.video ? (
-          <video
-            src={story.video}
-            poster={story.poster}
-            aria-label={`${story.title} preview`}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-          />
-        ) : (
-          <img src={story.image} alt={story.imageAlt ?? ""} />
-        )}
-      </div>
-      <div className="vv-storydeck-copy">
-        <div className="vv-storydeck-heading">
-          {story.logo ? <img src={story.logo} alt="" className="vv-storydeck-logo" aria-hidden="true" /> : null}
-          <h2>{story.title}</h2>
+    <div
+      className={`vv-storydeck-slot ${controller.isOpen ? "is-open" : ""}`}
+      aria-hidden={!controller.isOpen}
+      inert={!controller.isOpen ? true : undefined}
+    >
+      <article
+        className={`vv-storydeck-card is-${controller.switchStep}`}
+        aria-live="polite"
+        onTransitionEnd={(event) => {
+          if (event.currentTarget === event.target && event.propertyName === "transform") {
+            controller.finishSwitchStep();
+          }
+        }}
+      >
+        <div
+          className="vv-storydeck-sheet"
+        >
+          <div className="vv-storydeck-preview">
+            {story.video ? (
+              <video
+                src={story.video}
+                poster={story.poster}
+                aria-label={`${story.title} preview`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+              />
+            ) : (
+              <img src={story.image} alt={story.imageAlt ?? ""} />
+            )}
+          </div>
+          <div className="vv-storydeck-copy">
+            <div className="vv-storydeck-heading">
+              {story.logo ? <img src={story.logo} alt="" className="vv-storydeck-logo" aria-hidden="true" /> : null}
+              <h2>{story.title}</h2>
+            </div>
+            <p>{story.description}</p>
+            <a href={story.href} target="_blank" rel="noopener noreferrer" className="vv-storydeck-link">
+              Open
+              <svg className="vv-storydeck-link-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path
+                  d="M4 12L12 4M12 4H5.5M12 4V10.5"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
         </div>
-        <p>{story.description}</p>
-        <a href={story.href} target="_blank" rel="noopener noreferrer" className="vv-storydeck-link">
-          Open
-          <svg className="vv-storydeck-link-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path
-              d="M4 12L12 4M12 4H5.5M12 4V10.5"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </a>
-      </div>
-    </article>
+      </article>
+    </div>
   );
 }
