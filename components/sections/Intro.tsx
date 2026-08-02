@@ -2,11 +2,7 @@
 
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { ContactChips } from "@/components/ui/ContactChips";
-import {
-  PortfolioStoryPanel,
-  PortfolioStoryTrigger,
-  usePortfolioStories
-} from "@/components/ui/PortfolioStories";
+import { StoryDeckAvatar, StoryDeckCard, useStoryDeck } from "@/components/ui/StoryDeck";
 import { filmArtistDescription, filmLinks } from "@/lib/film-data";
 import { links } from "@/lib/data";
 import { musicArtistDescription, musicPlatformLinks } from "@/lib/music-data";
@@ -27,7 +23,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const isFilms = activeSection === "films";
   const showHobbies = false;
   const hasStaticPortrait = isMusic || isFilms || disablePortraitEffects;
-  const portfolioStories = usePortfolioStories(hasStaticPortrait);
+  const storyDeck = useStoryDeck(hasStaticPortrait);
 
   const travelStops = [
     { flag: "🇬🇧", label: "England" },
@@ -50,7 +46,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
     <section className={`intro-section grid gap-8 pb-12 pt-0 text-body sm:grid-cols-[minmax(210px,0.5fr)_minmax(0,1.5fr)] sm:pt-6 sm:pb-16 lg:gap-12 ${className}`}>
       <aside className="self-start sm:sticky sm:top-5">
         <div className="mobile-identity flex max-w-[220px] flex-col items-start gap-3">
-          <PortfolioStoryTrigger controller={portfolioStories} isStatic={hasStaticPortrait} />
+          <StoryDeckAvatar controller={storyDeck} isStatic={hasStaticPortrait} />
           <div className="space-y-0.5">
             <h1 className="font-semibold">Veniamin Vekk</h1>
             <p>
@@ -77,8 +73,8 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
       </aside>
 
       <div className="intro-frame relative max-w-[620px] text-bio sm:pt-[66px]">
-        <PortfolioStoryPanel controller={portfolioStories} />
-        <div className={`intro-content-flow space-y-8 ${portfolioStories.isOpen ? "is-centered" : ""}`}>
+        <StoryDeckCard controller={storyDeck} />
+        <div className="intro-content-flow space-y-8">
           {isMusic ? (
             <>
               <div className="intro-copy-block space-y-8">
