@@ -325,6 +325,115 @@ a:hover {
   font-size: 0.82em;
 }
 
+.intro-ai-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.34em;
+}
+
+.intro-ai-tool-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.08em + 1px);
+}
+
+.intro-ai-brand-logo {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-ai-brand-logo-codex img {
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.intro-ai-brand-logo-claude {
+  color: #d97757;
+  cursor: pointer;
+}
+
+.intro-ai-brand-logo-claude img {
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.intro-ai-project-ribbon {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+  width: max-content;
+  max-width: 100%;
+}
+
+.intro-ai-project-chip {
+  display: inline-flex;
+  min-height: 32px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  padding: 3px 11px 3px 4px;
+  font-size: 0.76em;
+  line-height: 1;
+  opacity: 0.82;
+  transition: opacity 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.intro-ai-project-chip:hover {
+  color: var(--foreground);
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.intro-ai-project-logo {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  object-fit: contain;
+  line-height: 1;
+}
+
+.intro-ai-project-logo-chord {
+  background: #080808;
+}
+
+.intro-ai-project-logo-tulzy {
+  background: transparent;
+  object-fit: contain;
+}
+
+.intro-ai-project-logo-headrush {
+  display: block;
+  width: 62px;
+  height: 10px;
+  flex: 0 0 62px;
+  object-fit: contain;
+}
+
+.intro-ai-project-chip-headrush {
+  padding-left: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .intro-ai-project-logo-tulzy,
+  .intro-ai-project-logo-headrush {
+    filter: invert(1);
+  }
+}
+
 .tool-chip {
   display: inline-flex;
   width: fit-content;
@@ -839,6 +948,19 @@ a:hover {
 
   .project-copy {
     font-size: 15px;
+  }
+
+  .intro-ai-project-ribbon {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 0 8px 1px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .intro-ai-project-ribbon::-webkit-scrollbar {
+    display: none;
   }
 
   .project-card {
