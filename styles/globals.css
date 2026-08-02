@@ -401,38 +401,67 @@ a:hover {
 
 .intro-ai-brand-logo {
   display: inline-flex;
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
 }
 
-.intro-ai-brand-logo svg {
-  width: 14px;
-  height: 14px;
-  stroke: currentColor;
-  stroke-linecap: round;
-}
-
-.intro-ai-brand-logo-codex {
-  background: #111111;
-  color: #ffffff;
-}
-
-.intro-ai-brand-logo-codex svg {
-  stroke-width: 1.15;
-  stroke-linejoin: round;
+.intro-ai-brand-logo-codex img {
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 
 .intro-ai-brand-logo-claude {
-  background: #d97757;
-  color: #fff8ef;
+  color: #d97757;
+  cursor: pointer;
 }
 
 .intro-ai-brand-logo-claude svg {
-  stroke-width: 1.65;
+  width: 22px;
+  height: 22px;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 2.45;
+  stroke-linecap: round;
+}
+
+.claude-ray {
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+  transform: rotate(var(--ray-angle));
+}
+
+.claude-ray-1 { --ray-angle: 0deg; }
+.claude-ray-2 { --ray-angle: 45deg; }
+.claude-ray-3 { --ray-angle: 90deg; }
+.claude-ray-4 { --ray-angle: 135deg; }
+.claude-ray-5 { --ray-angle: 180deg; }
+.claude-ray-6 { --ray-angle: 225deg; }
+.claude-ray-7 { --ray-angle: 270deg; }
+.claude-ray-8 { --ray-angle: 315deg; }
+
+.intro-ai-brand-logo-claude svg.is-morphing .claude-ray:nth-child(odd) {
+  animation: claude-ray-morph-a 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.intro-ai-brand-logo-claude svg.is-morphing .claude-ray:nth-child(even) {
+  animation: claude-ray-morph-b 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes claude-ray-morph-a {
+  0%, 100% { transform: rotate(var(--ray-angle)) scaleY(1); }
+  38% { transform: rotate(calc(var(--ray-angle) + 11deg)) scaleY(1.48); }
+  68% { transform: rotate(calc(var(--ray-angle) - 5deg)) scaleY(0.76); }
+}
+
+@keyframes claude-ray-morph-b {
+  0%, 100% { transform: rotate(var(--ray-angle)) scaleY(1); }
+  38% { transform: rotate(calc(var(--ray-angle) - 9deg)) scaleY(0.72); }
+  68% { transform: rotate(calc(var(--ray-angle) + 6deg)) scaleY(1.38); }
 }
 
 .intro-ai-project-ribbon {

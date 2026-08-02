@@ -21,21 +21,30 @@ function ChordTulzaLogo({ className = "" }: { className?: string }) {
 function CodexLogo({ className = "" }: { className?: string }) {
   return (
     <span className={`intro-ai-brand-logo intro-ai-brand-logo-codex ${className}`} aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M12 3.25a3.9 3.9 0 0 1 3.38 1.95l3.87 6.7a3.9 3.9 0 0 1 0 3.9 3.9 3.9 0 0 1-3.38 1.95H8.13a3.9 3.9 0 0 1-3.38-1.95 3.9 3.9 0 0 1 0-3.9l3.87-6.7A3.9 3.9 0 0 1 12 3.25Z" />
-        <path d="m8.62 5.2 3.38 1.95 3.38-1.95m3.87 6.7-3.38 1.95v3.9M4.75 11.9l3.38 1.95v3.9M12 7.15v3.9m0 0-3.87 2.8m3.87-2.8 3.87 2.8" />
-      </svg>
+      <img src="/assets/codex-mark.png" alt="" />
     </span>
   );
 }
 
-function ClaudeLogo({ className = "" }: { className?: string }) {
+function ClaudeLogo({ morphKey, onClick, className = "" }: { morphKey: number; onClick: () => void; className?: string }) {
   return (
-    <span className={`intro-ai-brand-logo intro-ai-brand-logo-claude ${className}`} aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M12 4v16M4 12h16M6.5 6.5l11 11m0-11-11 11M9.2 4.6l5.6 14.8M4.6 9.2l14.8 5.6M14.8 4.6 9.2 19.4M19.4 9.2 4.6 14.8" />
+    <button
+      type="button"
+      className={`intro-ai-brand-logo intro-ai-brand-logo-claude ${className}`}
+      aria-label="Animate Claude logo"
+      onClick={onClick}
+    >
+      <svg viewBox="0 0 24 24" fill="none" className={morphKey > 0 ? "is-morphing" : ""} key={morphKey} aria-hidden="true">
+        <line className="claude-ray claude-ray-1" x1="12" y1="3.25" x2="12" y2="9.1" />
+        <line className="claude-ray claude-ray-2" x1="12" y1="3.25" x2="12" y2="9.1" />
+        <line className="claude-ray claude-ray-3" x1="12" y1="3.25" x2="12" y2="9.1" />
+        <line className="claude-ray claude-ray-4" x1="12" y1="3.25" x2="12" y2="9.1" />
+        <line className="claude-ray claude-ray-5" x1="12" y1="3.25" x2="12" y2="9.1" />
+        <line className="claude-ray claude-ray-6" x1="12" y1="3.25" x2="12" y2="9.1" />
+        <line className="claude-ray claude-ray-7" x1="12" y1="3.25" x2="12" y2="9.1" />
+        <line className="claude-ray claude-ray-8" x1="12" y1="3.25" x2="12" y2="9.1" />
       </svg>
-    </span>
+    </button>
   );
 }
 
@@ -48,6 +57,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const [isPortraitLayerMounted, setIsPortraitLayerMounted] = useState(false);
   const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
   const [hasPortraitBeenOpened, setHasPortraitBeenOpened] = useState(false);
+  const [claudeLogoMorphKey, setClaudeLogoMorphKey] = useState(0);
 
   useEffect(() => {
     if (hasStaticPortrait) {
@@ -242,14 +252,14 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               <div className="intro-meta-block space-y-8">
                 <div className="intro-ai-block space-y-2">
                   <p className="intro-ai-credit">
-                    Made with <ClaudeLogo /> Claude and <CodexLogo /> Codex
+                    Made with <ClaudeLogo morphKey={claudeLogoMorphKey} onClick={() => setClaudeLogoMorphKey((key) => key + 1)} /> Claude and <CodexLogo /> Codex
                   </p>
                   <div className="intro-ai-project-ribbon" aria-label="Independent AI projects">
                     <ExternalLink href="https://chords.venyavekk.com" className="intro-ai-project-chip">
                       <ChordTulzaLogo className="intro-ai-project-logo intro-ai-project-logo-chord" />
                       <span>Chord Tulza</span>
                     </ExternalLink>
-                    <ExternalLink href="https://github.com/venyavekk-dev/tulzy" className="intro-ai-project-chip">
+                    <ExternalLink href="https://tools.venyavekk.com" className="intro-ai-project-chip">
                       <span className="intro-ai-project-logo intro-ai-project-logo-tulzy" aria-hidden="true">Т</span>
                       <span>Tulzy</span>
                     </ExternalLink>
