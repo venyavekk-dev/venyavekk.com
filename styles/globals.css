@@ -402,7 +402,7 @@ a:hover {
 .intro-ai-tool-pair {
   display: inline-flex;
   align-items: center;
-  gap: 0.08em;
+  gap: calc(0.08em + 1px);
 }
 
 .intro-ai-brand-logo {
@@ -421,8 +421,8 @@ a:hover {
   object-fit: contain;
 }
 
-.intro-ai-brand-logo-codex img.is-spinning {
-  animation: codex-logo-spin 720ms cubic-bezier(0.22, 1, 0.36, 1);
+.intro-ai-brand-logo-codex img.is-pulsing {
+  animation: codex-logo-pulse 620ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .intro-ai-brand-logo-claude {
@@ -441,10 +441,10 @@ a:hover {
   animation: claude-logo-morph 680ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@keyframes codex-logo-spin {
-  0% { transform: rotate(0deg) scale(1); }
-  55% { transform: rotate(285deg) scale(1.12); }
-  100% { transform: rotate(360deg) scale(1); }
+@keyframes codex-logo-pulse {
+  0%, 100% { transform: scale(1); }
+  48% { transform: scale(1.2); }
+  72% { transform: scale(0.96); }
 }
 
 @keyframes claude-logo-morph {

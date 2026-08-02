@@ -18,15 +18,15 @@ function ChordTulzaLogo({ className = "" }: { className?: string }) {
   return <img src="/assets/chord-tulza-logo.svg" alt="" className={className} aria-hidden="true" />;
 }
 
-function CodexLogo({ spinKey, onClick, className = "" }: { spinKey: number; onClick: () => void; className?: string }) {
+function CodexLogo({ pulseKey, onClick, className = "" }: { pulseKey: number; onClick: () => void; className?: string }) {
   return (
     <button
       type="button"
       className={`intro-ai-brand-logo intro-ai-brand-logo-codex ${className}`}
-      aria-label="Spin Codex logo"
+      aria-label="Animate Codex logo"
       onClick={onClick}
     >
-      <img src="/assets/codex-mark.png" alt="" className={spinKey > 0 ? "is-spinning" : ""} key={spinKey} />
+      <img src="/assets/codex-mark.png" alt="" className={pulseKey > 0 ? "is-pulsing" : ""} key={pulseKey} />
     </button>
   );
 }
@@ -54,7 +54,7 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
   const [isPortraitRingVisible, setIsPortraitRingVisible] = useState(false);
   const [hasPortraitBeenOpened, setHasPortraitBeenOpened] = useState(false);
   const [claudeLogoMorphKey, setClaudeLogoMorphKey] = useState(0);
-  const [codexLogoSpinKey, setCodexLogoSpinKey] = useState(0);
+  const [codexLogoPulseKey, setCodexLogoPulseKey] = useState(0);
 
   useEffect(() => {
     if (hasStaticPortrait) {
@@ -249,14 +249,14 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               <div className="intro-meta-block space-y-8">
                 <div className="intro-ai-block space-y-2">
                   <p className="intro-ai-credit">
-                    <span>Made with</span>
+                    <span>Built with</span>
                     <span className="intro-ai-tool-pair">
                       <ClaudeLogo morphKey={claudeLogoMorphKey} onClick={() => setClaudeLogoMorphKey((key) => key + 1)} />
                       <span>Claude</span>
                     </span>
                     <span>and</span>
                     <span className="intro-ai-tool-pair">
-                      <CodexLogo spinKey={codexLogoSpinKey} onClick={() => setCodexLogoSpinKey((key) => key + 1)} />
+                      <CodexLogo pulseKey={codexLogoPulseKey} onClick={() => setCodexLogoPulseKey((key) => key + 1)} />
                       <span>Codex</span>
                     </span>
                   </p>
