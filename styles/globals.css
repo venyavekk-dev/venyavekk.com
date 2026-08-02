@@ -499,19 +499,25 @@ a:hover {
 }
 
 .intro-ai-project-logo-tulzy {
-  background: #1c1c1c;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 600;
+  background: transparent;
+  object-fit: contain;
 }
 
 .intro-ai-project-logo-headrush {
-  background: #111111;
-  color: #ffffff;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: -0.06em;
+  display: block;
+  width: 34px;
+  height: 24px;
+  flex: 0 0 34px;
+  border-radius: 0;
+  background: transparent;
+  object-fit: contain;
+}
+
+@media (prefers-color-scheme: dark) {
+  .intro-ai-project-logo-tulzy,
+  .intro-ai-project-logo-headrush {
+    filter: invert(1);
+  }
 }
 
 .tool-chip {

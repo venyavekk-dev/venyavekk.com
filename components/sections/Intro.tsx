@@ -266,11 +266,21 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                       <span>Chords</span>
                     </ExternalLink>
                     <ExternalLink href="https://tools.venyavekk.com" className="intro-ai-project-chip">
-                      <span className="intro-ai-project-logo intro-ai-project-logo-tulzy" aria-hidden="true">Т</span>
+                      <img
+                        src="https://tools.venyavekk.com/favicon.png"
+                        alt=""
+                        className="intro-ai-project-logo intro-ai-project-logo-tulzy"
+                        aria-hidden="true"
+                      />
                       <span>Tulzy</span>
                     </ExternalLink>
                     <span className="intro-ai-project-chip">
-                      <span className="intro-ai-project-logo intro-ai-project-logo-headrush" aria-hidden="true">HR</span>
+                      <img
+                        src="/assets/headrush-logo.png"
+                        alt=""
+                        className="intro-ai-project-logo intro-ai-project-logo-headrush"
+                        aria-hidden="true"
+                      />
                       <span>HeadRush Skill</span>
                     </span>
                   </div>
