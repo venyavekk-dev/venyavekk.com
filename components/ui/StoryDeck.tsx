@@ -151,7 +151,7 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
       : `Close ${storyList[controller.activeIndex].title} story`;
   const segmentSpan = 360 / storyList.length;
   const segmentGap = segmentSpan * 0.02;
-  const segmentDuration = Math.max(180, 1120 / storyList.length);
+  const segmentDuration = Math.max(180, 600 / storyList.length);
 
   return (
     <button
