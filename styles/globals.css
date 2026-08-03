@@ -136,18 +136,34 @@ a:hover {
 
 .vv-storydeck-avatar {
   position: relative;
+  display: inline-grid;
+  place-items: center;
   overflow: visible;
   border-radius: 999px;
 }
 
-.vv-storydeck-avatar > img {
+.vv-storydeck-portrait {
   position: relative;
   z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.vv-storydeck-portrait > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
 }
 
 .vv-storydeck-ring {
   position: absolute;
-  inset: -8px;
+  inset: -6px;
   z-index: 0;
   display: block;
   pointer-events: none;
@@ -885,19 +901,7 @@ a:hover {
   }
 
   .mobile-identity .vv-storydeck-avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     flex: 0 0 auto;
-  }
-
-  .mobile-identity .vv-storydeck-avatar > img {
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
-    max-width: none;
-    aspect-ratio: 1;
-    flex: 0 0 auto;
-    margin: 0;
   }
 
   .mobile-identity > div {

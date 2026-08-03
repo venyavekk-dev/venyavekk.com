@@ -123,13 +123,17 @@ type StoryDeckAvatarProps = {
 
 export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvatarProps) {
   const portrait = (
-    <img
-      src="/assets/zhoGyz3txRaZFjgEq7BreUwhbQ.jpeg"
-      width={54}
-      height={54}
-      alt={isStatic ? "" : "Veniamin Vekk portrait"}
-      className={`h-full w-full rounded-full object-cover ${isStatic ? "" : "group-hover:scale-95 group-active:scale-[0.93]"}`}
-    />
+    <span
+      className={`vv-storydeck-portrait ${isStatic ? "" : "group-hover:scale-95 group-active:scale-[0.93]"}`}
+    >
+      <img
+        src="/assets/zhoGyz3txRaZFjgEq7BreUwhbQ.jpeg"
+        width={54}
+        height={54}
+        alt={isStatic ? "" : "Veniamin Vekk portrait"}
+        className="h-full w-full object-cover"
+      />
+    </span>
   );
 
   if (isStatic) {
@@ -150,8 +154,8 @@ export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvata
       ? `Show ${nextStory.title} story`
       : `Close ${storyList[controller.activeIndex].title} story`;
   const segmentSpan = 360 / storyList.length;
-  const segmentGap = segmentSpan * 0.04;
-  const segmentDuration = Math.max(180, 1120 / storyList.length);
+  const segmentGap = segmentSpan * 0.02;
+  const segmentDuration = Math.max(180, 600 / storyList.length);
 
   return (
     <button
