@@ -123,13 +123,15 @@ type StoryDeckAvatarProps = {
 
 export function StoryDeckAvatar({ controller, isStatic = false }: StoryDeckAvatarProps) {
   const portrait = (
-    <img
-      src="/assets/zhoGyz3txRaZFjgEq7BreUwhbQ.jpeg"
-      width={54}
-      height={54}
-      alt={isStatic ? "" : "Veniamin Vekk portrait"}
-      className={`h-full w-full rounded-full object-cover ${isStatic ? "" : "group-hover:scale-95 group-active:scale-[0.93]"}`}
-    />
+    <span className="vv-storydeck-portrait">
+      <img
+        src="/assets/zhoGyz3txRaZFjgEq7BreUwhbQ.jpeg"
+        width={54}
+        height={54}
+        alt={isStatic ? "" : "Veniamin Vekk portrait"}
+        className={`h-full w-full object-cover ${isStatic ? "" : "group-hover:scale-95 group-active:scale-[0.93]"}`}
+      />
+    </span>
   );
 
   if (isStatic) {
