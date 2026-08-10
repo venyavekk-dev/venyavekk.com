@@ -176,34 +176,11 @@ a:hover {
   overflow: visible;
 }
 
-.vv-storydeck-segment {
+.vv-storydeck-line {
   fill: none;
   stroke: #3777ff;
   stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-dasharray: 0 1;
   vector-effect: non-scaling-stroke;
-  animation: vv-storydeck-fill-segment var(--vv-storydeck-duration) linear var(--vv-storydeck-delay) both;
-}
-
-.vv-storydeck-segment.is-viewed {
-  stroke: color-mix(in srgb, var(--muted) 52%, transparent);
-}
-
-@keyframes vv-storydeck-fill-segment {
-  0% {
-    opacity: 0;
-    stroke-dasharray: 0 1;
-  }
-
-  2% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 1;
-    stroke-dasharray: 1 1;
-  }
 }
 
 .vv-storydeck-slot {
