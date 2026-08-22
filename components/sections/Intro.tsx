@@ -139,13 +139,6 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
               <div className="intro-copy-block space-y-8">
                 {musicArtistDescription.split("\n\n").map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </div>
-              <div className="intro-tools-block">
-                <p className="intro-tools-label">Instruments</p>
-                <a href="https://chords.venyavekk.com" target="_blank" rel="noopener noreferrer" className="tool-chip">
-                  <ChordTulzaLogo className="tool-chip-logo" />
-                  <span>Chord Tulza</span>
-                </a>
-              </div>
               <div className="intro-meta-block">
                 <ContactChips links={musicPlatformLinks} ariaLabel="Music platforms" />
               </div>
