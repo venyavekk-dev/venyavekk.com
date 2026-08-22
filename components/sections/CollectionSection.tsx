@@ -142,7 +142,9 @@ function MusicItem({
             />
           </button>
         ) : item.image ? (
-          <img src={item.image} width={44} height={44} alt="" className="music-row-cover" />
+          <span className="music-cover-frame">
+            <img src={item.image} width={44} height={44} alt="" className="music-row-cover" />
+          </span>
         ) : null}
         <div className="min-w-0">
           <h3 className="font-semibold">

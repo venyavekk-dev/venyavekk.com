@@ -15,8 +15,7 @@ export const musicPlatformLinks = [
   {
     label: "Yandex Music",
     href: "https://music.yandex.ru/artist/16974538",
-    icon: `${music}/platforms/yandex-music.svg`,
-    preserveIconColors: true
+    icon: `${music}/platforms/yandex-music.svg`
   },
   { label: "Apple Music", href: "https://music.apple.com/us/artist/venya-vekk/1631904055", icon: `${music}/platforms/apple-music.svg` },
   {

@@ -2,7 +2,7 @@ import { ExternalLink } from "@/components/ui/ExternalLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import Image from "next/image";
 
-type ChipLink = { label: string; href: string; icon?: string; preserveIconColors?: boolean };
+type ChipLink = { label: string; href: string; icon?: string };
 
 type ContactChipsProps = {
   links: readonly ChipLink[];
@@ -22,7 +22,7 @@ export function ContactChips({ links, showEmail = false, className = "", ariaLab
               alt=""
               width={16}
               height={16}
-              className={`soft-chip-icon ${link.preserveIconColors ? "preserve-colors" : ""}`.trim()}
+              className="soft-chip-icon"
               aria-hidden="true"
             />
           ) : null}

@@ -674,6 +674,24 @@ a:hover {
   height: 88px;
   border-radius: 6px;
   object-fit: cover;
+  transition: filter 180ms ease, transform 180ms ease;
+}
+
+.music-cover-frame {
+  display: block;
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.music-cover-frame .music-row-cover {
+  display: block;
+}
+
+.music-row.is-locked .music-row-cover {
+  filter: blur(7px);
+  transform: scale(1.12);
 }
 
 .music-preview-button {
@@ -836,6 +854,11 @@ a:hover {
     height: 64px;
   }
 
+  .music-cover-frame {
+    width: 64px;
+    height: 64px;
+  }
+
   .music-preview-button {
     width: 64px;
     height: 64px;
@@ -909,12 +932,6 @@ a:hover {
   height: 16px;
   flex: 0 0 16px;
   object-fit: contain;
-}
-
-@media (prefers-color-scheme: dark) {
-  .soft-chip-icon:not(.preserve-colors) {
-    filter: invert(0.68);
-  }
 }
 
 .email-copy-chip {
