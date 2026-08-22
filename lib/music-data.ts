@@ -20,7 +20,7 @@ export const musicSections: CollectionSectionData[] = [
     title: "Выйти из Айти",
     role: "Album",
     years: "2026",
-    audience: ["2 of 12 tracks released", "album countdown"],
+    audience: ["3 of 12 tracks released", "album countdown"],
     cover: `${music}/leave-it.webp`,
     items: [
       {
@@ -43,7 +43,15 @@ export const musicSections: CollectionSectionData[] = [
       { title: "Ценник для своих", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:47", status: "locked", videoPlanned: true },
       { title: "Айтишник", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "03:29", status: "locked", videoPlanned: true },
       { title: "Падает листва", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:39", status: "locked", videoPlanned: true },
-      { title: "Минус вайб", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "03:11", status: "locked", videoPlanned: true },
+      {
+        title: "Минус вайб",
+        description: "Веня Векк",
+        href: "https://band.link/minus_vekk",
+        image: `${music}/minus-vibe.png`,
+        duration: "03:24",
+        videoUrl: "https://www.youtube.com/watch?v=PIDp5vOmsL8",
+        previewUrl: `${music}/minus-vibe-preview.mp3`
+      },
       { title: "Мой стыд", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:56", status: "locked", videoPlanned: true },
       { title: "Пепел", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "03:33", status: "locked", videoPlanned: true },
       { title: "Большой вопрос", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:44", status: "locked", videoPlanned: true },

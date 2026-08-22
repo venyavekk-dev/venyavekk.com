@@ -2,7 +2,7 @@
 
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { YouTubeIcon } from "@/components/ui/YouTubeIcon";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export type CollectionItem = {
   title: string;
@@ -15,6 +15,7 @@ export type CollectionItem = {
   videoUrl?: string;
   videoMode?: "embed" | "external";
   videoPlanned?: boolean;
+  previewUrl?: string;
 };
 
 export type CollectionSectionData = {
@@ -90,14 +91,57 @@ function MusicItem({
 }) {
   const embedUrl = item.videoUrl ? getYouTubeEmbedUrl(item.videoUrl) : null;
   const opensExternally = item.videoMode === "external";
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+
+  const togglePreview = async () => {
+    const audio = audioRef.current;
+
+    if (!audio) return;
+
+    if (audio.paused) {
+      try {
+        await audio.play();
+        setIsPreviewPlaying(true);
+      } catch {
+        setIsPreviewPlaying(false);
+      }
+    } else {
+      audio.pause();
+      setIsPreviewPlaying(false);
+    }
+  };
+
   const content = (
     <div className="music-item">
       <div className={`music-row ${item.status === "locked" ? "is-locked" : ""}`}>
         <span className="music-row-index">{index + 1}</span>
-        {item.image ? <img src={item.image} width={44} height={44} alt="" className="music-row-cover" /> : null}
+        {item.image && item.previewUrl ? (
+          <button
+            type="button"
+            className="music-preview-button"
+            aria-label={`${isPreviewPlaying ? "Pause" : "Play"} preview of ${item.title}`}
+            aria-pressed={isPreviewPlaying}
+            onClick={togglePreview}
+          >
+            <img src={item.image} width={44} height={44} alt="" className="music-row-cover" />
+            <span className="music-preview-icon" aria-hidden="true">
+              {isPreviewPlaying ? <span className="music-preview-pause" /> : <span className="music-preview-play" />}
+            </span>
+            <audio
+              ref={audioRef}
+              src={item.previewUrl}
+              preload="none"
+              onPause={() => setIsPreviewPlaying(false)}
+              onEnded={() => setIsPreviewPlaying(false)}
+            />
+          </button>
+        ) : item.image ? (
+          <img src={item.image} width={44} height={44} alt="" className="music-row-cover" />
+        ) : null}
         <div className="min-w-0">
           <h3 className="font-semibold">
-            {item.href && (item.videoUrl || item.videoPlanned) ? (
+            {item.href && (item.videoUrl || item.videoPlanned || item.previewUrl) ? (
               <ExternalLink href={item.href}>{item.title}</ExternalLink>
             ) : (
               item.title
@@ -137,7 +181,7 @@ function MusicItem({
     );
   }
 
-  if (item.videoUrl || item.videoPlanned) {
+  if (item.videoUrl || item.videoPlanned || item.previewUrl) {
     return content;
   }
 
