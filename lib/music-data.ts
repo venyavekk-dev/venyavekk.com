@@ -3,16 +3,25 @@ import type { CollectionSectionData } from "@/components/sections/CollectionSect
 const yandexMusic = "https://music.yandex.ru";
 const music = "/assets/music";
 
-export const musicArtistDescription =
-  "I build my songs from scratch: music, lyrics, arrangements, guitars, bass, synths, vocals, and concepts.\n\nFor me, every release is a small world made of sound, words, visuals, and videos. This year, I am preparing a new album.";
-
 export const musicPlatformLinks = [
-  { label: "Spotify", href: "https://open.spotify.com/artist/5mg1WRefzOYqFkWKFxFhD6?si=X1uftFFhQuKKxsUjW_dv3Q" },
-  { label: "Yandex Music", href: "https://music.yandex.ru/artist/16974538" },
-  { label: "Apple Music", href: "https://music.apple.com/us/artist/venya-vekk/1631904055" },
-  { label: "YouTube Music", href: "https://music.youtube.com/channel/UCK-gvRtAq_zaY2BEJT_MIZA?si=wU0djgGqJCusxY92" },
-  { label: "VK Music", href: "https://vk.com/artist/venyavekk" },
-  { label: "SoundCloud", href: "https://soundcloud.com/venyavekk/" }
+  {
+    label: "Spotify",
+    href: "https://open.spotify.com/artist/5mg1WRefzOYqFkWKFxFhD6?si=X1uftFFhQuKKxsUjW_dv3Q",
+    icon: `${music}/platforms/spotify.svg`
+  },
+  {
+    label: "Yandex Music",
+    href: "https://music.yandex.ru/artist/16974538",
+    icon: `${music}/platforms/yandex-music.svg`
+  },
+  { label: "Apple Music", href: "https://music.apple.com/us/artist/venya-vekk/1631904055", icon: `${music}/platforms/apple-music.svg` },
+  {
+    label: "YouTube Music",
+    href: "https://music.youtube.com/channel/UCK-gvRtAq_zaY2BEJT_MIZA?si=wU0djgGqJCusxY92",
+    icon: `${music}/platforms/youtube-music.svg`
+  },
+  { label: "VK Music", href: "https://vk.com/artist/venyavekk", icon: `${music}/platforms/vk-music.svg` },
+  { label: "SoundCloud", href: "https://soundcloud.com/venyavekk/", icon: `${music}/platforms/soundcloud.svg` }
 ];
 
 export const musicSections: CollectionSectionData[] = [
@@ -20,7 +29,7 @@ export const musicSections: CollectionSectionData[] = [
     title: "Выйти из Айти",
     role: "Album",
     years: "2026",
-    audience: ["2 of 12 tracks released", "album countdown"],
+    audience: ["3 of 12 tracks released", "album countdown"],
     cover: `${music}/leave-it.webp`,
     items: [
       {
@@ -29,7 +38,8 @@ export const musicSections: CollectionSectionData[] = [
         href: `${yandexMusic}/album/41903132/track/150988999`,
         image: `${music}/leave-it.webp`,
         duration: "03:04",
-        videoUrl: "https://www.youtube.com/watch?v=H2IGh6k-XHA"
+        videoUrl: "https://www.youtube.com/watch?v=H2IGh6k-XHA",
+        previewUrl: `${music}/previews/H2IGh6k-XHA.mp3`
       },
       {
         title: "Голод",
@@ -37,13 +47,22 @@ export const musicSections: CollectionSectionData[] = [
         href: `${yandexMusic}/album/41903132`,
         image: `${music}/hunger.webp`,
         duration: "02:52",
-        videoUrl: "https://www.youtube.com/watch?v=A82-uVFX3RM"
+        videoUrl: "https://www.youtube.com/watch?v=A82-uVFX3RM",
+        previewUrl: `${music}/previews/A82-uVFX3RM.mp3`
       },
       { title: "Командировка", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "03:18", status: "locked", videoPlanned: true },
       { title: "Ценник для своих", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:47", status: "locked", videoPlanned: true },
       { title: "Айтишник", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "03:29", status: "locked", videoPlanned: true },
       { title: "Падает листва", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:39", status: "locked", videoPlanned: true },
-      { title: "Минус вайб", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "03:11", status: "locked", videoPlanned: true },
+      {
+        title: "Минус вайб",
+        description: "Веня Векк",
+        href: "https://band.link/minus_vekk",
+        image: `${music}/minus-vibe.png`,
+        duration: "03:24",
+        videoUrl: "https://www.youtube.com/watch?v=PIDp5vOmsL8",
+        previewUrl: `${music}/minus-vibe-preview.mp3`
+      },
       { title: "Мой стыд", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:56", status: "locked", videoPlanned: true },
       { title: "Пепел", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "03:33", status: "locked", videoPlanned: true },
       { title: "Большой вопрос", description: "Веня Векк", image: `${music}/leave-it.webp`, duration: "02:44", status: "locked", videoPlanned: true },
@@ -80,7 +99,8 @@ export const musicSections: CollectionSectionData[] = [
         href: `${yandexMusic}/album/33745183`,
         image: `${music}/brad.webp`,
         duration: "03:15",
-        videoUrl: "https://www.youtube.com/watch?v=YknxhWV-I-U"
+        videoUrl: "https://www.youtube.com/watch?v=YknxhWV-I-U",
+        previewUrl: `${music}/previews/YknxhWV-I-U.mp3`
       },
       {
         title: "УБЕГАЙ",
@@ -88,7 +108,8 @@ export const musicSections: CollectionSectionData[] = [
         href: `${yandexMusic}/album/33745183`,
         image: `${music}/runaway.webp`,
         duration: "02:50",
-        videoUrl: "https://www.youtube.com/watch?v=XQ3zFkdXtOM"
+        videoUrl: "https://www.youtube.com/watch?v=XQ3zFkdXtOM",
+        previewUrl: `${music}/previews/XQ3zFkdXtOM.mp3`
       },
       { title: "ОТПИСКА", description: "Веня Векк", href: `${yandexMusic}/album/33745183`, image: `${music}/brad.webp`, duration: "02:50" },
       { title: "КОПИЯ", description: "Веня Векк", href: `${yandexMusic}/album/33745183`, image: `${music}/copy.webp`, duration: "03:18" },
@@ -114,7 +135,8 @@ export const musicSections: CollectionSectionData[] = [
         href: `${yandexMusic}/album/26724231`,
         image: `${music}/na-dne.webp`,
         duration: "single",
-        videoUrl: "https://www.youtube.com/watch?v=EmEQtsa-nAM"
+        videoUrl: "https://www.youtube.com/watch?v=EmEQtsa-nAM",
+        previewUrl: `${music}/previews/EmEQtsa-nAM.mp3`
       },
       { title: "Хит!", description: "Веня Векк", href: `${yandexMusic}/album/26583902`, image: `${music}/hit.webp`, duration: "single" },
       {

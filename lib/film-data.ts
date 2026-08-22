@@ -16,13 +16,12 @@ export const filmSections: CollectionSectionData[] = [
   {
     title: "Short films",
     role: "Selected videos",
-    years: "2024",
+    years: "2025—2026",
     audience: ["short films", "visual stories"],
     collageImages: [thumbnail("mpnuerFGGtA"), thumbnail("xydVeKYYv4k"), thumbnail("xQhZD6HVtSs"), thumbnail("8kdZXUcSOJU")],
     items: [
       {
         title: "Вся магия кино — в свете",
-        description: "Visual story",
         href: `${youtube}mpnuerFGGtA`,
         videoUrl: `${youtube}mpnuerFGGtA`,
         videoMode: "external",
@@ -31,7 +30,6 @@ export const filmSections: CollectionSectionData[] = [
       },
       {
         title: "Цена творческой жизни",
-        description: "Visual story",
         href: `${youtube}xydVeKYYv4k`,
         videoUrl: `${youtube}xydVeKYYv4k`,
         videoMode: "external",
@@ -40,7 +38,6 @@ export const filmSections: CollectionSectionData[] = [
       },
       {
         title: "Уберись в своей комнате! — редизайн себя",
-        description: "Visual story",
         href: `${youtube}xQhZD6HVtSs`,
         videoUrl: `${youtube}xQhZD6HVtSs`,
         videoMode: "external",
@@ -49,7 +46,6 @@ export const filmSections: CollectionSectionData[] = [
       },
       {
         title: "Делай как ты можешь",
-        description: "Visual story",
         href: `${youtube}8kdZXUcSOJU`,
         videoUrl: `${youtube}8kdZXUcSOJU`,
         videoMode: "external",
@@ -61,7 +57,7 @@ export const filmSections: CollectionSectionData[] = [
   {
     title: "Short-form",
     role: "Experiments",
-    years: "2023",
+    years: "2023—2024",
     audience: ["compact stories", "creative sketches"],
     collageImages: [thumbnail("3Vtout49avI"), thumbnail("M3lFKnbfhWQ"), thumbnail("j89YduxCBZ0"), thumbnail("Z2RWTLjoW_8")],
     items: [
@@ -106,13 +102,12 @@ export const filmSections: CollectionSectionData[] = [
   {
     title: "Early short",
     role: "Archive",
-    years: "2022",
+    years: "2023",
     audience: ["short film"],
     cover: thumbnail("wiRmZRclac4"),
     items: [
       {
         title: "Много маленьких проектов или один большой?",
-        description: "Archive visual story",
         href: `${youtube}wiRmZRclac4`,
         videoUrl: `${youtube}wiRmZRclac4`,
         videoMode: "external",
