@@ -706,23 +706,6 @@ a:hover {
   display: block;
 }
 
-.music-preview-button::after {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: rgb(0 0 0 / 42%);
-  content: "";
-  opacity: 0;
-  transition: background 180ms ease, opacity 180ms ease;
-}
-
-.music-preview-button:hover::after,
-.music-preview-button:focus-visible::after,
-.music-preview-button[aria-pressed="true"]::after {
-  background: rgb(0 0 0 / 56%);
-  opacity: 1;
-}
-
 .music-preview-icon {
   position: absolute;
   z-index: 1;
@@ -740,32 +723,10 @@ a:hover {
   opacity: 1;
 }
 
-.music-preview-control {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  border: 1px solid rgb(255 255 255 / 34%);
-  border-radius: 999px;
-  background: rgb(0 0 0 / 26%);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 22%), inset 0 1px 0 rgb(255 255 255 / 18%);
-  backdrop-filter: blur(6px);
-  transform: scale(0.92);
-  transition: background 180ms ease, transform 180ms ease;
-}
-
-.music-preview-button:hover .music-preview-control,
-.music-preview-button:focus-visible .music-preview-control,
-.music-preview-button[aria-pressed="true"] .music-preview-control {
-  background: rgb(0 0 0 / 34%);
-  transform: scale(1);
-}
-
 .music-preview-glyph {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   fill: currentColor;
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 28%));
 }
 
 .music-preview-glyph.is-play {
