@@ -3,9 +3,6 @@ import type { CollectionSectionData } from "@/components/sections/CollectionSect
 const yandexMusic = "https://music.yandex.ru";
 const music = "/assets/music";
 
-export const musicArtistDescription =
-  "I build my songs from scratch: music, lyrics, arrangements, guitars, bass, synths, vocals, and concepts.\n\nFor me, every release is a small world made of sound, words, visuals, and videos. This year, I am preparing a new album.";
-
 export const musicPlatformLinks = [
   {
     label: "Spotify",

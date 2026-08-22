@@ -130,7 +130,18 @@ function MusicItem({
           >
             <img src={item.image} width={44} height={44} alt="" className="music-row-cover" />
             <span className="music-preview-icon" aria-hidden="true">
-              {isPreviewPlaying ? <span className="music-preview-pause" /> : <span className="music-preview-play" />}
+              <span className="music-preview-control">
+                {isPreviewPlaying ? (
+                  <svg className="music-preview-glyph" viewBox="0 0 24 24">
+                    <rect x="7" y="5.5" width="3.5" height="13" rx="1.25" />
+                    <rect x="13.5" y="5.5" width="3.5" height="13" rx="1.25" />
+                  </svg>
+                ) : (
+                  <svg className="music-preview-glyph is-play" viewBox="0 0 24 24">
+                    <path d="M8.5 6.35c0-.78.86-1.26 1.53-.85l9.05 5.65a1 1 0 0 1 0 1.7l-9.05 5.65a1 1 0 0 1-1.53-.85V6.35Z" />
+                  </svg>
+                )}
+              </span>
             </span>
             <audio
               ref={audioRef}

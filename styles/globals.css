@@ -740,20 +740,36 @@ a:hover {
   opacity: 1;
 }
 
-.music-preview-play {
-  width: 0;
-  height: 0;
-  margin-left: 2px;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 8px solid currentColor;
+.music-preview-control {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 34%);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 26%);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 22%), inset 0 1px 0 rgb(255 255 255 / 18%);
+  backdrop-filter: blur(6px);
+  transform: scale(0.92);
+  transition: background 180ms ease, transform 180ms ease;
 }
 
-.music-preview-pause {
-  width: 8px;
-  height: 10px;
-  border-right: 3px solid currentColor;
-  border-left: 3px solid currentColor;
+.music-preview-button:hover .music-preview-control,
+.music-preview-button:focus-visible .music-preview-control,
+.music-preview-button[aria-pressed="true"] .music-preview-control {
+  background: rgb(0 0 0 / 34%);
+  transform: scale(1);
+}
+
+.music-preview-glyph {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 28%));
+}
+
+.music-preview-glyph.is-play {
+  margin-left: 2px;
 }
 
 .music-row-meta {

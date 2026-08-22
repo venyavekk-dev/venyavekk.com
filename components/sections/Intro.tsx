@@ -5,7 +5,7 @@ import { ContactChips } from "@/components/ui/ContactChips";
 import { StoryDeckAvatar, StoryDeckCard, useStoryDeck } from "@/components/ui/StoryDeck";
 import { filmArtistDescription, filmLinks } from "@/lib/film-data";
 import { links } from "@/lib/data";
-import { musicArtistDescription, musicPlatformLinks } from "@/lib/music-data";
+import { musicPlatformLinks } from "@/lib/music-data";
 import Link from "next/link";
 import { useRef } from "react";
 
@@ -135,14 +135,9 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
         <StoryDeckCard controller={storyDeck} />
         <div className="intro-content-flow space-y-8">
           {isMusic ? (
-            <>
-              <div className="intro-copy-block space-y-8">
-                {musicArtistDescription.split("\n\n").map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-              </div>
-              <div className="intro-meta-block">
-                <ContactChips links={musicPlatformLinks} ariaLabel="Music platforms" />
-              </div>
-            </>
+            <div className="intro-meta-block">
+              <ContactChips links={musicPlatformLinks} ariaLabel="Music platforms" />
+            </div>
           ) : isFilms ? (
             <>
               <div className="intro-copy-block space-y-8">
