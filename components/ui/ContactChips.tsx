@@ -1,7 +1,8 @@
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
+import Image from "next/image";
 
-type ChipLink = { label: string; href: string };
+type ChipLink = { label: string; href: string; icon?: string; preserveIconColors?: boolean };
 
 type ContactChipsProps = {
   links: readonly ChipLink[];
@@ -15,6 +16,16 @@ export function ContactChips({ links, showEmail = false, className = "", ariaLab
     <nav aria-label={ariaLabel} className={`contact-chip-row flex flex-wrap gap-2 ${className}`.trim()}>
       {links.map((link) => (
         <ExternalLink href={link.href} className="soft-chip" key={link.label}>
+          {link.icon ? (
+            <Image
+              src={link.icon}
+              alt=""
+              width={16}
+              height={16}
+              className={`soft-chip-icon ${link.preserveIconColors ? "preserve-colors" : ""}`.trim()}
+              aria-hidden="true"
+            />
+          ) : null}
           {link.label}
         </ExternalLink>
       ))}

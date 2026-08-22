@@ -100,6 +100,10 @@ function MusicItem({
     if (!audio) return;
 
     if (audio.paused) {
+      document.querySelectorAll<HTMLAudioElement>("audio[data-track-preview]").forEach((preview) => {
+        if (preview !== audio) preview.pause();
+      });
+
       try {
         await audio.play();
         setIsPreviewPlaying(true);
@@ -132,6 +136,7 @@ function MusicItem({
               ref={audioRef}
               src={item.previewUrl}
               preload="none"
+              data-track-preview
               onPause={() => setIsPreviewPlaying(false)}
               onEnded={() => setIsPreviewPlaying(false)}
             />

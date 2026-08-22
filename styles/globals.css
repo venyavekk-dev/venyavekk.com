@@ -634,12 +634,12 @@ a:hover {
 
 .music-row {
   display: grid;
-  grid-template-columns: 24px 44px minmax(0, 1fr) auto;
-  gap: 12px;
+  grid-template-columns: 24px 88px minmax(0, 1fr) auto;
+  gap: 16px;
   align-items: center;
-  min-height: 62px;
+  min-height: 108px;
   border-radius: 8px;
-  padding: 8px 10px 8px 0;
+  padding: 10px 10px 10px 0;
   transition: background 180ms ease, opacity 180ms ease, transform 180ms ease;
 }
 
@@ -670,18 +670,18 @@ a:hover {
 }
 
 .music-row-cover {
-  width: 44px;
-  height: 44px;
-  border-radius: 4px;
+  width: 88px;
+  height: 88px;
+  border-radius: 6px;
   object-fit: cover;
 }
 
 .music-preview-button {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 88px;
+  height: 88px;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .music-preview-button .music-row-cover {
@@ -694,12 +694,15 @@ a:hover {
   border-radius: inherit;
   background: rgb(0 0 0 / 42%);
   content: "";
-  transition: background 180ms ease;
+  opacity: 0;
+  transition: background 180ms ease, opacity 180ms ease;
 }
 
 .music-preview-button:hover::after,
-.music-preview-button:focus-visible::after {
+.music-preview-button:focus-visible::after,
+.music-preview-button[aria-pressed="true"]::after {
   background: rgb(0 0 0 / 56%);
+  opacity: 1;
 }
 
 .music-preview-icon {
@@ -709,6 +712,14 @@ a:hover {
   display: grid;
   place-items: center;
   color: #fff;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.music-preview-button:hover .music-preview-icon,
+.music-preview-button:focus-visible .music-preview-icon,
+.music-preview-button[aria-pressed="true"] .music-preview-icon {
+  opacity: 1;
 }
 
 .music-preview-play {
@@ -782,7 +793,7 @@ a:hover {
 }
 
 .music-video-embed {
-  margin: 6px 10px 14px 90px;
+  margin: 6px 10px 14px 144px;
   overflow: hidden;
   border-radius: 8px;
   background: var(--surface);
@@ -814,19 +825,20 @@ a:hover {
   }
 
   .music-row {
-    grid-template-columns: 20px 38px minmax(0, 1fr) auto;
-    gap: 8px;
+    grid-template-columns: 20px 64px minmax(0, 1fr) auto;
+    gap: 10px;
+    min-height: 84px;
     padding-inline: 0;
   }
 
   .music-row-cover {
-    width: 38px;
-    height: 38px;
+    width: 64px;
+    height: 64px;
   }
 
   .music-preview-button {
-    width: 38px;
-    height: 38px;
+    width: 64px;
+    height: 64px;
   }
 
   .music-section-cover,
@@ -882,6 +894,7 @@ a:hover {
   min-height: 32px;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   border-radius: 999px;
   background: var(--surface);
   color: var(--foreground);
@@ -889,6 +902,19 @@ a:hover {
   line-height: 1;
   opacity: 0.82;
   transition: opacity 180ms ease;
+}
+
+.soft-chip-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  object-fit: contain;
+}
+
+@media (prefers-color-scheme: dark) {
+  .soft-chip-icon:not(.preserve-colors) {
+    filter: invert(0.68);
+  }
 }
 
 .email-copy-chip {
