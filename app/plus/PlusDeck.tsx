@@ -14,7 +14,7 @@ import {
 import styles from "./plus.module.css";
 
 const SLIDE_COUNT = 13;
-const VISUAL_SLIDES = new Set([0, 1, 2, 4, 7, 8, 10, 11, 12]);
+const VISUAL_SLIDES = new Set([0, 1, 2, 5, 7, 8, 10, 11, 12]);
 
 type MediaScreen = {
   id: string;
@@ -42,6 +42,7 @@ type PersistedMediaScreen = Omit<MediaScreen, "src" | "temporary" | "placeholder
 
 type PersistedMediaState = {
   id: string;
+  schemaVersion?: number;
   slides: Array<{
     slideIndex: number;
     screens: PersistedMediaScreen[];
@@ -52,6 +53,7 @@ const MEDIA_DATABASE_NAME = "venyavekk-plus-case-study";
 const MEDIA_DATABASE_VERSION = 1;
 const MEDIA_STORE_NAME = "deck-state";
 const MEDIA_STATE_KEY = "pasted-screens";
+const MEDIA_STATE_VERSION = 2;
 
 function openMediaDatabase() {
   return new Promise<IDBDatabase>((resolve, reject) => {
@@ -88,7 +90,13 @@ async function loadPersistedMedia() {
   });
   await waitForTransaction(transaction);
   database.close();
-  return state?.slides ?? [];
+  const slides = state?.slides ?? [];
+  if ((state?.schemaVersion ?? 1) >= MEDIA_STATE_VERSION) return slides;
+
+  return slides.map((slide) => ({
+    ...slide,
+    slideIndex: slide.slideIndex === 4 ? 2 : slide.slideIndex === 2 ? 5 : slide.slideIndex,
+  }));
 }
 
 async function persistMedia(pastedScreens: Record<number, MediaScreen[]>) {
@@ -116,6 +124,7 @@ async function persistMedia(pastedScreens: Record<number, MediaScreen[]>) {
   });
   const state: PersistedMediaState = {
     id: MEDIA_STATE_KEY,
+    schemaVersion: MEDIA_STATE_VERSION,
     slides,
   };
   const database = await openMediaDatabase();
@@ -239,8 +248,8 @@ function createPlaceholderScreen(slideIndex: number): MediaScreen {
 const defaultMediaScreens: Record<number, MediaScreen[]> = {
   0: [defaultPhoneScreen],
   1: [defaultPhoneScreen],
-  2: [{ ...defaultPhoneScreen, id: "previous-paywall", alt: "Previous Yandex Plus paywall" }],
-  4: flowScreens,
+  2: flowScreens,
+  5: [{ ...defaultPhoneScreen, id: "previous-paywall", alt: "Previous Yandex Plus paywall" }],
   7: [createPlaceholderScreen(7)],
   8: [createPlaceholderScreen(8)],
   10: [createPlaceholderScreen(10)],
@@ -252,7 +261,7 @@ const INITIAL_MEDIA_STEPS: Record<number, number> = {
   0: 0,
   1: 0,
   2: 0,
-  4: 0,
+  5: 0,
   7: 0,
   8: 0,
   10: 0,
@@ -263,8 +272,8 @@ const INITIAL_MEDIA_STEPS: Record<number, number> = {
 const DEFAULT_MEDIA_COUNTS: Record<number, number> = {
   0: 1,
   1: 1,
-  2: 1,
-  4: 5,
+  2: 5,
+  5: 1,
   7: 1,
   8: 1,
   10: 1,
@@ -375,6 +384,23 @@ function SlideNumber({ index }: { index: number }) {
   );
 }
 
+type SlideHeadingProps = {
+  title: string;
+  eyebrow?: string;
+  level?: "h1" | "h2";
+};
+
+function SlideHeading({ title, eyebrow, level = "h2" }: SlideHeadingProps) {
+  const Heading = level;
+
+  return (
+    <div className={styles.slideHeading}>
+      <Heading className={styles.title}>{title}</Heading>
+      {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
+    </div>
+  );
+}
+
 type StorySlideProps = {
   index: number;
   title: string;
@@ -387,15 +413,13 @@ function StorySlide({ index, title, eyebrow, children, requirements = false }: S
   return (
     <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
       <SlideNumber index={index} />
+      <SlideHeading title={title} eyebrow={eyebrow} />
       <div
         className={`${styles.slideInner} ${styles.storySlide} ${
           requirements ? styles.requirementsSlide : ""
         }`}
       >
-        <div>
-          {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
-          <h2 className={styles.title}>{title}</h2>
-        </div>
+        <div className={styles.headingSpace} aria-hidden="true" />
         <div className={styles.storyBody}>{children}</div>
       </div>
     </section>
@@ -420,10 +444,19 @@ function TextCardGrid({ children }: { children: ReactNode }) {
 }
 
 type DeleteScreenButtonProps = {
+  disabled: boolean;
   onDelete: () => void;
 };
 
-type ToolbarIconName = "upload" | "save" | "saved" | "undo" | "layout" | "delete";
+type ToolbarIconName =
+  | "upload"
+  | "save"
+  | "saved"
+  | "undo"
+  | "layout"
+  | "delete"
+  | "menu"
+  | "close";
 
 function ToolbarIcon({ name }: { name: ToolbarIconName }) {
   if (name === "upload") {
@@ -463,6 +496,17 @@ function ToolbarIcon({ name }: { name: ToolbarIconName }) {
     );
   }
 
+  if (name === "menu") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 7h14M5 12h14M5 17h14" />
+        <circle cx="9" cy="7" r="1.5" />
+        <circle cx="15" cy="12" r="1.5" />
+        <circle cx="11" cy="17" r="1.5" />
+      </svg>
+    );
+  }
+
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="m7 7 10 10M17 7 7 17" />
@@ -470,13 +514,14 @@ function ToolbarIcon({ name }: { name: ToolbarIconName }) {
   );
 }
 
-function DeleteScreenButton({ onDelete }: DeleteScreenButtonProps) {
+function DeleteScreenButton({ disabled, onDelete }: DeleteScreenButtonProps) {
   return (
     <button
       className={styles.deleteScreen}
       type="button"
       aria-label="Delete current pasted screen"
       title="Delete image"
+      disabled={disabled}
       onClick={onDelete}
     >
       <ToolbarIcon name="delete" />
@@ -485,6 +530,7 @@ function DeleteScreenButton({ onDelete }: DeleteScreenButtonProps) {
 }
 
 type MediaToolbarProps = {
+  isAvailable: boolean;
   layout: MediaLayout;
   canUndo: boolean;
   canDelete: boolean;
@@ -498,6 +544,7 @@ type MediaToolbarProps = {
 };
 
 function MediaToolbar({
+  isAvailable,
   layout,
   canUndo,
   canDelete,
@@ -510,6 +557,7 @@ function MediaToolbar({
   onSave,
 }: MediaToolbarProps) {
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const saveLabel =
     saveStatus === "saving"
       ? "Saving image"
@@ -520,61 +568,77 @@ function MediaToolbar({
           : "Save image";
 
   return (
-    <div className={styles.mediaToolbar} role="toolbar" aria-label="Image controls">
+    <div className={styles.floatingTools}>
+      {isOpen ? (
+        <div className={styles.mediaToolbar} role="toolbar" aria-label="Image controls">
+          <button
+            className={styles.toolbarButton}
+            type="button"
+            aria-label="Upload images"
+            title="Upload images"
+            disabled={!isAvailable}
+            onClick={() => uploadInputRef.current?.click()}
+          >
+            <ToolbarIcon name="upload" />
+          </button>
+          <input
+            ref={uploadInputRef}
+            className={styles.visuallyHidden}
+            type="file"
+            accept="image/*"
+            multiple
+            tabIndex={-1}
+            onChange={(event) => {
+              const files = Array.from(event.currentTarget.files ?? []);
+              if (files.length > 0) onUpload(files);
+              event.currentTarget.value = "";
+            }}
+          />
+          <button
+            className={`${styles.toolbarButton} ${
+              saveStatus === "error" ? styles.saveError : ""
+            }`}
+            type="button"
+            aria-label={saveLabel}
+            title={saveLabel}
+            disabled={!isAvailable || !canSave || saveStatus === "saving"}
+            onClick={onSave}
+          >
+            <ToolbarIcon name={saveStatus === "saved" ? "saved" : "save"} />
+          </button>
+          <button
+            className={styles.toolbarButton}
+            type="button"
+            aria-label="Undo last image change"
+            title="Undo"
+            disabled={!canUndo}
+            onClick={onUndo}
+          >
+            <ToolbarIcon name="undo" />
+          </button>
+          <button
+            className={styles.toolbarButton}
+            type="button"
+            aria-label={layout === "split" ? "Use full-width layout" : "Use split layout"}
+            title={layout === "split" ? "Full width" : "Split layout"}
+            disabled={!isAvailable}
+            onClick={onToggleLayout}
+          >
+            <ToolbarIcon name="layout" />
+          </button>
+          <DeleteScreenButton disabled={!canDelete} onDelete={onDelete} />
+        </div>
+      ) : null}
       <button
-        className={styles.toolbarButton}
+        className={styles.toolLauncher}
         type="button"
-        aria-label="Upload images"
-        title="Upload images"
-        onClick={() => uploadInputRef.current?.click()}
+        aria-label={isOpen ? "Close image tools" : "Open image tools"}
+        aria-expanded={isOpen}
+        title={isOpen ? "Close tools" : "Image tools"}
+        onClick={() => setIsOpen((current) => !current)}
       >
-        <ToolbarIcon name="upload" />
+        <ToolbarIcon name={isOpen ? "close" : "menu"} />
       </button>
-      <input
-        ref={uploadInputRef}
-        className={styles.visuallyHidden}
-        type="file"
-        accept="image/*"
-        multiple
-        tabIndex={-1}
-        onChange={(event) => {
-          const files = Array.from(event.currentTarget.files ?? []);
-          if (files.length > 0) onUpload(files);
-          event.currentTarget.value = "";
-        }}
-      />
-      <button
-        className={`${styles.toolbarButton} ${
-          saveStatus === "error" ? styles.saveError : ""
-        }`}
-        type="button"
-        aria-label={saveLabel}
-        title={saveLabel}
-        disabled={!canSave || saveStatus === "saving"}
-        onClick={onSave}
-      >
-        <ToolbarIcon name={saveStatus === "saved" ? "saved" : "save"} />
-      </button>
-      <button
-        className={styles.toolbarButton}
-        type="button"
-        aria-label="Undo last image change"
-        title="Undo"
-        disabled={!canUndo}
-        onClick={onUndo}
-      >
-        <ToolbarIcon name="undo" />
-      </button>
-      <button
-        className={styles.toolbarButton}
-        type="button"
-        aria-label={layout === "split" ? "Use full-width layout" : "Use split layout"}
-        title={layout === "split" ? "Full width" : "Split layout"}
-        onClick={onToggleLayout}
-      >
-        <ToolbarIcon name="layout" />
-      </button>
-      {canDelete ? <DeleteScreenButton onDelete={onDelete} /> : null}
     </div>
   );
 }
@@ -587,14 +651,7 @@ type MediaSlideProps = {
   screens: MediaScreen[];
   activeStep: number;
   onStepChange: (index: number) => void;
-  onDelete: () => void;
   layout: MediaLayout;
-  canUndo: boolean;
-  saveStatus: SaveStatus;
-  onUndo: () => void;
-  onToggleLayout: () => void;
-  onUpload: (files: File[]) => void;
-  onSave: () => void;
 };
 
 function MediaSlide({
@@ -605,43 +662,20 @@ function MediaSlide({
   screens,
   activeStep,
   onStepChange,
-  onDelete,
   layout,
-  canUndo,
-  saveStatus,
-  onUndo,
-  onToggleLayout,
-  onUpload,
-  onSave,
 }: MediaSlideProps) {
-  const Heading = index === 0 ? "h1" : "h2";
   const activeScreen = screens[activeStep] ?? screens[0];
 
   return (
     <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
       <SlideNumber index={index} />
-      <MediaToolbar
-        layout={layout}
-        canUndo={canUndo}
-        canDelete={Boolean(activeScreen.temporary)}
-        canSave={screens.some((screen) => Boolean(screen.blob))}
-        saveStatus={saveStatus}
-        onUndo={onUndo}
-        onToggleLayout={onToggleLayout}
-        onDelete={onDelete}
-        onUpload={onUpload}
-        onSave={onSave}
-      />
+      <SlideHeading title={title} eyebrow={eyebrow} level={index === 0 ? "h1" : "h2"} />
       <div
         className={`${styles.slideInner} ${styles.mediaSlide} ${
           layout === "full" ? styles.fullMediaSlide : ""
         }`}
       >
         <div className={styles.copy}>
-          <div>
-            {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
-            <Heading className={styles.title}>{title}</Heading>
-          </div>
           <div className={styles.body}>{children}</div>
         </div>
         <div className={styles.media}>
@@ -997,15 +1031,22 @@ export function PlusDeck() {
 
   const firstSlideScreens = getMediaScreens(0, pastedScreens);
   const secondSlideScreens = getMediaScreens(1, pastedScreens);
-  const thirdSlideScreens = getMediaScreens(2, pastedScreens);
-  const activeFlowScreens = getMediaScreens(4, pastedScreens);
+  const activeFlowScreens = getMediaScreens(2, pastedScreens);
+  const oldPaywallScreens = getMediaScreens(5, pastedScreens);
   const testSlideScreens = getMediaScreens(7, pastedScreens);
   const resultsSlideScreens = getMediaScreens(8, pastedScreens);
   const auditSlideScreens = getMediaScreens(10, pastedScreens);
   const systemSlideScreens = getMediaScreens(11, pastedScreens);
   const directionsSlideScreens = getMediaScreens(12, pastedScreens);
-  const activeFlowStep = activeMediaSteps[4] ?? 0;
+  const activeFlowStep = activeMediaSteps[2] ?? 0;
   const activeFlowScreen = activeFlowScreens[activeFlowStep] ?? activeFlowScreens[0];
+  const activeSlideHasMedia = VISUAL_SLIDES.has(activeSlide);
+  const activeToolScreens = activeSlideHasMedia
+    ? getMediaScreens(activeSlide, pastedScreens)
+    : [];
+  const activeToolStep = activeMediaSteps[activeSlide] ?? 0;
+  const activeToolScreen = activeToolScreens[activeToolStep];
+  const activeToolLayout = mediaLayouts[activeSlide] ?? "split";
 
   return (
     <>
@@ -1022,14 +1063,7 @@ export function PlusDeck() {
           screens={firstSlideScreens}
           activeStep={activeMediaSteps[0] ?? 0}
           onStepChange={(index) => setMediaStep(0, index)}
-          onDelete={() => deleteActiveScreen(0)}
           layout={mediaLayouts[0] ?? "split"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(0)}
-          onUpload={(files) => addImageFiles(0, files)}
-          onSave={saveCurrentMedia}
         >
           <div className={styles.fact}>
             <strong>Role</strong>
@@ -1050,14 +1084,7 @@ export function PlusDeck() {
           screens={secondSlideScreens}
           activeStep={activeMediaSteps[1] ?? 0}
           onStepChange={(index) => setMediaStep(1, index)}
-          onDelete={() => deleteActiveScreen(1)}
           layout={mediaLayouts[1] ?? "split"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(1)}
-          onUpload={(files) => addImageFiles(1, files)}
-          onSave={saveCurrentMedia}
         >
           <div className={styles.factGrid}>
             {context.map(([label, description]) => (
@@ -1069,70 +1096,15 @@ export function PlusDeck() {
           </div>
         </MediaSlide>
 
-        <MediaSlide
-          index={2}
-          title="The main paywall wasn’t built for the new subscription strategy"
-          screens={thirdSlideScreens}
-          activeStep={activeMediaSteps[2] ?? 0}
-          onStepChange={(index) => setMediaStep(2, index)}
-          onDelete={() => deleteActiveScreen(2)}
-          layout={mediaLayouts[2] ?? "split"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(2)}
-          onUpload={(files) => addImageFiles(2, files)}
-          onSave={saveCurrentMedia}
-        >
-          <div className={styles.problemList}>
-            {problems.map(([label, description]) => (
-              <div className={styles.textBlock} key={label}>
-                <strong>{label}</strong>
-                <p>{description}</p>
-              </div>
-            ))}
-          </div>
-        </MediaSlide>
-
-        <section className={styles.slide} aria-label={`Slide 4 of ${SLIDE_COUNT}`}>
-          <SlideNumber index={3} />
-          <div className={`${styles.slideInner} ${styles.textSlide}`}>
-            <h2 className={styles.title}>Strategic priorities</h2>
-            <div className={styles.priorityGrid}>
-              {priorities.map(([label, description]) => (
-                <div className={styles.textBlock} key={label}>
-                  <strong>{label}</strong>
-                  <p>{description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.slide} aria-label={`Slide 5 of ${SLIDE_COUNT}`}>
-          <SlideNumber index={4} />
-          <MediaToolbar
-            layout={mediaLayouts[4] ?? "split"}
-            canUndo={canUndo}
-            canDelete={Boolean(activeFlowScreen.temporary)}
-            canSave={activeFlowScreens.some((screen) => Boolean(screen.blob))}
-            saveStatus={saveStatus}
-            onUndo={undoLastEdit}
-            onToggleLayout={() => toggleMediaLayout(4)}
-            onDelete={() => deleteActiveScreen(4)}
-            onUpload={(files) => addImageFiles(4, files)}
-            onSave={saveCurrentMedia}
-          />
+        <section className={styles.slide} aria-label={`Slide 3 of ${SLIDE_COUNT}`}>
+          <SlideNumber index={2} />
+          <SlideHeading title="Flow" eyebrow="From first touch to the service" />
           <div
             className={`${styles.slideInner} ${styles.flowSlide} ${
-              mediaLayouts[4] === "full" ? styles.fullMediaSlide : ""
+              mediaLayouts[2] === "full" ? styles.fullMediaSlide : ""
             }`}
           >
             <div className={styles.flowCopy}>
-              <div>
-                <p className={styles.eyebrow}>From first touch to the service</p>
-                <h2 className={styles.title}>Flow</h2>
-              </div>
               <p className={styles.flowDescription}>
                 One continuous experience from the value proposition to the moment
                 the user starts enjoying Plus.
@@ -1154,22 +1126,54 @@ export function PlusDeck() {
                 screens={activeFlowScreens}
                 activeStep={activeFlowStep}
                 label="Subscription flow steps"
-                onStepChange={(index) => setMediaStep(4, index)}
+                onStepChange={(index) => setMediaStep(2, index)}
               />
             </div>
           </div>
         </section>
 
-        <section className={styles.slide} aria-label={`Slide 6 of ${SLIDE_COUNT}`}>
-          <SlideNumber index={5} />
+        <section className={styles.slide} aria-label={`Slide 4 of ${SLIDE_COUNT}`}>
+          <SlideNumber index={3} />
+          <SlideHeading title="Strategic priorities" />
+          <div className={`${styles.slideInner} ${styles.textSlide}`}>
+            <div className={styles.priorityGrid}>
+              {priorities.map(([label, description]) => (
+                <div className={styles.textBlock} key={label}>
+                  <strong>{label}</strong>
+                  <p>{description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.slide} aria-label={`Slide 5 of ${SLIDE_COUNT}`}>
+          <SlideNumber index={4} />
+          <SlideHeading title="Plan" eyebrow="The working principle" />
           <div className={`${styles.slideInner} ${styles.centerSlide}`}>
-            <p className={styles.eyebrow}>The working principle</p>
-            <h2 className={styles.title}>Plan</h2>
             <p className={styles.planText}>
               Take every part of the product and apply the new subscription strategy to it.
             </p>
           </div>
         </section>
+
+        <MediaSlide
+          index={5}
+          title="The old paywall couldn’t scale"
+          screens={oldPaywallScreens}
+          activeStep={activeMediaSteps[5] ?? 0}
+          onStepChange={(index) => setMediaStep(5, index)}
+          layout={mediaLayouts[5] ?? "split"}
+        >
+          <div className={styles.problemList}>
+            {problems.map(([label, description]) => (
+              <div className={styles.textBlock} key={label}>
+                <strong>{label}</strong>
+                <p>{description}</p>
+              </div>
+            ))}
+          </div>
+        </MediaSlide>
 
         <StorySlide index={6} title="Understanding the real task" eyebrow="Framing">
           <TextCardGrid>
@@ -1198,14 +1202,7 @@ export function PlusDeck() {
           screens={testSlideScreens}
           activeStep={activeMediaSteps[7] ?? 0}
           onStepChange={(index) => setMediaStep(7, index)}
-          onDelete={() => deleteActiveScreen(7)}
           layout={mediaLayouts[7] ?? "split"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(7)}
-          onUpload={(files) => addImageFiles(7, files)}
-          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1230,14 +1227,7 @@ export function PlusDeck() {
           screens={resultsSlideScreens}
           activeStep={activeMediaSteps[8] ?? 0}
           onStepChange={(index) => setMediaStep(8, index)}
-          onDelete={() => deleteActiveScreen(8)}
           layout={mediaLayouts[8] ?? "split"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(8)}
-          onUpload={(files) => addImageFiles(8, files)}
-          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1302,14 +1292,7 @@ export function PlusDeck() {
           screens={auditSlideScreens}
           activeStep={activeMediaSteps[10] ?? 0}
           onStepChange={(index) => setMediaStep(10, index)}
-          onDelete={() => deleteActiveScreen(10)}
           layout={mediaLayouts[10] ?? "full"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(10)}
-          onUpload={(files) => addImageFiles(10, files)}
-          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1331,14 +1314,7 @@ export function PlusDeck() {
           screens={systemSlideScreens}
           activeStep={activeMediaSteps[11] ?? 0}
           onStepChange={(index) => setMediaStep(11, index)}
-          onDelete={() => deleteActiveScreen(11)}
           layout={mediaLayouts[11] ?? "full"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(11)}
-          onUpload={(files) => addImageFiles(11, files)}
-          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1359,14 +1335,7 @@ export function PlusDeck() {
           screens={directionsSlideScreens}
           activeStep={activeMediaSteps[12] ?? 0}
           onStepChange={(index) => setMediaStep(12, index)}
-          onDelete={() => deleteActiveScreen(12)}
           layout={mediaLayouts[12] ?? "split"}
-          canUndo={canUndo}
-          saveStatus={saveStatus}
-          onUndo={undoLastEdit}
-          onToggleLayout={() => toggleMediaLayout(12)}
-          onUpload={(files) => addImageFiles(12, files)}
-          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1381,6 +1350,26 @@ export function PlusDeck() {
           </div>
         </MediaSlide>
       </main>
+
+      <MediaToolbar
+        isAvailable={activeSlideHasMedia}
+        layout={activeToolLayout}
+        canUndo={canUndo}
+        canDelete={Boolean(activeToolScreen?.temporary)}
+        canSave={activeToolScreens.some((screen) => Boolean(screen.blob))}
+        saveStatus={saveStatus}
+        onUndo={undoLastEdit}
+        onToggleLayout={() => {
+          if (activeSlideHasMedia) toggleMediaLayout(activeSlide);
+        }}
+        onDelete={() => {
+          if (activeSlideHasMedia) deleteActiveScreen(activeSlide);
+        }}
+        onUpload={(files) => {
+          if (activeSlideHasMedia) addImageFiles(activeSlide, files);
+        }}
+        onSave={saveCurrentMedia}
+      />
 
       <nav className={styles.presentationNav} aria-label="Presentation navigation">
         <button
