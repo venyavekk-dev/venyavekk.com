@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import {
-  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
   useCallback,
   useEffect,
@@ -138,7 +137,7 @@ function MediaSlide({
 export function PlusDeck() {
   const deckRef = useRef<HTMLElement>(null);
   const activeSlideRef = useRef(0);
-  const flowButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const activeFlowRef = useRef(0);
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeFlow, setActiveFlow] = useState(0);
 
@@ -149,28 +148,51 @@ export function PlusDeck() {
     const nextIndex = Math.max(0, Math.min(SLIDE_COUNT - 1, requestedIndex));
     activeSlideRef.current = nextIndex;
     setActiveSlide(nextIndex);
-    deck.scrollTo({ left: nextIndex * deck.clientWidth, behavior: "smooth" });
+    deck.scrollTo({ left: nextIndex * deck.clientWidth, behavior: "auto" });
   }, []);
+
+  const setFlowStep = useCallback((requestedIndex: number) => {
+    const nextIndex = Math.max(0, Math.min(flowScreens.length - 1, requestedIndex));
+    activeFlowRef.current = nextIndex;
+    setActiveFlow(nextIndex);
+  }, []);
+
+  const movePresentation = useCallback(
+    (direction: -1 | 1) => {
+      const currentSlide = activeSlideRef.current;
+      const currentFlow = activeFlowRef.current;
+
+      if (currentSlide === 4) {
+        const nextFlow = currentFlow + direction;
+        if (nextFlow >= 0 && nextFlow < flowScreens.length) {
+          setFlowStep(nextFlow);
+          return;
+        }
+      }
+
+      if (direction === 1 && currentSlide === 3) setFlowStep(0);
+      if (direction === -1 && currentSlide === 5) setFlowStep(flowScreens.length - 1);
+      goToSlide(currentSlide + direction);
+    },
+    [goToSlide, setFlowStep],
+  );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target;
-      if (target instanceof HTMLElement && target.closest('[role="tablist"]')) return;
-
       if (event.key === "ArrowRight") {
         event.preventDefault();
-        goToSlide(activeSlideRef.current + 1);
+        movePresentation(1);
       }
 
       if (event.key === "ArrowLeft") {
         event.preventDefault();
-        goToSlide(activeSlideRef.current - 1);
+        movePresentation(-1);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goToSlide]);
+  }, [movePresentation]);
 
   const handleDeckScroll = () => {
     const deck = deckRef.current;
@@ -185,16 +207,6 @@ export function PlusDeck() {
       activeSlideRef.current = nextIndex;
       setActiveSlide(nextIndex);
     }
-  };
-
-  const handleFlowKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-
-    event.preventDefault();
-    const direction = event.key === "ArrowRight" ? 1 : -1;
-    const nextIndex = (activeFlow + direction + flowScreens.length) % flowScreens.length;
-    setActiveFlow(nextIndex);
-    flowButtonRefs.current[nextIndex]?.focus();
   };
 
   const activeFlowScreen = flowScreens[activeFlow];
@@ -286,10 +298,8 @@ export function PlusDeck() {
             <div className={styles.flowVisual}>
               <div
                 className={styles.flowPanel}
-                id={`flow-panel-${activeFlow}`}
-                role="tabpanel"
-                aria-labelledby={`flow-tab-${activeFlow}`}
-                tabIndex={0}
+                role="group"
+                aria-label={`${activeFlowScreen.label}, step ${activeFlow + 1} of ${flowScreens.length}`}
               >
                 <Image
                   key={activeFlowScreen.src}
@@ -301,27 +311,19 @@ export function PlusDeck() {
                   sizes="(max-width: 760px) 62vw, 28vw"
                 />
               </div>
-              <div className={styles.flowTabs} role="tablist" aria-label="Subscription flow">
+              <nav className={styles.flowTabs} aria-label="Subscription flow steps">
                 {flowScreens.map((screen, index) => (
                   <button
                     key={screen.label}
-                    ref={(element) => {
-                      flowButtonRefs.current[index] = element;
-                    }}
                     className={styles.flowTab}
                     type="button"
-                    role="tab"
-                    id={`flow-tab-${index}`}
-                    aria-controls={`flow-panel-${index}`}
-                    aria-selected={activeFlow === index}
-                    tabIndex={activeFlow === index ? 0 : -1}
-                    onClick={() => setActiveFlow(index)}
-                    onKeyDown={handleFlowKeyDown}
+                    aria-current={activeFlow === index ? "step" : undefined}
+                    onClick={() => setFlowStep(index)}
                   >
                     {screen.label}
                   </button>
                 ))}
-              </div>
+              </nav>
             </div>
           </div>
         </section>
@@ -339,13 +341,15 @@ export function PlusDeck() {
 
       <nav className={styles.presentationNav} aria-label="Presentation navigation">
         <span className={styles.counter} aria-live="polite">
-          {activeSlide + 1} / {SLIDE_COUNT}
+          {activeSlide === 4
+            ? `5 / ${SLIDE_COUNT} · Step ${activeFlow + 1} / ${flowScreens.length}`
+            : `${activeSlide + 1} / ${SLIDE_COUNT}`}
         </span>
         <button
           type="button"
           aria-label="Previous slide"
           disabled={activeSlide === 0}
-          onClick={() => goToSlide(activeSlide - 1)}
+          onClick={() => movePresentation(-1)}
         >
           ←
         </button>
@@ -353,7 +357,7 @@ export function PlusDeck() {
           type="button"
           aria-label="Next slide"
           disabled={activeSlide === SLIDE_COUNT - 1}
-          onClick={() => goToSlide(activeSlide + 1)}
+          onClick={() => movePresentation(1)}
         >
           →
         </button>

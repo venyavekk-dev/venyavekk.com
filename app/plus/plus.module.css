@@ -8,7 +8,7 @@
   overflow-y: hidden;
   color: #f5f5f5;
   background: #121212;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
@@ -107,6 +107,7 @@
   place-items: center;
   min-width: 0;
   padding: clamp(2.5rem, 5vw, 5rem);
+  background: #202020;
 }
 
 .phone,
@@ -156,6 +157,7 @@
   grid-template-rows: minmax(0, 1fr) auto;
   min-width: 0;
   padding: clamp(2.5rem, 4vw, 4rem) clamp(1.25rem, 3vw, 3rem) 6.5rem;
+  background: #202020;
 }
 
 .flowPanel {
@@ -167,7 +169,6 @@
 
 .flowPhone {
   max-height: 60dvh;
-  animation: reveal 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .flowTabs {
@@ -192,15 +193,13 @@
   background: #262626;
   font: 600 0.82rem/1 Arial, Helvetica, sans-serif;
   cursor: pointer;
-  transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
 }
 
 .flowTab:hover {
   color: #fff;
-  transform: translateY(-1px);
 }
 
-.flowTab[aria-selected="true"] {
+.flowTab[aria-current="step"] {
   color: #111;
   background: #f5f5f5;
 }
@@ -235,7 +234,7 @@
 
 .presentationNav {
   position: fixed;
-  right: clamp(1rem, 2.5vw, 2.5rem);
+  right: 50%;
   bottom: clamp(1rem, 2.5vw, 2.5rem);
   z-index: 10;
   display: flex;
@@ -247,6 +246,7 @@
   background: rgb(29 29 31 / 78%);
   box-shadow: 0 12px 40px rgb(0 0 0 / 28%);
   backdrop-filter: blur(18px);
+  transform: translateX(50%);
 }
 
 .counter {
@@ -277,18 +277,6 @@
 .presentationNav button:disabled {
   opacity: 0.28;
   cursor: default;
-}
-
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 @media (max-width: 760px) {
@@ -349,19 +337,11 @@
     justify-content: flex-start;
   }
 
-  .presentationNav {
-    right: 50%;
-    transform: translateX(50%);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .deck {
     scroll-behavior: auto;
-  }
-
-  .flowPhone {
-    animation: none;
   }
 
   .flowTab,
