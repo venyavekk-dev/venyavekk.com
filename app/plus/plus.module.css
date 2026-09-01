@@ -110,18 +110,21 @@
 
 .media,
 .flowVisual {
+  --media-background: #202020;
+
   margin: clamp(0.75rem, 1.4vw, 1.25rem);
   min-height: 0;
   overflow: hidden;
   border-radius: clamp(1.25rem, 2.2vw, 2rem);
-  background: #202020;
+  background: var(--media-background);
 }
 
 .media {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
   min-width: 0;
-  padding: clamp(2.5rem, 5vw, 5rem);
+  padding: clamp(1rem, 2vw, 1.5rem);
   padding-bottom: clamp(5rem, 7vw, 7rem);
 }
 
@@ -132,6 +135,8 @@
   width: 100%;
   min-height: 0;
   place-items: center;
+  overflow: hidden;
+  padding-block: clamp(2rem, 5vh, 4.5rem);
 }
 
 .phone,
@@ -175,9 +180,10 @@
 
 .flowVisual {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
   min-width: 0;
-  padding: clamp(2.5rem, 4vw, 4rem) clamp(1.25rem, 3vw, 3rem) 6.5rem;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2vw, 1.5rem) 6.5rem;
 }
 
 .flowPanel {
@@ -226,15 +232,39 @@
   position: sticky;
   left: 0;
   z-index: 2;
-  box-shadow: -0.4rem 0 0 #202020, 0.7rem 0 0 #202020;
+  box-shadow: -0.4rem 0 0 var(--media-background), 0.7rem 0 0 var(--media-background);
+}
+
+.mediaToolbar {
+  display: flex;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toolbarButton {
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  color: #bcbcbc;
+  background: rgb(18 18 18 / 38%);
+  font: 600 0.78rem/1 Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.toolbarButton:hover:not(:disabled) {
+  color: #fff;
+  background: #303030;
+}
+
+.toolbarButton:disabled {
+  opacity: 0.32;
+  cursor: default;
 }
 
 .deleteScreen {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 3;
   display: grid;
+  margin-left: auto;
   width: 2.5rem;
   height: 2.5rem;
   place-items: center;
@@ -244,14 +274,74 @@
   background: rgb(18 18 18 / 72%);
   font: 400 1.4rem/1 Arial, Helvetica, sans-serif;
   cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
   backdrop-filter: blur(14px);
+  transition: opacity 140ms ease, background-color 140ms ease;
 }
 
 .deleteScreen:hover {
   background: #333;
 }
 
+.media:hover .deleteScreen,
+.flowVisual:hover .deleteScreen,
+.media:focus-within .deleteScreen,
+.flowVisual:focus-within .deleteScreen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fullMediaSlide {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.fullMediaSlide .copy,
+.fullMediaSlide .flowCopy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 6rem);
+  padding: clamp(2rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 5rem) 1rem;
+  overflow-y: auto;
+}
+
+.fullMediaSlide .title {
+  max-width: 18ch;
+  font-size: clamp(2.25rem, 3.5vw, 3.75rem);
+}
+
+.fullMediaSlide .body,
+.fullMediaSlide .flowDescription {
+  max-width: 34rem;
+  justify-self: end;
+}
+
+.fullMediaSlide .media,
+.fullMediaSlide .flowVisual {
+  --media-background: #121212;
+
+  margin: 0 clamp(1rem, 3vw, 3rem);
+  padding: 0 clamp(0.5rem, 2vw, 2rem) clamp(5rem, 7vw, 7rem);
+  border-radius: 0;
+  background: transparent;
+}
+
+.fullMediaSlide .mediaPanel,
+.fullMediaSlide .flowPanel {
+  padding-block: clamp(1.5rem, 3.5vh, 3.5rem);
+}
+
+.fullMediaSlide .phone,
+.fullMediaSlide .flowPhone {
+  max-width: 100%;
+  max-height: 56dvh;
+}
+
 .flowTab:focus-visible,
+.toolbarButton:focus-visible,
+.deleteScreen:focus-visible,
 .presentationNav button:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 3px;
@@ -338,13 +428,22 @@
     padding-top: 5rem;
   }
 
+  .fullMediaSlide .copy,
+  .fullMediaSlide .flowCopy {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    align-items: start;
+    gap: 2rem;
+    padding-top: 3.5rem;
+  }
+
   .title {
     font-size: clamp(2.45rem, 12vw, 3.7rem);
   }
 
   .media {
     min-height: 55dvh;
-    padding-top: 0;
+    padding-top: 1rem;
     padding-bottom: 7rem;
   }
 

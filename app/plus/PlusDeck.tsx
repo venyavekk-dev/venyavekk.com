@@ -29,6 +29,8 @@ type EditSnapshot = {
   activeMediaSteps: Record<number, number>;
 };
 
+type MediaLayout = "split" | "full";
+
 const impact = [
   "+4.2% payment conversion",
   "+7.4% in first-payment conversion and +4.9% in LTV per user",
@@ -238,6 +240,41 @@ function DeleteScreenButton({ onDelete }: DeleteScreenButtonProps) {
   );
 }
 
+type MediaToolbarProps = {
+  layout: MediaLayout;
+  canUndo: boolean;
+  canDelete: boolean;
+  onUndo: () => void;
+  onToggleLayout: () => void;
+  onDelete: () => void;
+};
+
+function MediaToolbar({
+  layout,
+  canUndo,
+  canDelete,
+  onUndo,
+  onToggleLayout,
+  onDelete,
+}: MediaToolbarProps) {
+  return (
+    <div className={styles.mediaToolbar} role="toolbar" aria-label="Image controls">
+      <button
+        className={styles.toolbarButton}
+        type="button"
+        disabled={!canUndo}
+        onClick={onUndo}
+      >
+        Undo
+      </button>
+      <button className={styles.toolbarButton} type="button" onClick={onToggleLayout}>
+        {layout === "split" ? "Full width" : "Split"}
+      </button>
+      {canDelete ? <DeleteScreenButton onDelete={onDelete} /> : null}
+    </div>
+  );
+}
+
 type MediaSlideProps = {
   index: number;
   title: string;
@@ -247,6 +284,10 @@ type MediaSlideProps = {
   activeStep: number;
   onStepChange: (index: number) => void;
   onDelete: () => void;
+  layout: MediaLayout;
+  canUndo: boolean;
+  onUndo: () => void;
+  onToggleLayout: () => void;
 };
 
 function MediaSlide({
@@ -258,13 +299,21 @@ function MediaSlide({
   activeStep,
   onStepChange,
   onDelete,
+  layout,
+  canUndo,
+  onUndo,
+  onToggleLayout,
 }: MediaSlideProps) {
   const Heading = index === 0 ? "h1" : "h2";
   const activeScreen = screens[activeStep] ?? screens[0];
 
   return (
     <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
-      <div className={`${styles.slideInner} ${styles.mediaSlide}`}>
+      <div
+        className={`${styles.slideInner} ${styles.mediaSlide} ${
+          layout === "full" ? styles.fullMediaSlide : ""
+        }`}
+      >
         <div className={styles.copy}>
           <div>
             {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
@@ -273,8 +322,15 @@ function MediaSlide({
           <div className={styles.body}>{children}</div>
         </div>
         <div className={styles.media}>
+          <MediaToolbar
+            layout={layout}
+            canUndo={canUndo}
+            canDelete={Boolean(activeScreen.temporary)}
+            onUndo={onUndo}
+            onToggleLayout={onToggleLayout}
+            onDelete={onDelete}
+          />
           <div className={styles.mediaPanel}>
-            {activeScreen.temporary ? <DeleteScreenButton onDelete={onDelete} /> : null}
             <ScreenVisual
               screen={activeScreen}
               className={styles.phone}
@@ -310,6 +366,8 @@ export function PlusDeck() {
     4: 0,
   });
   const [pastedScreens, setPastedScreens] = useState<Record<number, MediaScreen[]>>({});
+  const [canUndo, setCanUndo] = useState(false);
+  const [mediaLayouts, setMediaLayouts] = useState<Record<number, MediaLayout>>({});
 
   const applyPastedScreens = useCallback((nextPastedScreens: Record<number, MediaScreen[]>) => {
     const nextCounts: Record<number, number> = { 0: 1, 1: 1, 2: 1, 4: 5 };
@@ -342,6 +400,7 @@ export function PlusDeck() {
         activeMediaSteps: activeMediaStepsRef.current,
       },
     ];
+    setCanUndo(true);
   }, []);
 
   const undoLastEdit = useCallback(() => {
@@ -358,8 +417,16 @@ export function PlusDeck() {
     }
     activeMediaStepsRef.current = restoredActiveSteps;
     setActiveMediaSteps(restoredActiveSteps);
+    setCanUndo(editHistoryRef.current.length > 0);
     return true;
   }, [applyPastedScreens]);
+
+  const toggleMediaLayout = useCallback((slideIndex: number) => {
+    setMediaLayouts((currentLayouts) => ({
+      ...currentLayouts,
+      [slideIndex]: currentLayouts[slideIndex] === "full" ? "split" : "full",
+    }));
+  }, []);
 
   const deleteActiveScreen = useCallback(
     (slideIndex: number) => {
@@ -566,6 +633,10 @@ export function PlusDeck() {
           activeStep={activeMediaSteps[0] ?? 0}
           onStepChange={(index) => setMediaStep(0, index)}
           onDelete={() => deleteActiveScreen(0)}
+          layout={mediaLayouts[0] ?? "split"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(0)}
         >
           <div className={styles.fact}>
             <strong>Role</strong>
@@ -587,6 +658,10 @@ export function PlusDeck() {
           activeStep={activeMediaSteps[1] ?? 0}
           onStepChange={(index) => setMediaStep(1, index)}
           onDelete={() => deleteActiveScreen(1)}
+          layout={mediaLayouts[1] ?? "split"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(1)}
         >
           <div className={styles.factGrid}>
             {context.map(([label, description]) => (
@@ -605,6 +680,10 @@ export function PlusDeck() {
           activeStep={activeMediaSteps[2] ?? 0}
           onStepChange={(index) => setMediaStep(2, index)}
           onDelete={() => deleteActiveScreen(2)}
+          layout={mediaLayouts[2] ?? "split"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(2)}
         >
           <div className={styles.problemList}>
             {problems.map(([label, description]) => (
@@ -631,7 +710,11 @@ export function PlusDeck() {
         </section>
 
         <section className={styles.slide} aria-label="Slide 5 of 6">
-          <div className={`${styles.slideInner} ${styles.flowSlide}`}>
+          <div
+            className={`${styles.slideInner} ${styles.flowSlide} ${
+              mediaLayouts[4] === "full" ? styles.fullMediaSlide : ""
+            }`}
+          >
             <div className={styles.flowCopy}>
               <div>
                 <p className={styles.eyebrow}>From first touch to the service</p>
@@ -643,14 +726,19 @@ export function PlusDeck() {
               </p>
             </div>
             <div className={styles.flowVisual}>
+              <MediaToolbar
+                layout={mediaLayouts[4] ?? "split"}
+                canUndo={canUndo}
+                canDelete={Boolean(activeFlowScreen.temporary)}
+                onUndo={undoLastEdit}
+                onToggleLayout={() => toggleMediaLayout(4)}
+                onDelete={() => deleteActiveScreen(4)}
+              />
               <div
                 className={styles.flowPanel}
                 role="group"
                 aria-label={`${activeFlowScreen.label}, step ${activeFlowStep + 1} of ${activeFlowScreens.length}`}
               >
-                {activeFlowScreen.temporary ? (
-                  <DeleteScreenButton onDelete={() => deleteActiveScreen(4)} />
-                ) : null}
                 <ScreenVisual
                   screen={activeFlowScreen}
                   className={styles.flowPhone}
