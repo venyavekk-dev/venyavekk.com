@@ -1,0 +1,259 @@
+.deck {
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #121212;
+  color: #f5f5f3;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
+}
+
+.slide {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  isolation: isolate;
+}
+
+.splitSlide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(2rem, 6vh, 5.5rem);
+  padding: clamp(4rem, 8vw, 9rem) clamp(2rem, 7vw, 8.5rem);
+}
+
+.heroTitle,
+.title {
+  margin: 0;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.heroTitle {
+  max-width: 11ch;
+  font-size: clamp(3.7rem, 6.5vw, 7.8rem);
+  line-height: 0.94;
+}
+
+.title {
+  max-width: 14ch;
+  font-size: clamp(3rem, 5.4vw, 6.7rem);
+  line-height: 0.98;
+}
+
+.subtitle {
+  max-width: 30rem;
+  margin: clamp(1.2rem, 2.6vh, 2.2rem) 0 0;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: clamp(1.15rem, 1.45vw, 1.7rem);
+  line-height: 1.35;
+}
+
+.details {
+  display: grid;
+  max-width: 50rem;
+  gap: clamp(1.5rem, 3vh, 2.8rem);
+  font-size: clamp(1.05rem, 1.35vw, 1.6rem);
+  line-height: 1.45;
+}
+
+.details h2,
+.details h3,
+.textBlock h3 {
+  margin: 0 0 0.35rem;
+  color: #fff;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.details p,
+.textBlock p {
+  margin: 0;
+}
+
+.visual {
+  position: relative;
+  min-width: 0;
+  min-height: 100dvh;
+  background: #121212;
+}
+
+.croppedVisual {
+  object-fit: cover;
+  object-position: right center;
+}
+
+.slideNumber {
+  position: absolute;
+  z-index: 3;
+  top: clamp(1rem, 2.4vw, 2.25rem);
+  right: clamp(1rem, 2.4vw, 2.25rem);
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.slideNumber span {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.textSlide {
+  display: grid;
+  align-content: space-between;
+  gap: clamp(3rem, 7vh, 7rem);
+  padding: clamp(4rem, 8vw, 9rem) clamp(2rem, 7vw, 8.5rem);
+}
+
+.textGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2.2rem, 5vh, 4.8rem) clamp(3rem, 8vw, 10rem);
+}
+
+.textBlock {
+  max-width: 38rem;
+  font-size: clamp(1.05rem, 1.45vw, 1.65rem);
+  line-height: 1.35;
+}
+
+.textBlock p + p {
+  margin-top: 0.7rem;
+}
+
+.textBlock .impact {
+  color: rgba(255, 255, 255, 0.75);
+  font-style: italic;
+}
+
+.imageSlide {
+  background: #121212;
+}
+
+.containedVisual {
+  padding: clamp(1rem, 2vw, 2.5rem);
+  object-fit: contain;
+}
+
+.centerSlide {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.centerCopy {
+  display: grid;
+  justify-items: center;
+  gap: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+.centerCopy p {
+  max-width: 38rem;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.3rem, 2vw, 2.2rem);
+  font-weight: 600;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.problemList {
+  display: grid;
+  gap: clamp(1.4rem, 3vh, 2.8rem);
+}
+
+@supports (animation-timeline: view()) {
+  .slide > :not(.slideNumber) {
+    animation: slide-enter linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 42%;
+  }
+}
+
+@keyframes slide-enter {
+  from {
+    opacity: 0.2;
+    transform: translateY(2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 760px) {
+  .deck {
+    scroll-snap-type: y proximity;
+  }
+
+  .splitSlide {
+    grid-template-columns: 1fr;
+  }
+
+  .copy {
+    min-height: 58dvh;
+    padding: 4.8rem 1.25rem 2.5rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(3.25rem, 15vw, 5.2rem);
+  }
+
+  .title {
+    font-size: clamp(2.8rem, 13vw, 4.6rem);
+  }
+
+  .details,
+  .textBlock {
+    font-size: 1.05rem;
+  }
+
+  .visual {
+    min-height: 52dvh;
+  }
+
+  .croppedVisual {
+    object-position: 82% center;
+  }
+
+  .textSlide {
+    align-content: start;
+    padding: 4.8rem 1.25rem 3.5rem;
+  }
+
+  .textGrid {
+    grid-template-columns: 1fr;
+    gap: 2.4rem;
+  }
+
+  .imageSlide {
+    min-height: 72dvh;
+  }
+
+  .containedVisual {
+    padding: 2.5rem 0.5rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck {
+    scroll-behavior: auto;
+  }
+
+  .slide > * {
+    animation: none;
+  }
+}
