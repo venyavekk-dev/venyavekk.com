@@ -1,177 +1,371 @@
 .deck {
+  position: fixed;
+  inset: 0;
+  display: flex;
   width: 100%;
-  max-width: 1440px;
-  margin-inline: auto;
+  height: 100dvh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  color: #f5f5f5;
   background: #121212;
-  color: #f5f5f3;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.deck::-webkit-scrollbar {
+  display: none;
 }
 
 .slide {
-  min-height: 100dvh;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100dvh;
+  overflow-y: auto;
+  background: #121212;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
-.mediaSlide {
+.slideInner {
+  width: 100%;
+  max-width: 1440px;
+  min-height: 100%;
+  margin: 0 auto;
+}
+
+.mediaSlide,
+.flowSlide {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.copy,
-.textSlide {
-  padding: clamp(4rem, 7vw, 7rem) clamp(1.25rem, 5vw, 5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
 .copy {
   display: flex;
-  min-width: 0;
   flex-direction: column;
   justify-content: space-between;
-  gap: clamp(3rem, 8vh, 7rem);
-}
-
-.title {
-  max-width: 13ch;
-  margin: 0;
-  color: #fff;
-  font-size: clamp(3.25rem, 5.25vw, 5.75rem);
-  font-weight: 600;
-  letter-spacing: -0.045em;
-  line-height: 0.98;
-  text-wrap: balance;
+  gap: 4rem;
+  padding: clamp(3.5rem, 6.5vw, 6.5rem) clamp(1.5rem, 5vw, 5rem);
 }
 
 .eyebrow {
-  max-width: 34rem;
-  margin: 0 0 1.25rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: clamp(1rem, 1.25vw, 1.3rem);
-  line-height: 1.4;
+  max-width: 32rem;
+  margin: 0 0 1.4rem;
+  color: #a8a8a8;
+  font-size: clamp(1rem, 1.35vw, 1.25rem);
+  line-height: 1.35;
 }
 
-.overview,
-.stack {
-  display: grid;
-  gap: clamp(1.4rem, 3vh, 2.6rem);
-}
-
-.block {
-  max-width: 38rem;
-  font-size: clamp(1.05rem, 1.35vw, 1.45rem);
-  line-height: 1.4;
-}
-
-.block h3 {
-  margin: 0 0 0.35rem;
-  color: #fff;
-  font-size: 1em;
-  font-weight: 600;
-}
-
-.block p {
+.title {
+  max-width: 15ch;
   margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(2.65rem, 4.3vw, 4.6rem);
+  font-weight: 650;
+  line-height: 0.99;
+  letter-spacing: -0.055em;
 }
 
-.block p + p {
-  margin-top: 0.35rem;
+.body {
+  display: grid;
+  gap: 2.8rem;
+  max-width: 46rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  line-height: 1.42;
 }
 
-.impact {
-  color: rgba(255, 255, 255, 0.68);
-  font-style: italic;
+.fact,
+.textBlock {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.fact strong,
+.textBlock strong {
+  font-weight: 700;
+}
+
+.fact span {
+  display: block;
+}
+
+.factGrid,
+.problemList {
+  display: grid;
+  gap: clamp(1.4rem, 2.4vw, 2.5rem);
+}
+
+.textBlock p {
+  max-width: 34rem;
+  margin: 0;
 }
 
 .media {
   display: grid;
-  min-width: 0;
   place-items: center;
-  padding: clamp(3rem, 7vw, 6rem);
+  min-width: 0;
+  padding: clamp(2.5rem, 5vw, 5rem);
 }
 
-.phone {
-  display: block;
+.phone,
+.flowPhone {
   width: auto;
-  max-width: 100%;
   height: auto;
-  max-height: 78dvh;
+  max-width: 100%;
+  max-height: 76dvh;
   object-fit: contain;
 }
 
 .textSlide {
-  display: grid;
-  align-content: space-between;
-  gap: clamp(4rem, 10vh, 8rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(4rem, 9vh, 8rem);
+  padding: clamp(3.5rem, 6.5vw, 6.5rem) clamp(1.5rem, 5vw, 5rem);
 }
 
-.grid {
+.priorityGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(2.5rem, 6vh, 5rem) clamp(3rem, 9vw, 9rem);
+  gap: clamp(3rem, 6vw, 6rem) clamp(4rem, 9vw, 9rem);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  line-height: 1.4;
 }
 
-.journey {
+.flowCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3.5rem, 6.5vw, 6.5rem) clamp(1.5rem, 5vw, 5rem);
+}
+
+.flowDescription {
+  max-width: 28rem;
+  margin: 2rem 0 0;
+  color: #b9b9b9;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  line-height: 1.45;
+}
+
+.flowVisual {
   display: grid;
-  margin: 0;
-  padding: 0;
-  gap: 0.75rem;
-  font-size: clamp(1.2rem, 1.6vw, 1.7rem);
-  list-style-position: inside;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  padding: clamp(2.5rem, 4vw, 4rem) clamp(1.25rem, 3vw, 3rem) 6.5rem;
 }
 
-.planSlide {
+.flowPanel {
   display: grid;
   place-items: center;
-  padding: 2rem;
+  min-height: 0;
+  outline: none;
+}
+
+.flowPhone {
+  max-height: 60dvh;
+  animation: reveal 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.flowTabs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 0.4rem;
+  scrollbar-width: none;
+}
+
+.flowTabs::-webkit-scrollbar {
+  display: none;
+}
+
+.flowTab {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  color: #bcbcbc;
+  background: #262626;
+  font: 600 0.82rem/1 Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.flowTab:hover {
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.flowTab[aria-selected="true"] {
+  color: #111;
+  background: #f5f5f5;
+}
+
+.flowTab:focus-visible,
+.presentationNav button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.centerSlide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
   text-align: center;
 }
 
-.planSlide > div {
-  display: grid;
-  justify-items: center;
-  gap: 2rem;
+.centerSlide .title {
+  max-width: none;
 }
 
-.planSlide p {
-  max-width: 42rem;
-  margin: 0;
-  color: #fff;
-  font-size: clamp(1.35rem, 2vw, 2.25rem);
-  font-weight: 600;
-  line-height: 1.2;
-  text-wrap: balance;
+.planText {
+  max-width: 38rem;
+  margin: 2rem 0 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1.25rem, 2vw, 1.9rem);
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.presentationNav {
+  position: fixed;
+  right: clamp(1rem, 2.5vw, 2.5rem);
+  bottom: clamp(1rem, 2.5vw, 2.5rem);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 999px;
+  background: rgb(29 29 31 / 78%);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(18px);
+}
+
+.counter {
+  min-width: 3.2rem;
+  color: #bcbcbc;
+  font: 600 0.78rem/1 Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+
+.presentationNav button {
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #111;
+  background: #f5f5f5;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.presentationNav button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.presentationNav button:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (max-width: 760px) {
-  .mediaSlide {
-    grid-template-columns: 1fr;
+  .slide {
+    overflow-y: auto;
   }
 
-  .copy,
-  .textSlide {
-    padding: 4.5rem 1.25rem 3rem;
+  .mediaSlide,
+  .flowSlide {
+    grid-template-columns: 1fr;
   }
 
   .copy {
-    min-height: 70dvh;
+    min-height: 62dvh;
+    padding-top: 5rem;
   }
 
   .title {
-    font-size: clamp(3rem, 14vw, 4.75rem);
+    font-size: clamp(2.45rem, 12vw, 3.7rem);
   }
 
   .media {
-    min-height: 62dvh;
-    padding: 2.5rem 1.25rem;
+    min-height: 55dvh;
+    padding-top: 0;
+    padding-bottom: 7rem;
   }
 
   .phone {
-    max-height: 54dvh;
+    max-height: 62dvh;
   }
 
   .textSlide {
-    align-content: start;
+    justify-content: flex-start;
+    padding-top: 5rem;
+    padding-bottom: 7rem;
   }
 
-  .grid {
+  .priorityGrid {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    gap: 2.75rem;
+  }
+
+  .flowCopy {
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+  }
+
+  .flowVisual {
+    min-height: 66dvh;
+    padding-top: 0;
+  }
+
+  .flowPhone {
+    max-height: 50dvh;
+  }
+
+  .flowTabs {
+    justify-content: flex-start;
+  }
+
+  .presentationNav {
+    right: 50%;
+    transform: translateX(50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck {
+    scroll-behavior: auto;
+  }
+
+  .flowPhone {
+    animation: none;
+  }
+
+  .flowTab,
+  .presentationNav button {
+    transition: none;
   }
 }
