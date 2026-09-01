@@ -24,6 +24,11 @@ type MediaScreen = {
   temporary?: boolean;
 };
 
+type EditSnapshot = {
+  pastedScreens: Record<number, MediaScreen[]>;
+  activeMediaSteps: Record<number, number>;
+};
+
 const impact = [
   "+4.2% payment conversion",
   "+7.4% in first-payment conversion and +4.9% in LTV per user",
@@ -170,13 +175,40 @@ type StepControlsProps = {
 };
 
 function StepControls({ screens, activeStep, label, onStepChange }: StepControlsProps) {
+  const controlsRef = useRef<HTMLElement>(null);
+  const activeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const controls = controlsRef.current;
+    const activeButton = activeButtonRef.current;
+    if (!controls || !activeButton) return;
+
+    if (activeStep === 0) {
+      controls.scrollTo({ left: 0, behavior: "auto" });
+      return;
+    }
+
+    const pinnedWidth = controls.firstElementChild?.clientWidth ?? 0;
+    const visibleLeft = controls.scrollLeft + pinnedWidth + 16;
+    const visibleRight = controls.scrollLeft + controls.clientWidth;
+    const buttonLeft = activeButton.offsetLeft;
+    const buttonRight = buttonLeft + activeButton.offsetWidth;
+
+    if (buttonLeft < visibleLeft) {
+      controls.scrollTo({ left: buttonLeft - pinnedWidth - 16, behavior: "auto" });
+    } else if (buttonRight > visibleRight) {
+      controls.scrollTo({ left: buttonRight - controls.clientWidth + 8, behavior: "auto" });
+    }
+  }, [activeStep, screens.length]);
+
   if (screens.length < 2) return null;
 
   return (
-    <nav className={styles.flowTabs} aria-label={label}>
+    <nav ref={controlsRef} className={styles.flowTabs} aria-label={label}>
       {screens.map((screen, index) => (
         <button
           key={screen.id}
+          ref={activeStep === index ? activeButtonRef : undefined}
           className={styles.flowTab}
           type="button"
           aria-current={activeStep === index ? "step" : undefined}
@@ -189,6 +221,23 @@ function StepControls({ screens, activeStep, label, onStepChange }: StepControls
   );
 }
 
+type DeleteScreenButtonProps = {
+  onDelete: () => void;
+};
+
+function DeleteScreenButton({ onDelete }: DeleteScreenButtonProps) {
+  return (
+    <button
+      className={styles.deleteScreen}
+      type="button"
+      aria-label="Delete current pasted screen"
+      onClick={onDelete}
+    >
+      ×
+    </button>
+  );
+}
+
 type MediaSlideProps = {
   index: number;
   title: string;
@@ -197,6 +246,7 @@ type MediaSlideProps = {
   screens: MediaScreen[];
   activeStep: number;
   onStepChange: (index: number) => void;
+  onDelete: () => void;
 };
 
 function MediaSlide({
@@ -207,6 +257,7 @@ function MediaSlide({
   screens,
   activeStep,
   onStepChange,
+  onDelete,
 }: MediaSlideProps) {
   const Heading = index === 0 ? "h1" : "h2";
   const activeScreen = screens[activeStep] ?? screens[0];
@@ -223,6 +274,7 @@ function MediaSlide({
         </div>
         <div className={styles.media}>
           <div className={styles.mediaPanel}>
+            {activeScreen.temporary ? <DeleteScreenButton onDelete={onDelete} /> : null}
             <ScreenVisual
               screen={activeScreen}
               className={styles.phone}
@@ -248,6 +300,7 @@ export function PlusDeck() {
   const activeMediaStepsRef = useRef<Record<number, number>>({ 0: 0, 1: 0, 2: 0, 4: 0 });
   const mediaCountsRef = useRef<Record<number, number>>({ 0: 1, 1: 1, 2: 1, 4: 5 });
   const pastedScreensRef = useRef<Record<number, MediaScreen[]>>({});
+  const editHistoryRef = useRef<EditSnapshot[]>([]);
   const objectUrlsRef = useRef(new Set<string>());
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeMediaSteps, setActiveMediaSteps] = useState<Record<number, number>>({
@@ -257,6 +310,83 @@ export function PlusDeck() {
     4: 0,
   });
   const [pastedScreens, setPastedScreens] = useState<Record<number, MediaScreen[]>>({});
+
+  const applyPastedScreens = useCallback((nextPastedScreens: Record<number, MediaScreen[]>) => {
+    const nextCounts: Record<number, number> = { 0: 1, 1: 1, 2: 1, 4: 5 };
+
+    for (const slideIndex of VISUAL_SLIDES) {
+      const pastedCount = nextPastedScreens[slideIndex]?.length ?? 0;
+      if (pastedCount > 0) nextCounts[slideIndex] = pastedCount;
+    }
+
+    const nextActiveSteps = { ...activeMediaStepsRef.current };
+    for (const slideIndex of VISUAL_SLIDES) {
+      nextActiveSteps[slideIndex] = Math.min(
+        nextActiveSteps[slideIndex] ?? 0,
+        nextCounts[slideIndex] - 1,
+      );
+    }
+
+    pastedScreensRef.current = nextPastedScreens;
+    mediaCountsRef.current = nextCounts;
+    activeMediaStepsRef.current = nextActiveSteps;
+    setPastedScreens(nextPastedScreens);
+    setActiveMediaSteps(nextActiveSteps);
+  }, []);
+
+  const rememberCurrentEdit = useCallback(() => {
+    editHistoryRef.current = [
+      ...editHistoryRef.current.slice(-49),
+      {
+        pastedScreens: pastedScreensRef.current,
+        activeMediaSteps: activeMediaStepsRef.current,
+      },
+    ];
+  }, []);
+
+  const undoLastEdit = useCallback(() => {
+    const previousSnapshot = editHistoryRef.current.pop();
+    if (!previousSnapshot) return false;
+
+    applyPastedScreens(previousSnapshot.pastedScreens);
+    const restoredActiveSteps = { ...previousSnapshot.activeMediaSteps };
+    for (const slideIndex of VISUAL_SLIDES) {
+      restoredActiveSteps[slideIndex] = Math.min(
+        restoredActiveSteps[slideIndex] ?? 0,
+        (mediaCountsRef.current[slideIndex] ?? 1) - 1,
+      );
+    }
+    activeMediaStepsRef.current = restoredActiveSteps;
+    setActiveMediaSteps(restoredActiveSteps);
+    return true;
+  }, [applyPastedScreens]);
+
+  const deleteActiveScreen = useCallback(
+    (slideIndex: number) => {
+      const currentScreens = pastedScreensRef.current[slideIndex] ?? [];
+      if (currentScreens.length === 0) return;
+
+      rememberCurrentEdit();
+      const activeStep = activeMediaStepsRef.current[slideIndex] ?? 0;
+      const remainingScreens = currentScreens
+        .filter((_, index) => index !== activeStep)
+        .map((screen, index) => ({
+          ...screen,
+          label: `Screen ${index + 1}`,
+          alt: `Pasted screen ${index + 1}`,
+        }));
+      const nextPastedScreens = { ...pastedScreensRef.current };
+
+      if (remainingScreens.length > 0) {
+        nextPastedScreens[slideIndex] = remainingScreens;
+      } else {
+        delete nextPastedScreens[slideIndex];
+      }
+
+      applyPastedScreens(nextPastedScreens);
+    },
+    [applyPastedScreens, rememberCurrentEdit],
+  );
 
   const goToSlide = useCallback((requestedIndex: number) => {
     const deck = deckRef.current;
@@ -300,6 +430,16 @@ export function PlusDeck() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        !event.shiftKey &&
+        event.key.toLowerCase() === "z" &&
+        undoLastEdit()
+      ) {
+        event.preventDefault();
+        return;
+      }
+
       if (event.key === "ArrowRight") {
         event.preventDefault();
         movePresentation(1);
@@ -313,7 +453,7 @@ export function PlusDeck() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [movePresentation]);
+  }, [movePresentation, undoLastEdit]);
 
   useEffect(() => {
     let isMounted = true;
@@ -350,12 +490,8 @@ export function PlusDeck() {
         [currentSlide]: nextScreens,
       };
 
-      pastedScreensRef.current = nextPastedScreens;
-      mediaCountsRef.current = {
-        ...mediaCountsRef.current,
-        [currentSlide]: nextScreens.length,
-      };
-      setPastedScreens(nextPastedScreens);
+      rememberCurrentEdit();
+      applyPastedScreens(nextPastedScreens);
       setMediaStep(currentSlide, nextScreens.length - 1);
 
       const imageProbe = new window.Image();
@@ -387,7 +523,7 @@ export function PlusDeck() {
       objectUrls.forEach((url) => URL.revokeObjectURL(url));
       objectUrls.clear();
     };
-  }, [setMediaStep]);
+  }, [applyPastedScreens, rememberCurrentEdit, setMediaStep]);
 
   const handleDeckScroll = () => {
     const deck = deckRef.current;
@@ -413,8 +549,6 @@ export function PlusDeck() {
   const activeFlowScreens = getMediaScreens(4, pastedScreens);
   const activeFlowStep = activeMediaSteps[4] ?? 0;
   const activeFlowScreen = activeFlowScreens[activeFlowStep] ?? activeFlowScreens[0];
-  const activeScreenCount = getMediaScreens(activeSlide, pastedScreens).length || 1;
-  const activeScreenStep = activeMediaSteps[activeSlide] ?? 0;
 
   return (
     <>
@@ -431,6 +565,7 @@ export function PlusDeck() {
           screens={firstSlideScreens}
           activeStep={activeMediaSteps[0] ?? 0}
           onStepChange={(index) => setMediaStep(0, index)}
+          onDelete={() => deleteActiveScreen(0)}
         >
           <div className={styles.fact}>
             <strong>Role</strong>
@@ -451,6 +586,7 @@ export function PlusDeck() {
           screens={secondSlideScreens}
           activeStep={activeMediaSteps[1] ?? 0}
           onStepChange={(index) => setMediaStep(1, index)}
+          onDelete={() => deleteActiveScreen(1)}
         >
           <div className={styles.factGrid}>
             {context.map(([label, description]) => (
@@ -468,6 +604,7 @@ export function PlusDeck() {
           screens={thirdSlideScreens}
           activeStep={activeMediaSteps[2] ?? 0}
           onStepChange={(index) => setMediaStep(2, index)}
+          onDelete={() => deleteActiveScreen(2)}
         >
           <div className={styles.problemList}>
             {problems.map(([label, description]) => (
@@ -511,6 +648,9 @@ export function PlusDeck() {
                 role="group"
                 aria-label={`${activeFlowScreen.label}, step ${activeFlowStep + 1} of ${activeFlowScreens.length}`}
               >
+                {activeFlowScreen.temporary ? (
+                  <DeleteScreenButton onDelete={() => deleteActiveScreen(4)} />
+                ) : null}
                 <ScreenVisual
                   screen={activeFlowScreen}
                   className={styles.flowPhone}
@@ -539,11 +679,6 @@ export function PlusDeck() {
       </main>
 
       <nav className={styles.presentationNav} aria-label="Presentation navigation">
-        <span className={styles.counter} aria-live="polite">
-          {activeScreenCount > 1
-            ? `${activeSlide + 1} / ${SLIDE_COUNT} · Step ${activeScreenStep + 1} / ${activeScreenCount}`
-            : `${activeSlide + 1} / ${SLIDE_COUNT}`}
-        </span>
         <button
           type="button"
           aria-label="Previous slide"
