@@ -691,14 +691,12 @@ function MediaSlide({
         </div>
         <div className={styles.media}>
           <div className={styles.mediaPanel}>
-            <div className={styles.imageViewport}>
-              <ScreenVisual
-                screen={activeScreen}
-                className={styles.phone}
-                sizes="(max-width: 760px) 70vw, 38vw"
-                priority={index === 0}
-              />
-            </div>
+            <ScreenVisual
+              screen={activeScreen}
+              className={styles.phone}
+              sizes="(max-width: 760px) 70vw, 38vw"
+              priority={index === 0}
+            />
           </div>
           <StepControls
             screens={screens}
@@ -1126,13 +1124,11 @@ export function PlusDeck() {
                 role="group"
                 aria-label={`${activeFlowScreen.label}, step ${activeFlowStep + 1} of ${activeFlowScreens.length}`}
               >
-                <div className={styles.imageViewport}>
-                  <ScreenVisual
-                    screen={activeFlowScreen}
-                    className={styles.flowPhone}
-                    sizes="(max-width: 760px) 62vw, 28vw"
-                  />
-                </div>
+                <ScreenVisual
+                  screen={activeFlowScreen}
+                  className={styles.flowPhone}
+                  sizes="(max-width: 760px) 62vw, 28vw"
+                />
               </div>
               <StepControls
                 screens={activeFlowScreens}
