@@ -1,19 +1,15 @@
 .deck {
-  height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
   background: #121212;
   color: #f5f5f3;
-  scroll-snap-type: y mandatory;
-  overscroll-behavior-y: contain;
 }
 
 .slide {
   position: relative;
   min-height: 100dvh;
   overflow: hidden;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   isolation: isolate;
 }
 
@@ -195,10 +191,6 @@
 }
 
 @media (max-width: 760px) {
-  .deck {
-    scroll-snap-type: y proximity;
-  }
-
   .splitSlide {
     grid-template-columns: 1fr;
   }
@@ -249,10 +241,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .deck {
-    scroll-behavior: auto;
-  }
-
   .slide > * {
     animation: none;
   }
