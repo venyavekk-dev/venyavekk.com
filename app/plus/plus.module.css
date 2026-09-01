@@ -7,15 +7,17 @@
 }
 
 .slide {
-  position: relative;
   min-height: 100dvh;
-  overflow: hidden;
-  isolation: isolate;
 }
 
-.splitSlide {
+.mediaSlide {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.copy,
+.textSlide {
+  padding: clamp(4rem, 7vw, 7rem) clamp(1.25rem, 5vw, 5rem);
 }
 
 .copy {
@@ -23,225 +25,153 @@
   min-width: 0;
   flex-direction: column;
   justify-content: space-between;
-  gap: clamp(2rem, 6vh, 5.5rem);
-  padding: clamp(4rem, 8vw, 9rem) clamp(2rem, 7vw, 8.5rem);
+  gap: clamp(3rem, 8vh, 7rem);
 }
 
-.heroTitle,
 .title {
+  max-width: 13ch;
   margin: 0;
   color: #fff;
+  font-size: clamp(3.25rem, 5.25vw, 5.75rem);
   font-weight: 600;
   letter-spacing: -0.045em;
+  line-height: 0.98;
   text-wrap: balance;
 }
 
-.heroTitle {
-  max-width: 11ch;
-  font-size: clamp(3.7rem, 6.5vw, 7.8rem);
-  line-height: 0.94;
+.eyebrow {
+  max-width: 34rem;
+  margin: 0 0 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(1rem, 1.25vw, 1.3rem);
+  line-height: 1.4;
 }
 
-.title {
-  max-width: 14ch;
-  font-size: clamp(3rem, 5.4vw, 6.7rem);
-  line-height: 0.98;
-}
-
-.subtitle {
-  max-width: 30rem;
-  margin: clamp(1.2rem, 2.6vh, 2.2rem) 0 0;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: clamp(1.15rem, 1.45vw, 1.7rem);
-  line-height: 1.35;
-}
-
-.details {
+.overview,
+.stack {
   display: grid;
-  max-width: 50rem;
-  gap: clamp(1.5rem, 3vh, 2.8rem);
-  font-size: clamp(1.05rem, 1.35vw, 1.6rem);
-  line-height: 1.45;
+  gap: clamp(1.4rem, 3vh, 2.6rem);
 }
 
-.details h2,
-.details h3,
-.textBlock h3 {
+.block {
+  max-width: 38rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.45rem);
+  line-height: 1.4;
+}
+
+.block h3 {
   margin: 0 0 0.35rem;
   color: #fff;
   font-size: 1em;
   font-weight: 600;
 }
 
-.details p,
-.textBlock p {
+.block p {
   margin: 0;
 }
 
-.visual {
-  position: relative;
+.block p + p {
+  margin-top: 0.35rem;
+}
+
+.impact {
+  color: rgba(255, 255, 255, 0.68);
+  font-style: italic;
+}
+
+.media {
+  display: grid;
   min-width: 0;
-  min-height: 100dvh;
-  background: #121212;
+  place-items: center;
+  padding: clamp(3rem, 7vw, 6rem);
 }
 
-.croppedVisual {
-  object-fit: cover;
-  object-position: right center;
-}
-
-.slideNumber {
-  position: absolute;
-  z-index: 3;
-  top: clamp(1rem, 2.4vw, 2.25rem);
-  right: clamp(1rem, 2.4vw, 2.25rem);
-  margin: 0;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-}
-
-.slideNumber span {
-  color: rgba(255, 255, 255, 0.35);
+.phone {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 78dvh;
+  object-fit: contain;
 }
 
 .textSlide {
   display: grid;
   align-content: space-between;
-  gap: clamp(3rem, 7vh, 7rem);
-  padding: clamp(4rem, 8vw, 9rem) clamp(2rem, 7vw, 8.5rem);
+  gap: clamp(4rem, 10vh, 8rem);
 }
 
-.textGrid {
+.grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(2.2rem, 5vh, 4.8rem) clamp(3rem, 8vw, 10rem);
+  gap: clamp(2.5rem, 6vh, 5rem) clamp(3rem, 9vw, 9rem);
 }
 
-.textBlock {
-  max-width: 38rem;
-  font-size: clamp(1.05rem, 1.45vw, 1.65rem);
-  line-height: 1.35;
+.journey {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 0.75rem;
+  font-size: clamp(1.2rem, 1.6vw, 1.7rem);
+  list-style-position: inside;
 }
 
-.textBlock p + p {
-  margin-top: 0.7rem;
-}
-
-.textBlock .impact {
-  color: rgba(255, 255, 255, 0.75);
-  font-style: italic;
-}
-
-.imageSlide {
-  background: #121212;
-}
-
-.containedVisual {
-  padding: clamp(1rem, 2vw, 2.5rem);
-  object-fit: contain;
-}
-
-.centerSlide {
+.planSlide {
   display: grid;
   place-items: center;
   padding: 2rem;
   text-align: center;
 }
 
-.centerCopy {
+.planSlide > div {
   display: grid;
   justify-items: center;
-  gap: clamp(1.5rem, 3vh, 2.5rem);
+  gap: 2rem;
 }
 
-.centerCopy p {
-  max-width: 38rem;
+.planSlide p {
+  max-width: 42rem;
   margin: 0;
   color: #fff;
-  font-size: clamp(1.3rem, 2vw, 2.2rem);
+  font-size: clamp(1.35rem, 2vw, 2.25rem);
   font-weight: 600;
   line-height: 1.2;
   text-wrap: balance;
 }
 
-.problemList {
-  display: grid;
-  gap: clamp(1.4rem, 3vh, 2.8rem);
-}
-
-@supports (animation-timeline: view()) {
-  .slide > :not(.slideNumber) {
-    animation: slide-enter linear both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 42%;
-  }
-}
-
-@keyframes slide-enter {
-  from {
-    opacity: 0.2;
-    transform: translateY(2rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (max-width: 760px) {
-  .splitSlide {
+  .mediaSlide {
     grid-template-columns: 1fr;
   }
 
-  .copy {
-    min-height: 58dvh;
-    padding: 4.8rem 1.25rem 2.5rem;
+  .copy,
+  .textSlide {
+    padding: 4.5rem 1.25rem 3rem;
   }
 
-  .heroTitle {
-    font-size: clamp(3.25rem, 15vw, 5.2rem);
+  .copy {
+    min-height: 70dvh;
   }
 
   .title {
-    font-size: clamp(2.8rem, 13vw, 4.6rem);
+    font-size: clamp(3rem, 14vw, 4.75rem);
   }
 
-  .details,
-  .textBlock {
-    font-size: 1.05rem;
+  .media {
+    min-height: 62dvh;
+    padding: 2.5rem 1.25rem;
   }
 
-  .visual {
-    min-height: 52dvh;
-  }
-
-  .croppedVisual {
-    object-position: 82% center;
+  .phone {
+    max-height: 54dvh;
   }
 
   .textSlide {
     align-content: start;
-    padding: 4.8rem 1.25rem 3.5rem;
   }
 
-  .textGrid {
+  .grid {
     grid-template-columns: 1fr;
-    gap: 2.4rem;
-  }
-
-  .imageSlide {
-    min-height: 72dvh;
-  }
-
-  .containedVisual {
-    padding: 2.5rem 0.5rem 1rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .slide > * {
-    animation: none;
+    gap: 2.5rem;
   }
 }
