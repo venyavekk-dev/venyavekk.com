@@ -423,15 +423,63 @@ type DeleteScreenButtonProps = {
   onDelete: () => void;
 };
 
+type ToolbarIconName = "upload" | "save" | "saved" | "undo" | "layout" | "delete";
+
+function ToolbarIcon({ name }: { name: ToolbarIconName }) {
+  if (name === "upload") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15.5V20h14v-4.5" />
+      </svg>
+    );
+  }
+
+  if (name === "save" || name === "saved") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        {name === "saved" ? (
+          <path d="m5 12.5 4.2 4.2L19 7" />
+        ) : (
+          <path d="M5 4h11l3 3v13H5V4Zm3 0v6h8V4M8 20v-6h8v6" />
+        )}
+      </svg>
+    );
+  }
+
+  if (name === "undo") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m9 7-5 5 5 5M5 12h8.5a5.5 5.5 0 0 1 5.5 5.5" />
+      </svg>
+    );
+  }
+
+  if (name === "layout") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="5" width="16" height="14" rx="2" />
+        <path d="M11 5v14" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m7 7 10 10M17 7 7 17" />
+    </svg>
+  );
+}
+
 function DeleteScreenButton({ onDelete }: DeleteScreenButtonProps) {
   return (
     <button
       className={styles.deleteScreen}
       type="button"
       aria-label="Delete current pasted screen"
+      title="Delete image"
       onClick={onDelete}
     >
-      ×
+      <ToolbarIcon name="delete" />
     </button>
   );
 }
@@ -463,16 +511,24 @@ function MediaToolbar({
 }: MediaToolbarProps) {
   const uploadInputRef = useRef<HTMLInputElement>(null);
   const saveLabel =
-    saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "Saved" : "Save";
+    saveStatus === "saving"
+      ? "Saving image"
+      : saveStatus === "saved"
+        ? "Image saved"
+        : saveStatus === "error"
+          ? "Try saving again"
+          : "Save image";
 
   return (
     <div className={styles.mediaToolbar} role="toolbar" aria-label="Image controls">
       <button
         className={styles.toolbarButton}
         type="button"
+        aria-label="Upload images"
+        title="Upload images"
         onClick={() => uploadInputRef.current?.click()}
       >
-        Upload
+        <ToolbarIcon name="upload" />
       </button>
       <input
         ref={uploadInputRef}
@@ -492,21 +548,31 @@ function MediaToolbar({
           saveStatus === "error" ? styles.saveError : ""
         }`}
         type="button"
+        aria-label={saveLabel}
+        title={saveLabel}
         disabled={!canSave || saveStatus === "saving"}
         onClick={onSave}
       >
-        {saveStatus === "error" ? "Try again" : saveLabel}
+        <ToolbarIcon name={saveStatus === "saved" ? "saved" : "save"} />
       </button>
       <button
         className={styles.toolbarButton}
         type="button"
+        aria-label="Undo last image change"
+        title="Undo"
         disabled={!canUndo}
         onClick={onUndo}
       >
-        Undo
+        <ToolbarIcon name="undo" />
       </button>
-      <button className={styles.toolbarButton} type="button" onClick={onToggleLayout}>
-        {layout === "split" ? "Full width" : "Split"}
+      <button
+        className={styles.toolbarButton}
+        type="button"
+        aria-label={layout === "split" ? "Use full-width layout" : "Use split layout"}
+        title={layout === "split" ? "Full width" : "Split layout"}
+        onClick={onToggleLayout}
+      >
+        <ToolbarIcon name="layout" />
       </button>
       {canDelete ? <DeleteScreenButton onDelete={onDelete} /> : null}
     </div>
@@ -554,6 +620,18 @@ function MediaSlide({
   return (
     <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
       <SlideNumber index={index} />
+      <MediaToolbar
+        layout={layout}
+        canUndo={canUndo}
+        canDelete={Boolean(activeScreen.temporary)}
+        canSave={screens.some((screen) => Boolean(screen.blob))}
+        saveStatus={saveStatus}
+        onUndo={onUndo}
+        onToggleLayout={onToggleLayout}
+        onDelete={onDelete}
+        onUpload={onUpload}
+        onSave={onSave}
+      />
       <div
         className={`${styles.slideInner} ${styles.mediaSlide} ${
           layout === "full" ? styles.fullMediaSlide : ""
@@ -567,18 +645,6 @@ function MediaSlide({
           <div className={styles.body}>{children}</div>
         </div>
         <div className={styles.media}>
-          <MediaToolbar
-            layout={layout}
-            canUndo={canUndo}
-            canDelete={Boolean(activeScreen.temporary)}
-            canSave={screens.some((screen) => Boolean(screen.blob))}
-            saveStatus={saveStatus}
-            onUndo={onUndo}
-            onToggleLayout={onToggleLayout}
-            onDelete={onDelete}
-            onUpload={onUpload}
-            onSave={onSave}
-          />
           <div className={styles.mediaPanel}>
             <ScreenVisual
               screen={activeScreen}
@@ -1045,6 +1111,18 @@ export function PlusDeck() {
 
         <section className={styles.slide} aria-label={`Slide 5 of ${SLIDE_COUNT}`}>
           <SlideNumber index={4} />
+          <MediaToolbar
+            layout={mediaLayouts[4] ?? "split"}
+            canUndo={canUndo}
+            canDelete={Boolean(activeFlowScreen.temporary)}
+            canSave={activeFlowScreens.some((screen) => Boolean(screen.blob))}
+            saveStatus={saveStatus}
+            onUndo={undoLastEdit}
+            onToggleLayout={() => toggleMediaLayout(4)}
+            onDelete={() => deleteActiveScreen(4)}
+            onUpload={(files) => addImageFiles(4, files)}
+            onSave={saveCurrentMedia}
+          />
           <div
             className={`${styles.slideInner} ${styles.flowSlide} ${
               mediaLayouts[4] === "full" ? styles.fullMediaSlide : ""
@@ -1061,18 +1139,6 @@ export function PlusDeck() {
               </p>
             </div>
             <div className={styles.flowVisual}>
-              <MediaToolbar
-                layout={mediaLayouts[4] ?? "split"}
-                canUndo={canUndo}
-                canDelete={Boolean(activeFlowScreen.temporary)}
-                canSave={activeFlowScreens.some((screen) => Boolean(screen.blob))}
-                saveStatus={saveStatus}
-                onUndo={undoLastEdit}
-                onToggleLayout={() => toggleMediaLayout(4)}
-                onDelete={() => deleteActiveScreen(4)}
-                onUpload={(files) => addImageFiles(4, files)}
-                onSave={saveCurrentMedia}
-              />
               <div
                 className={styles.flowPanel}
                 role="group"
