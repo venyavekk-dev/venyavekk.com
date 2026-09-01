@@ -41,7 +41,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
-.copy {
+.copy,
+.flowCopy {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -102,12 +103,19 @@
   margin: 0;
 }
 
+.media,
+.flowVisual {
+  margin: clamp(0.75rem, 1.4vw, 1.25rem);
+  overflow: hidden;
+  border-radius: clamp(1.25rem, 2.2vw, 2rem);
+  background: #202020;
+}
+
 .media {
   display: grid;
   place-items: center;
   min-width: 0;
   padding: clamp(2.5rem, 5vw, 5rem);
-  background: #202020;
 }
 
 .phone,
@@ -137,15 +145,12 @@
 }
 
 .flowCopy {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(3.5rem, 6.5vw, 6.5rem) clamp(1.5rem, 5vw, 5rem);
+  min-width: 0;
 }
 
 .flowDescription {
   max-width: 28rem;
-  margin: 2rem 0 0;
+  margin: 0;
   color: #b9b9b9;
   font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(1rem, 1.3vw, 1.25rem);
@@ -157,7 +162,6 @@
   grid-template-rows: minmax(0, 1fr) auto;
   min-width: 0;
   padding: clamp(2.5rem, 4vw, 4rem) clamp(1.25rem, 3vw, 3rem) 6.5rem;
-  background: #202020;
 }
 
 .flowPanel {
@@ -289,7 +293,8 @@
     grid-template-columns: 1fr;
   }
 
-  .copy {
+  .copy,
+  .flowCopy {
     min-height: 62dvh;
     padding-top: 5rem;
   }
@@ -317,11 +322,6 @@
   .priorityGrid {
     grid-template-columns: 1fr;
     gap: 2.75rem;
-  }
-
-  .flowCopy {
-    padding-top: 5rem;
-    padding-bottom: 2rem;
   }
 
   .flowVisual {

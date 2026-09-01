@@ -288,8 +288,10 @@ export function PlusDeck() {
         <section className={styles.slide} aria-label="Slide 5 of 6">
           <div className={`${styles.slideInner} ${styles.flowSlide}`}>
             <div className={styles.flowCopy}>
-              <p className={styles.eyebrow}>From first touch to the service</p>
-              <h2 className={styles.title}>Flow</h2>
+              <div>
+                <p className={styles.eyebrow}>From first touch to the service</p>
+                <h2 className={styles.title}>Flow</h2>
+              </div>
               <p className={styles.flowDescription}>
                 One continuous experience from the value proposition to the moment
                 the user starts enjoying Plus.
