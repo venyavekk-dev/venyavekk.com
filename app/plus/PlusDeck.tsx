@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import {
+  Children,
+  type CSSProperties,
   type ReactNode,
   useCallback,
   useEffect,
@@ -21,6 +23,7 @@ type MediaScreen = {
   alt: string;
   width: number;
   height: number;
+  blob?: Blob;
   temporary?: boolean;
   placeholder?: boolean;
 };
@@ -31,6 +34,95 @@ type EditSnapshot = {
 };
 
 type MediaLayout = "split" | "full";
+
+type PersistedMediaScreen = Omit<MediaScreen, "src" | "temporary" | "placeholder"> & {
+  blob: Blob;
+};
+
+type PersistedMediaState = {
+  id: string;
+  slides: Array<{
+    slideIndex: number;
+    screens: PersistedMediaScreen[];
+  }>;
+};
+
+const MEDIA_DATABASE_NAME = "venyavekk-plus-case-study";
+const MEDIA_DATABASE_VERSION = 1;
+const MEDIA_STORE_NAME = "deck-state";
+const MEDIA_STATE_KEY = "pasted-screens";
+
+function openMediaDatabase() {
+  return new Promise<IDBDatabase>((resolve, reject) => {
+    const request = window.indexedDB.open(MEDIA_DATABASE_NAME, MEDIA_DATABASE_VERSION);
+
+    request.onupgradeneeded = () => {
+      const database = request.result;
+      if (!database.objectStoreNames.contains(MEDIA_STORE_NAME)) {
+        database.createObjectStore(MEDIA_STORE_NAME, { keyPath: "id" });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function waitForTransaction(transaction: IDBTransaction) {
+  return new Promise<void>((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+    transaction.onabort = () => reject(transaction.error);
+  });
+}
+
+async function loadPersistedMedia() {
+  if (!("indexedDB" in window)) return [];
+
+  const database = await openMediaDatabase();
+  const transaction = database.transaction(MEDIA_STORE_NAME, "readonly");
+  const request = transaction.objectStore(MEDIA_STORE_NAME).get(MEDIA_STATE_KEY);
+  const state = await new Promise<PersistedMediaState | undefined>((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result as PersistedMediaState | undefined);
+    request.onerror = () => reject(request.error);
+  });
+  await waitForTransaction(transaction);
+  database.close();
+  return state?.slides ?? [];
+}
+
+async function persistMedia(pastedScreens: Record<number, MediaScreen[]>) {
+  if (!("indexedDB" in window)) return;
+
+  const slides = Object.entries(pastedScreens).flatMap(([slideIndex, screens]) => {
+    const persistedScreens = screens.flatMap((screen) => {
+      if (!screen.blob) return [];
+
+      return [
+        {
+          id: screen.id,
+          label: screen.label,
+          alt: screen.alt,
+          width: screen.width,
+          height: screen.height,
+          blob: screen.blob,
+        },
+      ];
+    });
+
+    return persistedScreens.length
+      ? [{ slideIndex: Number(slideIndex), screens: persistedScreens }]
+      : [];
+  });
+  const state: PersistedMediaState = {
+    id: MEDIA_STATE_KEY,
+    slides,
+  };
+  const database = await openMediaDatabase();
+  const transaction = database.transaction(MEDIA_STORE_NAME, "readwrite");
+  transaction.objectStore(MEDIA_STORE_NAME).put(state);
+  await waitForTransaction(transaction);
+  database.close();
+}
 
 const impact = [
   "+4.2% payment conversion",
@@ -309,6 +401,23 @@ function StorySlide({ index, title, eyebrow, children, requirements = false }: S
   );
 }
 
+function TextCardGrid({ children }: { children: ReactNode }) {
+  const cards = Children.toArray(children);
+  const gridStyle = {
+    "--text-card-count": cards.length,
+  } as CSSProperties;
+
+  return (
+    <div className={styles.textCardGrid} style={gridStyle}>
+      {cards.map((card, index) => (
+        <div className={styles.contentCard} key={index}>
+          {card}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 type DeleteScreenButtonProps = {
   onDelete: () => void;
 };
@@ -445,6 +554,7 @@ export function PlusDeck() {
   const pastedScreensRef = useRef<Record<number, MediaScreen[]>>({});
   const editHistoryRef = useRef<EditSnapshot[]>([]);
   const objectUrlsRef = useRef(new Set<string>());
+  const persistenceReadyRef = useRef(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeMediaSteps, setActiveMediaSteps] = useState<Record<number, number>>({
     ...INITIAL_MEDIA_STEPS,
@@ -610,6 +720,47 @@ export function PlusDeck() {
   }, [movePresentation, undoLastEdit]);
 
   useEffect(() => {
+    let isCancelled = false;
+
+    void loadPersistedMedia()
+      .then((persistedSlides) => {
+        if (isCancelled) return;
+
+        const restoredScreens: Record<number, MediaScreen[]> = {};
+        for (const { slideIndex, screens } of persistedSlides) {
+          if (!VISUAL_SLIDES.has(slideIndex)) continue;
+
+          restoredScreens[slideIndex] = screens.map((screen) => {
+            const objectUrl = URL.createObjectURL(screen.blob);
+            objectUrlsRef.current.add(objectUrl);
+            return {
+              ...screen,
+              src: objectUrl,
+              temporary: true,
+            };
+          });
+        }
+
+        persistenceReadyRef.current = true;
+        if (Object.keys(restoredScreens).length > 0) {
+          applyPastedScreens(restoredScreens);
+        }
+      })
+      .catch(() => {
+        persistenceReadyRef.current = true;
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [applyPastedScreens]);
+
+  useEffect(() => {
+    if (!persistenceReadyRef.current) return;
+    void persistMedia(pastedScreens);
+  }, [pastedScreens]);
+
+  useEffect(() => {
     let isMounted = true;
 
     const handlePaste = (event: ClipboardEvent) => {
@@ -636,6 +787,7 @@ export function PlusDeck() {
         alt: `Pasted screen ${nextScreenNumber}`,
         width: 994,
         height: 1978,
+        blob: imageFile,
         temporary: true,
       };
       const nextScreens = [...currentScreens, newScreen];
@@ -861,16 +1013,23 @@ export function PlusDeck() {
         </section>
 
         <StorySlide index={6} title="Understanding the real task" eyebrow="Framing">
-          <p className={styles.storyLead}>
-            The brief was not to redesign a single paywall. It was to create a
-            configurable subscription system that could sell different products across
-            multiple storefronts, adapt to each user’s context, and support continuous
-            experimentation without rebuilding the flow every time.
-          </p>
-          <div className={styles.storyHighlights}>
-            <strong>Multiple products · Multiple storefronts</strong>
-            <strong>Personalization · A/B testing</strong>
-          </div>
+          <TextCardGrid>
+            <div>
+              <strong>The actual challenge</strong>
+              <p>
+                The brief was not to redesign a single paywall. It was to create a
+                configurable subscription system that could sell different products
+                across multiple storefronts and adapt to each user’s context.
+              </p>
+            </div>
+            <div>
+              <strong>A system designed to evolve</strong>
+              <p>
+                Multiple products · Multiple storefronts · Personalization · Continuous
+                A/B testing
+              </p>
+            </div>
+          </TextCardGrid>
         </StorySlide>
 
         <MediaSlide
@@ -936,12 +1095,14 @@ export function PlusDeck() {
           eyebrow="From a test result to a product model"
           requirements
         >
-          <p className={styles.storyLead}>
-            The test showed that benefits did not drive plan selection on their own. That
-            gave us room to simplify the interface and define a more flexible product
-            model.
-          </p>
-          <div className={styles.requirementsGrid}>
+          <TextCardGrid>
+            <div className={styles.requirementGroup}>
+              <strong>What the evidence changed</strong>
+              <p>
+                Benefits did not drive plan selection on their own. We could simplify the
+                interface and define a more flexible product model.
+              </p>
+            </div>
             <div className={styles.requirementGroup}>
               <strong>Product requirements</strong>
               <ol>
@@ -966,7 +1127,7 @@ export function PlusDeck() {
                 cancellations and the need to search for critical details elsewhere.
               </p>
             </div>
-          </div>
+          </TextCardGrid>
         </StorySlide>
 
         <MediaSlide
