@@ -113,9 +113,18 @@
 
 .media {
   display: grid;
-  place-items: center;
+  grid-template-rows: minmax(0, 1fr) auto;
   min-width: 0;
   padding: clamp(2.5rem, 5vw, 5rem);
+  padding-bottom: clamp(5rem, 7vw, 7rem);
+}
+
+.mediaPanel,
+.flowPanel {
+  display: grid;
+  width: 100%;
+  min-height: 0;
+  place-items: center;
 }
 
 .phone,
@@ -165,9 +174,6 @@
 }
 
 .flowPanel {
-  display: grid;
-  place-items: center;
-  min-height: 0;
   outline: none;
 }
 

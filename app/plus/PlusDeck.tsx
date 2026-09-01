@@ -12,6 +12,17 @@ import {
 import styles from "./plus.module.css";
 
 const SLIDE_COUNT = 6;
+const VISUAL_SLIDES = new Set([0, 1, 2, 4]);
+
+type MediaScreen = {
+  id: string;
+  label: string;
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  temporary?: boolean;
+};
 
 const impact = [
   "+4.2% payment conversion",
@@ -61,41 +72,131 @@ const priorities = [
   ],
 ];
 
-const flowScreens = [
+const flowScreens: MediaScreen[] = [
   {
+    id: "paywall",
     label: "Sees paywall",
     src: "/assets/HAsPpFHrY8gd9dIWSIoqAh7o.png",
     alt: "Yandex Plus paywall",
+    width: 994,
+    height: 1978,
   },
   {
+    id: "checkout",
     label: "Opens checkout",
     src: "/assets/projects/dis08.webp",
     alt: "Yandex Plus checkout",
+    width: 994,
+    height: 1978,
   },
   {
+    id: "upsell",
     label: "Sees upsell",
     src: "/assets/GPtO07NsC3qlkt6A0mFXsXyCiI.png",
     alt: "Yandex Plus upsell",
+    width: 994,
+    height: 1978,
   },
   {
+    id: "success",
     label: "Sees success",
     src: "/assets/projects/dis02.webp",
     alt: "Yandex Plus success screen",
+    width: 994,
+    height: 1978,
   },
   {
+    id: "service",
     label: "Goes to service",
     src: "/assets/projects/dis07.webp",
     alt: "Yandex Music service screen",
+    width: 994,
+    height: 1978,
   },
 ];
+
+const defaultPhoneScreen: MediaScreen = {
+  id: "default-phone",
+  label: "Screen",
+  src: "/assets/HAsPpFHrY8gd9dIWSIoqAh7o.png",
+  alt: "Yandex Plus subscription screen",
+  width: 994,
+  height: 1978,
+};
+
+const defaultMediaScreens: Record<number, MediaScreen[]> = {
+  0: [defaultPhoneScreen],
+  1: [defaultPhoneScreen],
+  2: [{ ...defaultPhoneScreen, id: "previous-paywall", alt: "Previous Yandex Plus paywall" }],
+  4: flowScreens,
+};
+
+function getMediaScreens(
+  slideIndex: number,
+  pastedScreens: Record<number, MediaScreen[]>,
+) {
+  const pasted = pastedScreens[slideIndex];
+  return pasted?.length ? pasted : defaultMediaScreens[slideIndex] ?? [];
+}
+
+type ScreenVisualProps = {
+  screen: MediaScreen;
+  className: string;
+  priority?: boolean;
+  sizes: string;
+};
+
+function ScreenVisual({ screen, className, priority = false, sizes }: ScreenVisualProps) {
+  return (
+    <Image
+      key={screen.id}
+      className={className}
+      src={screen.src}
+      alt={screen.alt}
+      width={screen.width}
+      height={screen.height}
+      priority={priority}
+      unoptimized={screen.temporary}
+      sizes={sizes}
+    />
+  );
+}
+
+type StepControlsProps = {
+  screens: MediaScreen[];
+  activeStep: number;
+  label: string;
+  onStepChange: (index: number) => void;
+};
+
+function StepControls({ screens, activeStep, label, onStepChange }: StepControlsProps) {
+  if (screens.length < 2) return null;
+
+  return (
+    <nav className={styles.flowTabs} aria-label={label}>
+      {screens.map((screen, index) => (
+        <button
+          key={screen.id}
+          className={styles.flowTab}
+          type="button"
+          aria-current={activeStep === index ? "step" : undefined}
+          onClick={() => onStepChange(index)}
+        >
+          {screen.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
 
 type MediaSlideProps = {
   index: number;
   title: string;
   eyebrow?: string;
   children: ReactNode;
-  imageSrc: string;
-  imageAlt: string;
+  screens: MediaScreen[];
+  activeStep: number;
+  onStepChange: (index: number) => void;
 };
 
 function MediaSlide({
@@ -103,10 +204,12 @@ function MediaSlide({
   title,
   eyebrow,
   children,
-  imageSrc,
-  imageAlt,
+  screens,
+  activeStep,
+  onStepChange,
 }: MediaSlideProps) {
   const Heading = index === 0 ? "h1" : "h2";
+  const activeScreen = screens[activeStep] ?? screens[0];
 
   return (
     <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
@@ -119,14 +222,19 @@ function MediaSlide({
           <div className={styles.body}>{children}</div>
         </div>
         <div className={styles.media}>
-          <Image
-            className={styles.phone}
-            src={imageSrc}
-            alt={imageAlt}
-            width={994}
-            height={1978}
-            priority={index === 0}
-            sizes="(max-width: 760px) 70vw, 38vw"
+          <div className={styles.mediaPanel}>
+            <ScreenVisual
+              screen={activeScreen}
+              className={styles.phone}
+              sizes="(max-width: 760px) 70vw, 38vw"
+              priority={index === 0}
+            />
+          </div>
+          <StepControls
+            screens={screens}
+            activeStep={activeStep}
+            label={`Slide ${index + 1} image steps`}
+            onStepChange={onStepChange}
           />
         </div>
       </div>
@@ -137,9 +245,18 @@ function MediaSlide({
 export function PlusDeck() {
   const deckRef = useRef<HTMLElement>(null);
   const activeSlideRef = useRef(0);
-  const activeFlowRef = useRef(0);
+  const activeMediaStepsRef = useRef<Record<number, number>>({ 0: 0, 1: 0, 2: 0, 4: 0 });
+  const mediaCountsRef = useRef<Record<number, number>>({ 0: 1, 1: 1, 2: 1, 4: 5 });
+  const pastedScreensRef = useRef<Record<number, MediaScreen[]>>({});
+  const objectUrlsRef = useRef(new Set<string>());
   const [activeSlide, setActiveSlide] = useState(0);
-  const [activeFlow, setActiveFlow] = useState(0);
+  const [activeMediaSteps, setActiveMediaSteps] = useState<Record<number, number>>({
+    0: 0,
+    1: 0,
+    2: 0,
+    4: 0,
+  });
+  const [pastedScreens, setPastedScreens] = useState<Record<number, MediaScreen[]>>({});
 
   const goToSlide = useCallback((requestedIndex: number) => {
     const deck = deckRef.current;
@@ -151,30 +268,34 @@ export function PlusDeck() {
     deck.scrollTo({ left: nextIndex * deck.clientWidth, behavior: "auto" });
   }, []);
 
-  const setFlowStep = useCallback((requestedIndex: number) => {
-    const nextIndex = Math.max(0, Math.min(flowScreens.length - 1, requestedIndex));
-    activeFlowRef.current = nextIndex;
-    setActiveFlow(nextIndex);
+  const setMediaStep = useCallback((slideIndex: number, requestedIndex: number) => {
+    const screenCount = mediaCountsRef.current[slideIndex] ?? 1;
+    const nextIndex = Math.max(0, Math.min(screenCount - 1, requestedIndex));
+    activeMediaStepsRef.current = {
+      ...activeMediaStepsRef.current,
+      [slideIndex]: nextIndex,
+    };
+    setActiveMediaSteps(activeMediaStepsRef.current);
   }, []);
 
   const movePresentation = useCallback(
     (direction: -1 | 1) => {
       const currentSlide = activeSlideRef.current;
-      const currentFlow = activeFlowRef.current;
+      const currentStep = activeMediaStepsRef.current[currentSlide] ?? 0;
+      const currentScreenCount = mediaCountsRef.current[currentSlide] ?? 1;
+      const nextStep = currentStep + direction;
 
-      if (currentSlide === 4) {
-        const nextFlow = currentFlow + direction;
-        if (nextFlow >= 0 && nextFlow < flowScreens.length) {
-          setFlowStep(nextFlow);
-          return;
-        }
+      if (nextStep >= 0 && nextStep < currentScreenCount) {
+        setMediaStep(currentSlide, nextStep);
+        return;
       }
 
-      if (direction === 1 && currentSlide === 3) setFlowStep(0);
-      if (direction === -1 && currentSlide === 5) setFlowStep(flowScreens.length - 1);
-      goToSlide(currentSlide + direction);
+      const targetSlide = Math.max(0, Math.min(SLIDE_COUNT - 1, currentSlide + direction));
+      const targetScreenCount = mediaCountsRef.current[targetSlide] ?? 1;
+      setMediaStep(targetSlide, direction === 1 ? 0 : targetScreenCount - 1);
+      goToSlide(targetSlide);
     },
-    [goToSlide, setFlowStep],
+    [goToSlide, setMediaStep],
   );
 
   useEffect(() => {
@@ -194,6 +315,80 @@ export function PlusDeck() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [movePresentation]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const handlePaste = (event: ClipboardEvent) => {
+      const currentSlide = activeSlideRef.current;
+      if (!VISUAL_SLIDES.has(currentSlide)) return;
+
+      const imageItem = Array.from(event.clipboardData?.items ?? []).find((item) =>
+        item.type.startsWith("image/"),
+      );
+      const imageFile = imageItem?.getAsFile();
+      if (!imageFile) return;
+
+      event.preventDefault();
+      const objectUrl = URL.createObjectURL(imageFile);
+      objectUrlsRef.current.add(objectUrl);
+
+      const currentScreens = pastedScreensRef.current[currentSlide] ?? [];
+      const nextScreenNumber = currentScreens.length + 1;
+      const screenId = `pasted-${Date.now()}-${nextScreenNumber}`;
+      const newScreen: MediaScreen = {
+        id: screenId,
+        label: `Screen ${nextScreenNumber}`,
+        src: objectUrl,
+        alt: `Pasted screen ${nextScreenNumber}`,
+        width: 994,
+        height: 1978,
+        temporary: true,
+      };
+      const nextScreens = [...currentScreens, newScreen];
+      const nextPastedScreens = {
+        ...pastedScreensRef.current,
+        [currentSlide]: nextScreens,
+      };
+
+      pastedScreensRef.current = nextPastedScreens;
+      mediaCountsRef.current = {
+        ...mediaCountsRef.current,
+        [currentSlide]: nextScreens.length,
+      };
+      setPastedScreens(nextPastedScreens);
+      setMediaStep(currentSlide, nextScreens.length - 1);
+
+      const imageProbe = new window.Image();
+      imageProbe.onload = () => {
+        if (!isMounted) return;
+
+        const latestScreens = pastedScreensRef.current[currentSlide] ?? [];
+        const resizedScreens = latestScreens.map((screen) =>
+          screen.id === screenId
+            ? { ...screen, width: imageProbe.naturalWidth, height: imageProbe.naturalHeight }
+            : screen,
+        );
+        const resizedPastedScreens = {
+          ...pastedScreensRef.current,
+          [currentSlide]: resizedScreens,
+        };
+        pastedScreensRef.current = resizedPastedScreens;
+        setPastedScreens(resizedPastedScreens);
+      };
+      imageProbe.src = objectUrl;
+    };
+
+    window.addEventListener("paste", handlePaste);
+    const objectUrls = objectUrlsRef.current;
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("paste", handlePaste);
+      objectUrls.forEach((url) => URL.revokeObjectURL(url));
+      objectUrls.clear();
+    };
+  }, [setMediaStep]);
+
   const handleDeckScroll = () => {
     const deck = deckRef.current;
     if (!deck || deck.clientWidth === 0) return;
@@ -204,12 +399,22 @@ export function PlusDeck() {
     );
 
     if (nextIndex !== activeSlideRef.current) {
+      const previousIndex = activeSlideRef.current;
+      const targetScreenCount = mediaCountsRef.current[nextIndex] ?? 1;
+      setMediaStep(nextIndex, nextIndex > previousIndex ? 0 : targetScreenCount - 1);
       activeSlideRef.current = nextIndex;
       setActiveSlide(nextIndex);
     }
   };
 
-  const activeFlowScreen = flowScreens[activeFlow];
+  const firstSlideScreens = getMediaScreens(0, pastedScreens);
+  const secondSlideScreens = getMediaScreens(1, pastedScreens);
+  const thirdSlideScreens = getMediaScreens(2, pastedScreens);
+  const activeFlowScreens = getMediaScreens(4, pastedScreens);
+  const activeFlowStep = activeMediaSteps[4] ?? 0;
+  const activeFlowScreen = activeFlowScreens[activeFlowStep] ?? activeFlowScreens[0];
+  const activeScreenCount = getMediaScreens(activeSlide, pastedScreens).length || 1;
+  const activeScreenStep = activeMediaSteps[activeSlide] ?? 0;
 
   return (
     <>
@@ -223,8 +428,9 @@ export function PlusDeck() {
           index={0}
           title="How to sell subscription well"
           eyebrow="Case Study by Veniamin Vekk"
-          imageSrc="/assets/HAsPpFHrY8gd9dIWSIoqAh7o.png"
-          imageAlt="Yandex Plus subscription screen"
+          screens={firstSlideScreens}
+          activeStep={activeMediaSteps[0] ?? 0}
+          onStepChange={(index) => setMediaStep(0, index)}
         >
           <div className={styles.fact}>
             <strong>Role</strong>
@@ -242,8 +448,9 @@ export function PlusDeck() {
           index={1}
           title="What is Yandex Plus?"
           eyebrow="The region’s largest multi-service subscription"
-          imageSrc="/assets/HAsPpFHrY8gd9dIWSIoqAh7o.png"
-          imageAlt="Yandex Plus subscription screen"
+          screens={secondSlideScreens}
+          activeStep={activeMediaSteps[1] ?? 0}
+          onStepChange={(index) => setMediaStep(1, index)}
         >
           <div className={styles.factGrid}>
             {context.map(([label, description]) => (
@@ -258,8 +465,9 @@ export function PlusDeck() {
         <MediaSlide
           index={2}
           title="The main paywall wasn’t built for the new subscription strategy"
-          imageSrc="/assets/HAsPpFHrY8gd9dIWSIoqAh7o.png"
-          imageAlt="Previous Yandex Plus paywall"
+          screens={thirdSlideScreens}
+          activeStep={activeMediaSteps[2] ?? 0}
+          onStepChange={(index) => setMediaStep(2, index)}
         >
           <div className={styles.problemList}>
             {problems.map(([label, description]) => (
@@ -301,31 +509,20 @@ export function PlusDeck() {
               <div
                 className={styles.flowPanel}
                 role="group"
-                aria-label={`${activeFlowScreen.label}, step ${activeFlow + 1} of ${flowScreens.length}`}
+                aria-label={`${activeFlowScreen.label}, step ${activeFlowStep + 1} of ${activeFlowScreens.length}`}
               >
-                <Image
-                  key={activeFlowScreen.src}
+                <ScreenVisual
+                  screen={activeFlowScreen}
                   className={styles.flowPhone}
-                  src={activeFlowScreen.src}
-                  alt={activeFlowScreen.alt}
-                  width={994}
-                  height={1978}
                   sizes="(max-width: 760px) 62vw, 28vw"
                 />
               </div>
-              <nav className={styles.flowTabs} aria-label="Subscription flow steps">
-                {flowScreens.map((screen, index) => (
-                  <button
-                    key={screen.label}
-                    className={styles.flowTab}
-                    type="button"
-                    aria-current={activeFlow === index ? "step" : undefined}
-                    onClick={() => setFlowStep(index)}
-                  >
-                    {screen.label}
-                  </button>
-                ))}
-              </nav>
+              <StepControls
+                screens={activeFlowScreens}
+                activeStep={activeFlowStep}
+                label="Subscription flow steps"
+                onStepChange={(index) => setMediaStep(4, index)}
+              />
             </div>
           </div>
         </section>
@@ -343,8 +540,8 @@ export function PlusDeck() {
 
       <nav className={styles.presentationNav} aria-label="Presentation navigation">
         <span className={styles.counter} aria-live="polite">
-          {activeSlide === 4
-            ? `5 / ${SLIDE_COUNT} · Step ${activeFlow + 1} / ${flowScreens.length}`
+          {activeScreenCount > 1
+            ? `${activeSlide + 1} / ${SLIDE_COUNT} · Step ${activeScreenStep + 1} / ${activeScreenCount}`
             : `${activeSlide + 1} / ${SLIDE_COUNT}`}
         </span>
         <button
