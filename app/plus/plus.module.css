@@ -281,6 +281,7 @@
 
 .mediaToolbar {
   display: flex;
+  flex-wrap: wrap;
   min-height: 2.5rem;
   align-items: center;
   gap: 0.5rem;
@@ -304,6 +305,10 @@
 .toolbarButton:disabled {
   opacity: 0.32;
   cursor: default;
+}
+
+.saveError {
+  color: #ff9c9c;
 }
 
 .deleteScreen {

@@ -34,6 +34,7 @@ type EditSnapshot = {
 };
 
 type MediaLayout = "split" | "full";
+type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 type PersistedMediaScreen = Omit<MediaScreen, "src" | "temporary" | "placeholder"> & {
   blob: Blob;
@@ -439,21 +440,63 @@ type MediaToolbarProps = {
   layout: MediaLayout;
   canUndo: boolean;
   canDelete: boolean;
+  canSave: boolean;
+  saveStatus: SaveStatus;
   onUndo: () => void;
   onToggleLayout: () => void;
   onDelete: () => void;
+  onUpload: (files: File[]) => void;
+  onSave: () => void;
 };
 
 function MediaToolbar({
   layout,
   canUndo,
   canDelete,
+  canSave,
+  saveStatus,
   onUndo,
   onToggleLayout,
   onDelete,
+  onUpload,
+  onSave,
 }: MediaToolbarProps) {
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const saveLabel =
+    saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "Saved" : "Save";
+
   return (
     <div className={styles.mediaToolbar} role="toolbar" aria-label="Image controls">
+      <button
+        className={styles.toolbarButton}
+        type="button"
+        onClick={() => uploadInputRef.current?.click()}
+      >
+        Upload
+      </button>
+      <input
+        ref={uploadInputRef}
+        className={styles.visuallyHidden}
+        type="file"
+        accept="image/*"
+        multiple
+        tabIndex={-1}
+        onChange={(event) => {
+          const files = Array.from(event.currentTarget.files ?? []);
+          if (files.length > 0) onUpload(files);
+          event.currentTarget.value = "";
+        }}
+      />
+      <button
+        className={`${styles.toolbarButton} ${
+          saveStatus === "error" ? styles.saveError : ""
+        }`}
+        type="button"
+        disabled={!canSave || saveStatus === "saving"}
+        onClick={onSave}
+      >
+        {saveStatus === "error" ? "Try again" : saveLabel}
+      </button>
       <button
         className={styles.toolbarButton}
         type="button"
@@ -481,8 +524,11 @@ type MediaSlideProps = {
   onDelete: () => void;
   layout: MediaLayout;
   canUndo: boolean;
+  saveStatus: SaveStatus;
   onUndo: () => void;
   onToggleLayout: () => void;
+  onUpload: (files: File[]) => void;
+  onSave: () => void;
 };
 
 function MediaSlide({
@@ -496,8 +542,11 @@ function MediaSlide({
   onDelete,
   layout,
   canUndo,
+  saveStatus,
   onUndo,
   onToggleLayout,
+  onUpload,
+  onSave,
 }: MediaSlideProps) {
   const Heading = index === 0 ? "h1" : "h2";
   const activeScreen = screens[activeStep] ?? screens[0];
@@ -522,9 +571,13 @@ function MediaSlide({
             layout={layout}
             canUndo={canUndo}
             canDelete={Boolean(activeScreen.temporary)}
+            canSave={screens.some((screen) => Boolean(screen.blob))}
+            saveStatus={saveStatus}
             onUndo={onUndo}
             onToggleLayout={onToggleLayout}
             onDelete={onDelete}
+            onUpload={onUpload}
+            onSave={onSave}
           />
           <div className={styles.mediaPanel}>
             <ScreenVisual
@@ -561,6 +614,7 @@ export function PlusDeck() {
   });
   const [pastedScreens, setPastedScreens] = useState<Record<number, MediaScreen[]>>({});
   const [canUndo, setCanUndo] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [mediaLayouts, setMediaLayouts] = useState<Record<number, MediaLayout>>({
     10: "full",
     11: "full",
@@ -672,6 +726,75 @@ export function PlusDeck() {
     setActiveMediaSteps(activeMediaStepsRef.current);
   }, []);
 
+  const addImageFiles = useCallback(
+    (slideIndex: number, files: File[]) => {
+      if (!VISUAL_SLIDES.has(slideIndex) || files.length === 0) return;
+
+      const currentScreens = pastedScreensRef.current[slideIndex] ?? [];
+      const batchId = Date.now();
+      const newScreens = files.map((file, index) => {
+        const screenNumber = currentScreens.length + index + 1;
+        const objectUrl = URL.createObjectURL(file);
+        objectUrlsRef.current.add(objectUrl);
+
+        return {
+          id: `pasted-${batchId}-${screenNumber}`,
+          label: `Screen ${screenNumber}`,
+          src: objectUrl,
+          alt: `Pasted screen ${screenNumber}`,
+          width: 994,
+          height: 1978,
+          blob: file,
+          temporary: true,
+        } satisfies MediaScreen;
+      });
+      const nextScreens = [...currentScreens, ...newScreens];
+      const nextPastedScreens = {
+        ...pastedScreensRef.current,
+        [slideIndex]: nextScreens,
+      };
+
+      rememberCurrentEdit();
+      setSaveStatus("saving");
+      applyPastedScreens(nextPastedScreens);
+      setMediaStep(slideIndex, nextScreens.length - 1);
+
+      for (const screen of newScreens) {
+        const imageProbe = new window.Image();
+        imageProbe.onload = () => {
+          const latestScreens = pastedScreensRef.current[slideIndex] ?? [];
+          const resizedScreens = latestScreens.map((latestScreen) =>
+            latestScreen.id === screen.id
+              ? {
+                  ...latestScreen,
+                  width: imageProbe.naturalWidth,
+                  height: imageProbe.naturalHeight,
+                }
+              : latestScreen,
+          );
+          const resizedPastedScreens = {
+            ...pastedScreensRef.current,
+            [slideIndex]: resizedScreens,
+          };
+          pastedScreensRef.current = resizedPastedScreens;
+          setPastedScreens(resizedPastedScreens);
+        };
+        imageProbe.src = screen.src ?? "";
+      }
+    },
+    [applyPastedScreens, rememberCurrentEdit, setMediaStep],
+  );
+
+  const saveCurrentMedia = useCallback(async () => {
+    setSaveStatus("saving");
+    try {
+      await persistMedia(pastedScreensRef.current);
+      setSaveStatus("saved");
+    } catch {
+      setSaveStatus("error");
+    }
+  }, []);
+
   const movePresentation = useCallback(
     (direction: -1 | 1) => {
       const currentSlide = activeSlideRef.current;
@@ -757,12 +880,13 @@ export function PlusDeck() {
 
   useEffect(() => {
     if (!persistenceReadyRef.current) return;
-    void persistMedia(pastedScreens);
+    setSaveStatus("saving");
+    void persistMedia(pastedScreens)
+      .then(() => setSaveStatus("saved"))
+      .catch(() => setSaveStatus("error"));
   }, [pastedScreens]);
 
   useEffect(() => {
-    let isMounted = true;
-
     const handlePaste = (event: ClipboardEvent) => {
       const currentSlide = activeSlideRef.current;
       if (!VISUAL_SLIDES.has(currentSlide)) return;
@@ -774,62 +898,18 @@ export function PlusDeck() {
       if (!imageFile) return;
 
       event.preventDefault();
-      const objectUrl = URL.createObjectURL(imageFile);
-      objectUrlsRef.current.add(objectUrl);
-
-      const currentScreens = pastedScreensRef.current[currentSlide] ?? [];
-      const nextScreenNumber = currentScreens.length + 1;
-      const screenId = `pasted-${Date.now()}-${nextScreenNumber}`;
-      const newScreen: MediaScreen = {
-        id: screenId,
-        label: `Screen ${nextScreenNumber}`,
-        src: objectUrl,
-        alt: `Pasted screen ${nextScreenNumber}`,
-        width: 994,
-        height: 1978,
-        blob: imageFile,
-        temporary: true,
-      };
-      const nextScreens = [...currentScreens, newScreen];
-      const nextPastedScreens = {
-        ...pastedScreensRef.current,
-        [currentSlide]: nextScreens,
-      };
-
-      rememberCurrentEdit();
-      applyPastedScreens(nextPastedScreens);
-      setMediaStep(currentSlide, nextScreens.length - 1);
-
-      const imageProbe = new window.Image();
-      imageProbe.onload = () => {
-        if (!isMounted) return;
-
-        const latestScreens = pastedScreensRef.current[currentSlide] ?? [];
-        const resizedScreens = latestScreens.map((screen) =>
-          screen.id === screenId
-            ? { ...screen, width: imageProbe.naturalWidth, height: imageProbe.naturalHeight }
-            : screen,
-        );
-        const resizedPastedScreens = {
-          ...pastedScreensRef.current,
-          [currentSlide]: resizedScreens,
-        };
-        pastedScreensRef.current = resizedPastedScreens;
-        setPastedScreens(resizedPastedScreens);
-      };
-      imageProbe.src = objectUrl;
+      addImageFiles(currentSlide, [imageFile]);
     };
 
     window.addEventListener("paste", handlePaste);
     const objectUrls = objectUrlsRef.current;
 
     return () => {
-      isMounted = false;
       window.removeEventListener("paste", handlePaste);
       objectUrls.forEach((url) => URL.revokeObjectURL(url));
       objectUrls.clear();
     };
-  }, [applyPastedScreens, rememberCurrentEdit, setMediaStep]);
+  }, [addImageFiles]);
 
   const handleDeckScroll = () => {
     const deck = deckRef.current;
@@ -879,8 +959,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(0)}
           layout={mediaLayouts[0] ?? "split"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(0)}
+          onUpload={(files) => addImageFiles(0, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.fact}>
             <strong>Role</strong>
@@ -904,8 +987,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(1)}
           layout={mediaLayouts[1] ?? "split"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(1)}
+          onUpload={(files) => addImageFiles(1, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.factGrid}>
             {context.map(([label, description]) => (
@@ -926,8 +1012,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(2)}
           layout={mediaLayouts[2] ?? "split"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(2)}
+          onUpload={(files) => addImageFiles(2, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.problemList}>
             {problems.map(([label, description]) => (
@@ -976,9 +1065,13 @@ export function PlusDeck() {
                 layout={mediaLayouts[4] ?? "split"}
                 canUndo={canUndo}
                 canDelete={Boolean(activeFlowScreen.temporary)}
+                canSave={activeFlowScreens.some((screen) => Boolean(screen.blob))}
+                saveStatus={saveStatus}
                 onUndo={undoLastEdit}
                 onToggleLayout={() => toggleMediaLayout(4)}
                 onDelete={() => deleteActiveScreen(4)}
+                onUpload={(files) => addImageFiles(4, files)}
+                onSave={saveCurrentMedia}
               />
               <div
                 className={styles.flowPanel}
@@ -1042,8 +1135,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(7)}
           layout={mediaLayouts[7] ?? "split"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(7)}
+          onUpload={(files) => addImageFiles(7, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1071,8 +1167,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(8)}
           layout={mediaLayouts[8] ?? "split"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(8)}
+          onUpload={(files) => addImageFiles(8, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1140,8 +1239,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(10)}
           layout={mediaLayouts[10] ?? "full"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(10)}
+          onUpload={(files) => addImageFiles(10, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1166,8 +1268,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(11)}
           layout={mediaLayouts[11] ?? "full"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(11)}
+          onUpload={(files) => addImageFiles(11, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
@@ -1191,8 +1296,11 @@ export function PlusDeck() {
           onDelete={() => deleteActiveScreen(12)}
           layout={mediaLayouts[12] ?? "split"}
           canUndo={canUndo}
+          saveStatus={saveStatus}
           onUndo={undoLastEdit}
           onToggleLayout={() => toggleMediaLayout(12)}
+          onUpload={(files) => addImageFiles(12, files)}
+          onSave={saveCurrentMedia}
         >
           <div className={styles.textBlock}>
             <p>
