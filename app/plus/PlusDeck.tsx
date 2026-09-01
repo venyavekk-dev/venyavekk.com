@@ -407,9 +407,17 @@ type StorySlideProps = {
   eyebrow?: string;
   children: ReactNode;
   requirements?: boolean;
+  research?: boolean;
 };
 
-function StorySlide({ index, title, eyebrow, children, requirements = false }: StorySlideProps) {
+function StorySlide({
+  index,
+  title,
+  eyebrow,
+  children,
+  requirements = false,
+  research = false,
+}: StorySlideProps) {
   return (
     <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
       <SlideNumber index={index} />
@@ -417,7 +425,7 @@ function StorySlide({ index, title, eyebrow, children, requirements = false }: S
       <div
         className={`${styles.slideInner} ${styles.storySlide} ${
           requirements ? styles.requirementsSlide : ""
-        }`}
+        } ${research ? styles.researchSlide : ""}`}
       >
         <div className={styles.headingSpace} aria-hidden="true" />
         <div className={styles.storyBody}>{children}</div>
@@ -667,7 +675,10 @@ function MediaSlide({
   const activeScreen = screens[activeStep] ?? screens[0];
 
   return (
-    <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
+    <section
+      className={`${styles.slide} ${index === 10 ? styles.horizontalMediaSlide : ""}`}
+      aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}
+    >
       <SlideNumber index={index} />
       <SlideHeading title={title} eyebrow={eyebrow} level={index === 0 ? "h1" : "h2"} />
       <div
@@ -1105,10 +1116,7 @@ export function PlusDeck() {
             }`}
           >
             <div className={styles.flowCopy}>
-              <p className={styles.flowDescription}>
-                One continuous experience from the value proposition to the moment
-                the user starts enjoying Plus.
-              </p>
+              <div aria-hidden="true" />
             </div>
             <div className={styles.flowVisual}>
               <div
@@ -1175,22 +1183,70 @@ export function PlusDeck() {
           </div>
         </MediaSlide>
 
-        <StorySlide index={6} title="Understanding the real task" eyebrow="Framing">
+        <StorySlide index={6} title="Understanding the real task" eyebrow="Framing" research>
           <TextCardGrid>
             <div>
-              <strong>The actual challenge</strong>
+              <strong>Task, hypothesis, and requirements</strong>
+              <h3>Overall task</h3>
               <p>
-                The brief was not to redesign a single paywall. It was to create a
-                configurable subscription system that could sell different products
-                across multiple storefronts and adapt to each user’s context.
+                Accelerate subscription sales through a reusable offer section that can
+                appear across services, receive different offers, and let product teams
+                manage them.
               </p>
+              <h3>Music hypothesis</h3>
+              <p>
+                Showing two offers on one screen will increase subscription take rate by
+                supporting different offer configurations.
+              </p>
+              <h3>Requirements</h3>
+              <ul>
+                <li>Show one or two offers.</li>
+                <li>Include the offer name, price description, and legal copy.</li>
+                <li>Highlight one promotional offer.</li>
+                <li>Support a sticky position and live inside the paywall.</li>
+              </ul>
             </div>
             <div>
-              <strong>A system designed to evolve</strong>
-              <p>
-                Multiple products · Multiple storefronts · Personalization · Continuous
-                A/B testing
-              </p>
+              <strong>Research questions</strong>
+              <ol>
+                <li>Does the checkbox make the selected offer clear?</li>
+                <li>Do people understand that only one offer can be selected?</li>
+                <li>Is the blue highlight enough to communicate the selection?</li>
+                <li>Do people understand which plan types are available?</li>
+                <li>Can they compare prices and see the differences between offers?</li>
+                <li>Do they understand which option provides better value?</li>
+                <li>Do they know they can scroll for details?</li>
+                <li>What do they expect after pressing the button?</li>
+                <li>Do they notice and read the legal copy?</li>
+              </ol>
+            </div>
+            <div>
+              <strong>Sticky-section questions</strong>
+              <ol>
+                <li>Does the section interfere with scrolling?</li>
+                <li>Can people see where to change their plan?</li>
+                <li>What do they expect after selecting “Change plan”?</li>
+                <li>Does the sticky section affect offer take rate?</li>
+                <li>Should it stick to the page or remain inside the paywall?</li>
+              </ol>
+              <h3>Promotional emphasis</h3>
+              <ol>
+                <li>Does highlighting an offer improve take rate?</li>
+                <li>Does the sticky behavior change take rate?</li>
+              </ol>
+            </div>
+            <div>
+              <strong>A/B-test questions</strong>
+              <h3>Highlight the promotion</h3>
+              <ol>
+                <li>Does highlighting an offer improve take rate?</li>
+                <li>Does the sticky section improve take rate?</li>
+              </ol>
+              <h3>Present the offer as two propositions</h3>
+              <ol>
+                <li>Does showing “30 days” on both buttons affect take rate?</li>
+                <li>Will people press a button to learn more?</li>
+              </ol>
             </div>
           </TextCardGrid>
         </StorySlide>
@@ -1246,18 +1302,10 @@ export function PlusDeck() {
 
         <StorySlide
           index={9}
-          title="Turning evidence into business requirements"
-          eyebrow="From a test result to a product model"
+          title="I compiled the business requirements"
           requirements
         >
           <TextCardGrid>
-            <div className={styles.requirementGroup}>
-              <strong>What the evidence changed</strong>
-              <p>
-                Benefits did not drive plan selection on their own. We could simplify the
-                interface and define a more flexible product model.
-              </p>
-            </div>
             <div className={styles.requirementGroup}>
               <strong>Product requirements</strong>
               <ol>
@@ -1300,10 +1348,6 @@ export function PlusDeck() {
               surfaces. The audit exposed duplicated patterns, inconsistent hierarchy,
               and service-specific solutions that could not scale as one system.
             </p>
-          </div>
-          <div className={styles.textBlock}>
-            <strong>What we mapped</strong>
-            <p>Entry point · Audience · Offer · Message · Purchase mechanics</p>
           </div>
         </MediaSlide>
 
