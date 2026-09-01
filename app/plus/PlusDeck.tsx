@@ -11,17 +11,18 @@ import {
 
 import styles from "./plus.module.css";
 
-const SLIDE_COUNT = 6;
-const VISUAL_SLIDES = new Set([0, 1, 2, 4]);
+const SLIDE_COUNT = 13;
+const VISUAL_SLIDES = new Set([0, 1, 2, 4, 7, 8, 10, 11, 12]);
 
 type MediaScreen = {
   id: string;
   label: string;
-  src: string;
+  src?: string;
   alt: string;
   width: number;
   height: number;
   temporary?: boolean;
+  placeholder?: boolean;
 };
 
 type EditSnapshot = {
@@ -131,11 +132,51 @@ const defaultPhoneScreen: MediaScreen = {
   height: 1978,
 };
 
+function createPlaceholderScreen(slideIndex: number): MediaScreen {
+  return {
+    id: `placeholder-${slideIndex}`,
+    label: "Image",
+    alt: "Empty image area",
+    width: 1600,
+    height: 1000,
+    placeholder: true,
+  };
+}
+
 const defaultMediaScreens: Record<number, MediaScreen[]> = {
   0: [defaultPhoneScreen],
   1: [defaultPhoneScreen],
   2: [{ ...defaultPhoneScreen, id: "previous-paywall", alt: "Previous Yandex Plus paywall" }],
   4: flowScreens,
+  7: [createPlaceholderScreen(7)],
+  8: [createPlaceholderScreen(8)],
+  10: [createPlaceholderScreen(10)],
+  11: [createPlaceholderScreen(11)],
+  12: [createPlaceholderScreen(12)],
+};
+
+const INITIAL_MEDIA_STEPS: Record<number, number> = {
+  0: 0,
+  1: 0,
+  2: 0,
+  4: 0,
+  7: 0,
+  8: 0,
+  10: 0,
+  11: 0,
+  12: 0,
+};
+
+const DEFAULT_MEDIA_COUNTS: Record<number, number> = {
+  0: 1,
+  1: 1,
+  2: 1,
+  4: 5,
+  7: 1,
+  8: 1,
+  10: 1,
+  11: 1,
+  12: 1,
 };
 
 function getMediaScreens(
@@ -154,6 +195,15 @@ type ScreenVisualProps = {
 };
 
 function ScreenVisual({ screen, className, priority = false, sizes }: ScreenVisualProps) {
+  if (screen.placeholder || !screen.src) {
+    return (
+      <div className={styles.emptyMedia} role="img" aria-label={screen.alt}>
+        <span>Paste image</span>
+        <kbd>⌘V</kbd>
+      </div>
+    );
+  }
+
   return (
     <Image
       key={screen.id}
@@ -216,10 +266,46 @@ function StepControls({ screens, activeStep, label, onStepChange }: StepControls
           aria-current={activeStep === index ? "step" : undefined}
           onClick={() => onStepChange(index)}
         >
-          {screen.label}
+          <span className={styles.visuallyHidden}>{screen.label}</span>
+          {index + 1}
         </button>
       ))}
     </nav>
+  );
+}
+
+function SlideNumber({ index }: { index: number }) {
+  return (
+    <span className={styles.slideNumber} aria-hidden="true">
+      {String(index + 1).padStart(2, "0")}
+    </span>
+  );
+}
+
+type StorySlideProps = {
+  index: number;
+  title: string;
+  eyebrow?: string;
+  children: ReactNode;
+  requirements?: boolean;
+};
+
+function StorySlide({ index, title, eyebrow, children, requirements = false }: StorySlideProps) {
+  return (
+    <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
+      <SlideNumber index={index} />
+      <div
+        className={`${styles.slideInner} ${styles.storySlide} ${
+          requirements ? styles.requirementsSlide : ""
+        }`}
+      >
+        <div>
+          {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
+          <h2 className={styles.title}>{title}</h2>
+        </div>
+        <div className={styles.storyBody}>{children}</div>
+      </div>
+    </section>
   );
 }
 
@@ -309,6 +395,7 @@ function MediaSlide({
 
   return (
     <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
+      <SlideNumber index={index} />
       <div
         className={`${styles.slideInner} ${styles.mediaSlide} ${
           layout === "full" ? styles.fullMediaSlide : ""
@@ -353,24 +440,24 @@ function MediaSlide({
 export function PlusDeck() {
   const deckRef = useRef<HTMLElement>(null);
   const activeSlideRef = useRef(0);
-  const activeMediaStepsRef = useRef<Record<number, number>>({ 0: 0, 1: 0, 2: 0, 4: 0 });
-  const mediaCountsRef = useRef<Record<number, number>>({ 0: 1, 1: 1, 2: 1, 4: 5 });
+  const activeMediaStepsRef = useRef<Record<number, number>>({ ...INITIAL_MEDIA_STEPS });
+  const mediaCountsRef = useRef<Record<number, number>>({ ...DEFAULT_MEDIA_COUNTS });
   const pastedScreensRef = useRef<Record<number, MediaScreen[]>>({});
   const editHistoryRef = useRef<EditSnapshot[]>([]);
   const objectUrlsRef = useRef(new Set<string>());
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeMediaSteps, setActiveMediaSteps] = useState<Record<number, number>>({
-    0: 0,
-    1: 0,
-    2: 0,
-    4: 0,
+    ...INITIAL_MEDIA_STEPS,
   });
   const [pastedScreens, setPastedScreens] = useState<Record<number, MediaScreen[]>>({});
   const [canUndo, setCanUndo] = useState(false);
-  const [mediaLayouts, setMediaLayouts] = useState<Record<number, MediaLayout>>({});
+  const [mediaLayouts, setMediaLayouts] = useState<Record<number, MediaLayout>>({
+    10: "full",
+    11: "full",
+  });
 
   const applyPastedScreens = useCallback((nextPastedScreens: Record<number, MediaScreen[]>) => {
-    const nextCounts: Record<number, number> = { 0: 1, 1: 1, 2: 1, 4: 5 };
+    const nextCounts: Record<number, number> = { ...DEFAULT_MEDIA_COUNTS };
 
     for (const slideIndex of VISUAL_SLIDES) {
       const pastedCount = nextPastedScreens[slideIndex]?.length ?? 0;
@@ -614,6 +701,11 @@ export function PlusDeck() {
   const secondSlideScreens = getMediaScreens(1, pastedScreens);
   const thirdSlideScreens = getMediaScreens(2, pastedScreens);
   const activeFlowScreens = getMediaScreens(4, pastedScreens);
+  const testSlideScreens = getMediaScreens(7, pastedScreens);
+  const resultsSlideScreens = getMediaScreens(8, pastedScreens);
+  const auditSlideScreens = getMediaScreens(10, pastedScreens);
+  const systemSlideScreens = getMediaScreens(11, pastedScreens);
+  const directionsSlideScreens = getMediaScreens(12, pastedScreens);
   const activeFlowStep = activeMediaSteps[4] ?? 0;
   const activeFlowScreen = activeFlowScreens[activeFlowStep] ?? activeFlowScreens[0];
 
@@ -695,7 +787,8 @@ export function PlusDeck() {
           </div>
         </MediaSlide>
 
-        <section className={styles.slide} aria-label="Slide 4 of 6">
+        <section className={styles.slide} aria-label={`Slide 4 of ${SLIDE_COUNT}`}>
+          <SlideNumber index={3} />
           <div className={`${styles.slideInner} ${styles.textSlide}`}>
             <h2 className={styles.title}>Strategic priorities</h2>
             <div className={styles.priorityGrid}>
@@ -709,7 +802,8 @@ export function PlusDeck() {
           </div>
         </section>
 
-        <section className={styles.slide} aria-label="Slide 5 of 6">
+        <section className={styles.slide} aria-label={`Slide 5 of ${SLIDE_COUNT}`}>
+          <SlideNumber index={4} />
           <div
             className={`${styles.slideInner} ${styles.flowSlide} ${
               mediaLayouts[4] === "full" ? styles.fullMediaSlide : ""
@@ -755,7 +849,8 @@ export function PlusDeck() {
           </div>
         </section>
 
-        <section className={styles.slide} aria-label="Slide 6 of 6">
+        <section className={styles.slide} aria-label={`Slide 6 of ${SLIDE_COUNT}`}>
+          <SlideNumber index={5} />
           <div className={`${styles.slideInner} ${styles.centerSlide}`}>
             <p className={styles.eyebrow}>The working principle</p>
             <h2 className={styles.title}>Plan</h2>
@@ -764,6 +859,192 @@ export function PlusDeck() {
             </p>
           </div>
         </section>
+
+        <StorySlide index={6} title="Understanding the real task" eyebrow="Framing">
+          <p className={styles.storyLead}>
+            The brief was not to redesign a single paywall. It was to create a
+            configurable subscription system that could sell different products across
+            multiple storefronts, adapt to each user’s context, and support continuous
+            experimentation without rebuilding the flow every time.
+          </p>
+          <div className={styles.storyHighlights}>
+            <strong>Multiple products · Multiple storefronts</strong>
+            <strong>Personalization · A/B testing</strong>
+          </div>
+        </StorySlide>
+
+        <MediaSlide
+          index={7}
+          title="What if we remove the descriptions?"
+          eyebrow="A deliberately simple test"
+          screens={testSlideScreens}
+          activeStep={activeMediaSteps[7] ?? 0}
+          onStepChange={(index) => setMediaStep(7, index)}
+          onDelete={() => deleteActiveScreen(7)}
+          layout={mediaLayouts[7] ?? "split"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(7)}
+        >
+          <div className={styles.textBlock}>
+            <p>
+              I proposed a focused experiment: remove the benefit descriptions that
+              repeated information already communicated elsewhere and measure whether
+              they actually contributed to conversion.
+            </p>
+          </div>
+          <div className={styles.textBlock}>
+            <strong>Hypothesis</strong>
+            <p>
+              If descriptions add little perceived value, removing them should simplify
+              the interface without reducing take rate.
+            </p>
+          </div>
+        </MediaSlide>
+
+        <MediaSlide
+          index={8}
+          title="The experiment confirmed the hypothesis"
+          eyebrow="Evidence before redesign"
+          screens={resultsSlideScreens}
+          activeStep={activeMediaSteps[8] ?? 0}
+          onStepChange={(index) => setMediaStep(8, index)}
+          onDelete={() => deleteActiveScreen(8)}
+          layout={mediaLayouts[8] ?? "split"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(8)}
+        >
+          <div className={styles.textBlock}>
+            <p>
+              Conversion remained effectively unchanged across the control and test
+              variants. Annual-versus-monthly take rate also stayed stable.
+            </p>
+          </div>
+          <div className={styles.textBlock}>
+            <strong>Result</strong>
+            <p>
+              We could remove duplicated descriptions, reduce visual pressure, and make
+              room for more relevant information.
+            </p>
+          </div>
+        </MediaSlide>
+
+        <StorySlide
+          index={9}
+          title="Turning evidence into business requirements"
+          eyebrow="From a test result to a product model"
+          requirements
+        >
+          <p className={styles.storyLead}>
+            The test showed that benefits did not drive plan selection on their own. That
+            gave us room to simplify the interface and define a more flexible product
+            model.
+          </p>
+          <div className={styles.requirementsGrid}>
+            <div className={styles.requirementGroup}>
+              <strong>Product requirements</strong>
+              <ol>
+                <li>Sell any offer type, not only annual versus monthly plans.</li>
+                <li>
+                  Support trials, introductory prices, full-price plans, and promotions.
+                </li>
+                <li>
+                  Fit into different services without redesigning the entire purchase
+                  flow.
+                </li>
+                <li>
+                  Encourage discovery across the Plus ecosystem and grow cross-service
+                  usage.
+                </li>
+              </ol>
+            </div>
+            <div className={styles.requirementGroup}>
+              <strong>Strategic requirement</strong>
+              <p>
+                Make subscription decisions more deliberate and transparent—reducing
+                cancellations and the need to search for critical details elsewhere.
+              </p>
+            </div>
+          </div>
+        </StorySlide>
+
+        <MediaSlide
+          index={10}
+          title="Auditing the existing paywalls"
+          eyebrow="Across every service and entry point"
+          screens={auditSlideScreens}
+          activeStep={activeMediaSteps[10] ?? 0}
+          onStepChange={(index) => setMediaStep(10, index)}
+          onDelete={() => deleteActiveScreen(10)}
+          layout={mediaLayouts[10] ?? "full"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(10)}
+        >
+          <div className={styles.textBlock}>
+            <p>
+              I reviewed how Plus was sold across Music, Kinopoisk, Books, and partner
+              surfaces. The audit exposed duplicated patterns, inconsistent hierarchy,
+              and service-specific solutions that could not scale as one system.
+            </p>
+          </div>
+          <div className={styles.textBlock}>
+            <strong>What we mapped</strong>
+            <p>Entry point · Audience · Offer · Message · Purchase mechanics</p>
+          </div>
+        </MediaSlide>
+
+        <MediaSlide
+          index={11}
+          title="Designing one system for every offer"
+          eyebrow="From a catalogue of offers to a configurable model"
+          screens={systemSlideScreens}
+          activeStep={activeMediaSteps[11] ?? 0}
+          onStepChange={(index) => setMediaStep(11, index)}
+          onDelete={() => deleteActiveScreen(11)}
+          layout={mediaLayouts[11] ?? "full"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(11)}
+        >
+          <div className={styles.textBlock}>
+            <p>
+              We mapped every live offer—trial, intro, annual, monthly, promotional, and
+              win-back—and separated the content from the interface.
+            </p>
+          </div>
+          <div className={styles.textBlock}>
+            <strong>Configurable fields</strong>
+            <p>Subscription · Trial · Promo · Price · CTA · Legal information</p>
+          </div>
+        </MediaSlide>
+
+        <MediaSlide
+          index={12}
+          title="Two directions to validate"
+          eyebrow="One system, two interaction models"
+          screens={directionsSlideScreens}
+          activeStep={activeMediaSteps[12] ?? 0}
+          onStepChange={(index) => setMediaStep(12, index)}
+          onDelete={() => deleteActiveScreen(12)}
+          layout={mediaLayouts[12] ?? "split"}
+          canUndo={canUndo}
+          onUndo={undoLastEdit}
+          onToggleLayout={() => toggleMediaLayout(12)}
+        >
+          <div className={styles.textBlock}>
+            <p>
+              I reduced the exploration to two viable directions: a guided selection
+              model with one primary action, and a side-by-side model that makes competing
+              offers directly comparable.
+            </p>
+          </div>
+          <div className={styles.textBlock}>
+            <strong>Evaluation criteria</strong>
+            <p>Clarity · Flexibility · Conversion potential · Ability to scale</p>
+          </div>
+        </MediaSlide>
       </main>
 
       <nav className={styles.presentationNav} aria-label="Presentation navigation">
