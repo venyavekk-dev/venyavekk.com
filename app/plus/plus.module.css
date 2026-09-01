@@ -136,7 +136,6 @@
 .flowVisual {
   --media-background: #202020;
 
-  position: relative;
   margin: clamp(0.75rem, 1.4vw, 1.25rem);
   min-height: 0;
   overflow: hidden;
@@ -146,10 +145,11 @@
 
 .media {
   display: grid;
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.75rem;
   min-width: 0;
   padding: clamp(1rem, 2vw, 1.5rem);
-  padding-bottom: 4.25rem;
+  padding-bottom: clamp(5rem, 7vw, 7rem);
 }
 
 .mediaPanel,
@@ -157,12 +157,10 @@
   display: grid;
   position: relative;
   width: 100%;
-  height: 100%;
   min-height: 0;
   place-items: center;
   overflow: hidden;
-  box-sizing: border-box;
-  padding-block: clamp(1.25rem, 3vh, 2.5rem);
+  padding-block: clamp(2rem, 5vh, 4.5rem);
 }
 
 .phone,
@@ -170,7 +168,7 @@
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: 100%;
+  max-height: 76dvh;
   object-fit: contain;
 }
 
@@ -226,9 +224,10 @@
 
 .flowVisual {
   display: grid;
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.75rem;
   min-width: 0;
-  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2vw, 1.5rem) 4.25rem;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2vw, 1.5rem) 6.5rem;
 }
 
 .flowPanel {
@@ -236,20 +235,16 @@
 }
 
 .flowPhone {
-  max-height: 100%;
+  max-height: 60dvh;
 }
 
 .flowTabs {
-  position: absolute;
-  right: 1rem;
-  bottom: 0.9rem;
-  left: 1rem;
   display: flex;
-  gap: 0.45rem;
+  gap: 0.75rem;
   justify-content: center;
-  width: auto;
+  width: 100%;
   overflow-x: auto;
-  padding: 0.25rem;
+  padding: 0.4rem;
   scrollbar-width: none;
 }
 
@@ -260,15 +255,15 @@
 .flowTab {
   display: grid;
   flex: 0 0 auto;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
   place-items: center;
   border: 0;
   border-radius: 50%;
   padding: 0;
   color: #bcbcbc;
   background: #262626;
-  font: 600 0.7rem/1 Arial, Helvetica, sans-serif;
+  font: 600 0.82rem/1 Arial, Helvetica, sans-serif;
   cursor: pointer;
 }
 
@@ -402,7 +397,7 @@
   --media-background: #121212;
 
   margin: 0 clamp(1rem, 3vw, 3rem);
-  padding: 0 clamp(0.5rem, 2vw, 2rem) 4.25rem;
+  padding: 0 clamp(0.5rem, 2vw, 2rem) clamp(5rem, 7vw, 7rem);
   border-radius: 0;
   background: transparent;
 }
@@ -415,25 +410,7 @@
 .fullMediaSlide .phone,
 .fullMediaSlide .flowPhone {
   max-width: 100%;
-  max-height: 100%;
-}
-
-.horizontalMediaSlide .mediaPanel {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-}
-
-.horizontalMediaSlide .phone {
-  width: auto;
-  height: 100%;
-  max-width: none;
-  max-height: 100%;
-  flex: 0 0 auto;
-  margin: 0 auto;
+  max-height: 56dvh;
 }
 
 .fullMediaSlide .emptyMedia {
@@ -759,7 +736,7 @@
   .media {
     min-height: 55dvh;
     padding-top: 1rem;
-    padding-bottom: 4.25rem;
+    padding-bottom: 7rem;
   }
 
   .phone {

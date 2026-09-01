@@ -676,7 +676,7 @@ function MediaSlide({
 
   return (
     <section
-      className={`${styles.slide} ${index === 10 ? styles.horizontalMediaSlide : ""}`}
+      className={styles.slide}
       aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}
     >
       <SlideNumber index={index} />
