@@ -1324,7 +1324,7 @@ export function PlusDeck() {
               </ol>
             </div>
             <div className={styles.requirementGroup}>
-              <strong>Strategic requirement</strong>
+              <strong>Strategic requirements</strong>
               <p>
                 Make subscription decisions more deliberate and transparent—reducing
                 cancellations and the need to search for critical details elsewhere.
