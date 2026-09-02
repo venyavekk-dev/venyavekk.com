@@ -1195,7 +1195,7 @@ export function PlusDeck() {
           </div>
         </MediaSlide>
 
-        <StorySlide index={6} title="Understanding the real task" eyebrow="Framing" research>
+        <StorySlide index={6} title="Understanding the real task" research>
           <TextCardGrid>
             <div>
               <strong>Task</strong>
@@ -1217,12 +1217,12 @@ export function PlusDeck() {
             <div>
               <strong>Product model</strong>
               <h3>Requirements</h3>
-              <ul>
+              <ol>
                 <li>Show one or two offers.</li>
                 <li>Include the offer name, price description, and legal copy.</li>
                 <li>Highlight one promotional offer.</li>
                 <li>Support a sticky position and live inside the paywall.</li>
-              </ul>
+              </ol>
             </div>
             <div>
               <strong>Research</strong>
