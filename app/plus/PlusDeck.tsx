@@ -401,6 +401,24 @@ function SlideHeading({ title, eyebrow, level = "h2" }: SlideHeadingProps) {
   );
 }
 
+type StatementSlideProps = {
+  index: number;
+  label: string;
+  children: ReactNode;
+};
+
+function StatementSlide({ index, label, children }: StatementSlideProps) {
+  return (
+    <section className={styles.slide} aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}>
+      <SlideNumber index={index} />
+      <div className={`${styles.slideInner} ${styles.statementSlide}`}>
+        <p className={styles.statementLabel}>{label}</p>
+        <p className={styles.statementText}>{children}</p>
+      </div>
+    </section>
+  );
+}
+
 type StorySlideProps = {
   index: number;
   title: string;
@@ -1155,15 +1173,9 @@ export function PlusDeck() {
           </div>
         </section>
 
-        <section className={styles.slide} aria-label={`Slide 5 of ${SLIDE_COUNT}`}>
-          <SlideNumber index={4} />
-          <SlideHeading title="Plan" eyebrow="The working principle" />
-          <div className={`${styles.slideInner} ${styles.centerSlide}`}>
-            <p className={styles.planText}>
-              Take every part of the product and apply the new subscription strategy to it.
-            </p>
-          </div>
-        </section>
+        <StatementSlide index={4} label="Plan">
+          Take every part of the product and apply the new subscription strategy to it.
+        </StatementSlide>
 
         <MediaSlide
           index={5}
@@ -1186,18 +1198,24 @@ export function PlusDeck() {
         <StorySlide index={6} title="Understanding the real task" eyebrow="Framing" research>
           <TextCardGrid>
             <div>
-              <strong>Task, hypothesis, and requirements</strong>
+              <strong>Task</strong>
               <h3>Overall task</h3>
               <p>
                 Accelerate subscription sales through a reusable offer section that can
                 appear across services, receive different offers, and let product teams
                 manage them.
               </p>
+            </div>
+            <div>
+              <strong>Hypothesis</strong>
               <h3>Music hypothesis</h3>
               <p>
                 Showing two offers on one screen will increase subscription take rate by
                 supporting different offer configurations.
               </p>
+            </div>
+            <div>
+              <strong>Product model</strong>
               <h3>Requirements</h3>
               <ul>
                 <li>Show one or two offers.</li>
@@ -1207,7 +1225,8 @@ export function PlusDeck() {
               </ul>
             </div>
             <div>
-              <strong>Research questions</strong>
+              <strong>Research</strong>
+              <h3>Offer selection</h3>
               <ol>
                 <li>Does the checkbox make the selected offer clear?</li>
                 <li>Do people understand that only one offer can be selected?</li>
@@ -1215,13 +1234,20 @@ export function PlusDeck() {
                 <li>Do people understand which plan types are available?</li>
                 <li>Can they compare prices and see the differences between offers?</li>
                 <li>Do they understand which option provides better value?</li>
+              </ol>
+            </div>
+            <div>
+              <strong>Research</strong>
+              <h3>Purchase comprehension</h3>
+              <ol>
                 <li>Do they know they can scroll for details?</li>
                 <li>What do they expect after pressing the button?</li>
                 <li>Do they notice and read the legal copy?</li>
               </ol>
             </div>
             <div>
-              <strong>Sticky-section questions</strong>
+              <strong>Research</strong>
+              <h3>Sticky behavior</h3>
               <ol>
                 <li>Does the section interfere with scrolling?</li>
                 <li>Can people see where to change their plan?</li>
@@ -1229,21 +1255,13 @@ export function PlusDeck() {
                 <li>Does the sticky section affect offer take rate?</li>
                 <li>Should it stick to the page or remain inside the paywall?</li>
               </ol>
-              <h3>Promotional emphasis</h3>
-              <ol>
-                <li>Does highlighting an offer improve take rate?</li>
-                <li>Does the sticky behavior change take rate?</li>
-              </ol>
             </div>
             <div>
-              <strong>A/B-test questions</strong>
-              <h3>Highlight the promotion</h3>
+              <strong>Experiments</strong>
+              <h3>What we need to validate</h3>
               <ol>
                 <li>Does highlighting an offer improve take rate?</li>
                 <li>Does the sticky section improve take rate?</li>
-              </ol>
-              <h3>Present the offer as two propositions</h3>
-              <ol>
                 <li>Does showing “30 days” on both buttons affect take rate?</li>
                 <li>Will people press a button to learn more?</li>
               </ol>
