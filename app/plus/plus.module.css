@@ -1,0 +1,916 @@
+.deck {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  width: 100%;
+  height: 100dvh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  color: #f5f5f5;
+  background: #121212;
+  scroll-behavior: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.deck::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100dvh;
+  overflow-y: auto;
+  background: #121212;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.slideNumber {
+  position: absolute;
+  top: clamp(1.25rem, 2.2vw, 2rem);
+  left: max(clamp(1.5rem, 5vw, 5rem), calc((100vw - 1440px) / 2 + 5rem));
+  z-index: 4;
+  color: #777;
+  font: 600 0.72rem/1 Arial, Helvetica, sans-serif;
+  letter-spacing: 0.14em;
+}
+
+.slideHeading {
+  position: absolute;
+  top: clamp(3.5rem, 6.5vw, 6.5rem);
+  left: max(clamp(1.5rem, 5vw, 5rem), calc((100vw - 1440px) / 2 + 5rem));
+  z-index: 3;
+  width: min(calc(50% - clamp(2rem, 5vw, 5rem)), 40rem);
+}
+
+.slideHeading .eyebrow {
+  margin: 1rem 0 0;
+}
+
+.slideInner {
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+  min-height: 100%;
+  margin: 0 auto;
+}
+
+.mediaSlide,
+.flowSlide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.copy,
+.flowCopy {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4rem;
+  padding: clamp(3.5rem, 6.5vw, 6.5rem) clamp(1.5rem, 5vw, 5rem);
+  padding-top: clamp(18rem, 35vh, 24rem);
+}
+
+.eyebrow {
+  max-width: 32rem;
+  margin: 0 0 1.4rem;
+  color: #a8a8a8;
+  font-size: clamp(1rem, 1.35vw, 1.25rem);
+  line-height: 1.35;
+}
+
+.title {
+  max-width: 15ch;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(2.65rem, 4.3vw, 4.6rem);
+  font-weight: 650;
+  line-height: 0.99;
+  letter-spacing: -0.055em;
+}
+
+.body {
+  display: grid;
+  gap: 2.8rem;
+  max-width: 46rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  line-height: 1.42;
+}
+
+.fact,
+.textBlock {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.fact strong,
+.textBlock strong {
+  font-weight: 700;
+}
+
+.fact span {
+  display: block;
+}
+
+.factGrid,
+.problemList {
+  display: grid;
+  gap: clamp(1.4rem, 2.4vw, 2.5rem);
+}
+
+.textBlock p {
+  max-width: 34rem;
+  margin: 0;
+}
+
+.media,
+.flowVisual {
+  --media-background: #202020;
+
+  position: relative;
+  margin: clamp(0.75rem, 1.4vw, 1.25rem);
+  min-height: 0;
+  overflow: hidden;
+  border-radius: clamp(1.25rem, 2.2vw, 2rem);
+  background: var(--media-background);
+}
+
+.media {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  padding-bottom: clamp(5rem, 7vw, 7rem);
+}
+
+.mediaPanel,
+.flowPanel {
+  display: grid;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  place-items: center;
+  overflow: hidden;
+  padding-block: clamp(2rem, 5vh, 4.5rem);
+}
+
+.phone,
+.flowPhone {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 76dvh;
+  object-fit: contain;
+}
+
+.emptyMedia {
+  display: grid;
+  width: min(100%, 42rem);
+  min-height: min(44dvh, 30rem);
+  place-content: center;
+  gap: 0.7rem;
+  border: 1px dashed rgb(255 255 255 / 12%);
+  border-radius: 1.25rem;
+  color: #747474;
+  background: rgb(255 255 255 / 1.5%);
+  text-align: center;
+  font: 600 0.9rem/1.2 Arial, Helvetica, sans-serif;
+}
+
+.emptyMedia kbd {
+  color: #9b9b9b;
+  font: 500 0.78rem/1 Arial, Helvetica, sans-serif;
+}
+
+.textSlide {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: clamp(4rem, 9vh, 8rem);
+  padding: clamp(3.5rem, 6.5vw, 6.5rem) clamp(1.5rem, 5vw, 5rem);
+  padding-top: clamp(18rem, 35vh, 24rem);
+}
+
+.priorityGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(3rem, 6vw, 6rem) clamp(4rem, 9vw, 9rem);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  line-height: 1.4;
+}
+
+.flowCopy {
+  min-width: 0;
+}
+
+.flowDescription {
+  max-width: 28rem;
+  margin: 0;
+  color: #b9b9b9;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  line-height: 1.45;
+}
+
+.flowVisual {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2vw, 1.5rem) 6.5rem;
+}
+
+.flowPanel {
+  outline: none;
+}
+
+.flowPhone {
+  max-height: 60dvh;
+}
+
+.flowTabs {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  width: auto;
+  overflow-x: auto;
+  padding: 0.25rem;
+  scrollbar-width: none;
+}
+
+.flowTabs::-webkit-scrollbar {
+  display: none;
+}
+
+.flowTab {
+  display: grid;
+  flex: 0 0 auto;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  color: #bcbcbc;
+  background: #262626;
+  font: 600 0.7rem/1 Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.flowTab:hover {
+  color: #fff;
+}
+
+.flowTab[aria-current="step"] {
+  color: #111;
+  background: #f5f5f5;
+}
+
+.floatingTools {
+  position: fixed;
+  bottom: clamp(1rem, 2vw, 1.5rem);
+  left: 1rem;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mediaToolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.toolbarButton,
+.deleteScreen,
+.toolLauncher {
+  display: grid;
+  width: 2.85rem;
+  height: 2.85rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 50%;
+  padding: 0;
+  color: #bcbcbc;
+  background: #252525;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+}
+
+.toolbarButton svg,
+.deleteScreen svg,
+.toolLauncher svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.toolbarButton:hover:not(:disabled),
+.deleteScreen:hover:not(:disabled),
+.toolLauncher:hover {
+  color: #fff;
+  background: #363636;
+}
+
+.toolbarButton:disabled,
+.deleteScreen:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.saveError {
+  color: #ff9c9c;
+}
+
+.deleteScreen {
+  color: #d5d5d5;
+}
+
+.toolLauncher {
+  color: #111;
+  background: #f5f5f5;
+}
+
+.toolLauncher:hover {
+  color: #111;
+  background: #fff;
+}
+
+.fullMediaSlide {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: clamp(18rem, 34dvh, 23rem) minmax(0, 1fr);
+}
+
+.fullMediaSlide .copy,
+.fullMediaSlide .flowCopy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(2rem, 6vw, 6rem);
+  height: 100%;
+  padding: clamp(3.5rem, 6.5vw, 6.5rem) clamp(1.5rem, 5vw, 5rem) 1rem;
+  overflow: hidden;
+}
+
+.fullMediaSlide .title {
+  max-width: 18ch;
+}
+
+.fullMediaSlide .body,
+.fullMediaSlide .flowDescription {
+  grid-column: 2;
+  align-self: end;
+  max-width: 34rem;
+  justify-self: end;
+}
+
+.fullMediaSlide .media,
+.fullMediaSlide .flowVisual {
+  --media-background: #121212;
+
+  margin: 0 clamp(1rem, 3vw, 3rem);
+  padding: 0 clamp(0.5rem, 2vw, 2rem) clamp(5rem, 7vw, 7rem);
+  border-radius: 0;
+  background: transparent;
+}
+
+.fullMediaSlide .mediaPanel,
+.fullMediaSlide .flowPanel {
+  padding-block: clamp(1.5rem, 3.5vh, 3.5rem);
+}
+
+.fullMediaSlide .phone,
+.fullMediaSlide .flowPhone {
+  max-width: 100%;
+  max-height: 56dvh;
+}
+
+.fullMediaSlide .emptyMedia {
+  width: min(100%, 78rem);
+  min-height: min(42dvh, 27rem);
+}
+
+.storySlide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.requirementsSlide {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: clamp(16rem, 32vh, 22rem) auto;
+  gap: clamp(2rem, 4vh, 4rem);
+  height: auto;
+  min-height: 100%;
+  padding: 0 clamp(1.5rem, 5vw, 5rem) clamp(6rem, 8vw, 8rem);
+  overflow: visible;
+}
+
+.requirementsSlide > :first-child {
+  overflow: visible;
+  padding: 0;
+}
+
+.requirementsSlide .storyBody {
+  margin: 0;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+}
+
+.requirementsSlide .textCardGrid {
+  grid-template-columns: repeat(var(--text-card-count), minmax(0, 1fr));
+  grid-template-rows: auto;
+  align-items: stretch;
+  gap: clamp(0.8rem, 1.5vw, 1.25rem);
+  height: auto;
+  padding: 0;
+}
+
+.requirementsSlide .contentCard,
+.researchSlide .contentCard {
+  align-content: start;
+  min-height: 0;
+  border-radius: clamp(1.25rem, 2.2vw, 2rem);
+  padding: clamp(1.4rem, 2.4vw, 2.4rem);
+  background: #202020;
+}
+
+.requirementsSlide .contentCard {
+  height: auto;
+  overflow: visible;
+}
+
+.researchSlide {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: clamp(17rem, 35vh, 23rem) minmax(0, 1fr);
+  gap: 0;
+  height: 100%;
+  min-height: 100%;
+  padding: 0 0 clamp(5rem, 7vw, 7rem);
+  overflow: hidden;
+}
+
+.researchSlide .storyBody {
+  min-height: 0;
+  margin: 0 clamp(1.5rem, 5vw, 5rem);
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 0;
+  color: #f5f5f5;
+  background: transparent;
+  overscroll-behavior-x: contain;
+  scroll-padding-left: 0;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.researchSlide .storyBody::-webkit-scrollbar {
+  display: none;
+}
+
+.researchSlide .textCardGrid {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(0.8rem, 1.5vw, 1.25rem);
+  width: max-content;
+  min-width: 100%;
+  height: 100%;
+  padding: 0 0 0.75rem;
+}
+
+.researchSlide .contentCard {
+  flex: 0 0 clamp(20rem, 31vw, 27rem);
+  height: 100%;
+  overflow-y: auto;
+  color: #f5f5f5;
+  scroll-snap-align: start;
+}
+
+.researchSlide .contentCard strong {
+  color: #a8a8a8;
+  font-size: clamp(0.72rem, 0.8vw, 0.82rem);
+  letter-spacing: 0.01em;
+}
+
+.researchSlide .contentCard > div {
+  gap: 0.55rem;
+}
+
+.researchSlide h3 {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.8vw, 1.8rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.researchSlide ol {
+  display: grid;
+  counter-reset: research-item;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.researchSlide li {
+  position: relative;
+  min-height: 1.5rem;
+  padding-left: 2rem;
+}
+
+.researchSlide li::before {
+  position: absolute;
+  top: 0.05rem;
+  left: 0;
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #c8c8c8;
+  background: #333;
+  content: counter(research-item);
+  counter-increment: research-item;
+  font: 600 0.65rem/1 Arial, Helvetica, sans-serif;
+}
+
+.storySlide .headingSpace {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.storyBody {
+  min-width: 0;
+  min-height: 0;
+  margin: clamp(0.75rem, 1.4vw, 1.25rem);
+  overflow: hidden;
+  border-radius: clamp(1.25rem, 2.2vw, 2rem);
+  background: #202020;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(0.95rem, 1.22vw, 1.15rem);
+  line-height: 1.42;
+}
+
+.textCardGrid {
+  display: grid;
+  grid-template-rows: repeat(var(--text-card-count), minmax(0, 1fr));
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
+
+.contentCard {
+  display: grid;
+  align-content: center;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: clamp(0.9rem, 1.4vw, 1.25rem);
+  padding: clamp(1rem, 2.2vw, 2rem);
+  background: #272727;
+}
+
+.contentCard > div {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.contentCard p,
+.requirementGroup p {
+  margin: 0;
+}
+
+.requirementGroup {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.requirementGroup ol {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  padding-left: 1.75rem;
+  list-style: decimal;
+}
+
+.requirementGroup li {
+  padding-left: 0.25rem;
+}
+
+.requirementGroup li::marker {
+  color: #8d8d8d;
+  font-variant-numeric: tabular-nums;
+}
+
+.flowTab:focus-visible,
+.toolbarButton:focus-visible,
+.deleteScreen:focus-visible,
+.toolLauncher:focus-visible,
+.presentationNav button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.statementSlide {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 5vh, 4rem);
+  padding: clamp(6rem, 10vh, 9rem) clamp(1.5rem, 5vw, 5rem);
+  text-align: center;
+}
+
+.statementLabel {
+  position: absolute;
+  top: clamp(4.75rem, 8vh, 7rem);
+  margin: 0;
+  color: #a8a8a8;
+  font: 600 clamp(0.9rem, 1.15vw, 1.1rem)/1.2 Arial, Helvetica, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.statementText {
+  max-width: 15ch;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(3rem, 6.2vw, 6.5rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+  color: transparent;
+  background: linear-gradient(115deg, #f5f5f7 8%, #74a6ff 38%, #c78dff 62%, #ff8d77 92%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.presentationNav {
+  position: fixed;
+  right: 50%;
+  bottom: clamp(1rem, 2.5vw, 2.5rem);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 999px;
+  background: rgb(29 29 31 / 78%);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(18px);
+  transform: translateX(50%);
+}
+
+.presentationNav button {
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #111;
+  background: #f5f5f5;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.presentationNav button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.presentationNav button:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+@media (max-width: 760px) {
+  .slideNumber {
+    top: 1.35rem;
+    left: 1.5rem;
+  }
+
+  .slide {
+    overflow-y: auto;
+  }
+
+  .slideHeading {
+    top: 4.75rem;
+    left: 1.5rem;
+    width: calc(100% - 3rem);
+  }
+
+  .mediaSlide,
+  .flowSlide {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .floatingTools {
+    bottom: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .mediaToolbar {
+    gap: 0.45rem;
+  }
+
+  .toolbarButton,
+  .deleteScreen,
+  .toolLauncher {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .copy,
+  .flowCopy {
+    min-height: 62dvh;
+    overflow: visible;
+    padding-top: 17rem;
+  }
+
+  .fullMediaSlide .copy,
+  .fullMediaSlide .flowCopy {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    align-items: start;
+    gap: 2rem;
+    padding-top: 17rem;
+  }
+
+  .fullMediaSlide .body,
+  .fullMediaSlide .flowDescription {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .fullMediaSlide {
+    grid-template-rows: auto minmax(55dvh, auto);
+  }
+
+  .title {
+    font-size: clamp(2.45rem, 12vw, 3.7rem);
+  }
+
+  .media {
+    min-height: 55dvh;
+    padding-top: 1rem;
+    padding-bottom: 7rem;
+  }
+
+  .phone {
+    max-height: 62dvh;
+  }
+
+  .textSlide {
+    justify-content: flex-start;
+    padding-top: 17rem;
+    padding-bottom: 7rem;
+  }
+
+  .storySlide,
+  .requirementsSlide,
+  .researchSlide {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  .requirementsSlide {
+    gap: 3rem;
+    grid-template-rows: 17rem auto;
+    padding: 0 1.5rem 7rem;
+  }
+
+  .researchSlide {
+    grid-template-rows: 17rem minmax(0, 1fr);
+    gap: 0;
+    height: 100%;
+    padding: 0 0 6rem;
+    overflow: hidden;
+  }
+
+  .researchSlide .storyBody {
+    min-height: 0;
+    margin: 0 1.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .researchSlide .textCardGrid {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    height: 100%;
+  }
+
+  .researchSlide .contentCard {
+    flex-basis: min(82vw, 24rem);
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .requirementsSlide .headingSpace {
+    min-height: auto;
+    padding: 0;
+  }
+
+  .requirementsSlide .storyBody {
+    min-height: 0;
+    margin: 0;
+  }
+
+  .requirementsSlide .textCardGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+
+  .storySlide .headingSpace {
+    min-height: 17rem;
+    overflow: visible;
+  }
+
+  .storyBody {
+    min-height: 60dvh;
+    margin-bottom: 7rem;
+    overflow: visible;
+  }
+
+  .textCardGrid {
+    grid-template-rows: none;
+    height: auto;
+  }
+
+  .contentCard {
+    min-height: 12rem;
+    overflow: visible;
+  }
+
+  .priorityGrid {
+    grid-template-columns: 1fr;
+    gap: 2.75rem;
+  }
+
+  .flowVisual {
+    min-height: 66dvh;
+    padding-top: 0;
+  }
+
+  .flowPhone {
+    max-height: 50dvh;
+  }
+
+  .flowTabs {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck {
+    scroll-behavior: auto;
+  }
+
+  .flowTab,
+  .presentationNav button {
+    transition: none;
+  }
+}
