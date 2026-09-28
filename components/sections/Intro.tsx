@@ -6,6 +6,7 @@ import { StoryDeckAvatar, StoryDeckCard, useStoryDeck } from "@/components/ui/St
 import { filmArtistDescription, filmLinks } from "@/lib/film-data";
 import { links } from "@/lib/data";
 import { musicPlatformLinks } from "@/lib/music-data";
+import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 
@@ -192,6 +193,17 @@ export function Intro({ activeSection = "design", disablePortraitEffects = false
                         aria-hidden="true"
                       />
                       <span>Tulzy</span>
+                    </ExternalLink>
+                    <ExternalLink href="https://wav.venyavekk.com" className="intro-ai-project-chip">
+                      <Image
+                        src="/assets/wav-icon.png"
+                        alt=""
+                        width={24}
+                        height={24}
+                        className="intro-ai-project-logo intro-ai-project-logo-wav"
+                        aria-hidden="true"
+                      />
+                      <span>Wav</span>
                     </ExternalLink>
                     <ExternalLink
                       href="https://github.com/venyavekk-dev/deveq/tree/main/ship-safe-pull-request"

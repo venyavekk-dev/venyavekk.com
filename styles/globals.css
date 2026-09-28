@@ -423,6 +423,10 @@ a:hover {
   background: #080808;
 }
 
+.intro-ai-project-logo-wav {
+  border-radius: 6px;
+}
+
 .intro-ai-project-logo-tulzy {
   background: transparent;
   object-fit: contain;
